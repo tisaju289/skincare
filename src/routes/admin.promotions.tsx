@@ -1,30 +1,77 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
-import { Plus, Copy } from "lucide-react";
+import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
+import { supabase } from "@/integrations/supabase/client";
+import { Plus, Copy, Edit2, Trash2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/promotions")({
   component: PromotionsPage,
 });
 
-const promos = [
-  { code: "SUMMER45", desc: "45% off on Unilever July Jaw Droppers", type: "Percentage", value: "45%", usage: "1,284 / 5,000", status: "Active" },
-  { code: "NEW10", desc: "10% off for first-time customers", type: "Percentage", value: "10%", usage: "3,201 / ∞", status: "Active" },
-  { code: "FREESHIP", desc: "Free shipping over ৳999", type: "Shipping", value: "Free", usage: "8,412 / ∞", status: "Active" },
-  { code: "BUY2GET101", desc: "৳101 off when buying 2 pads", type: "Fixed", value: "৳101", usage: "428 / 2,000", status: "Active" },
-  { code: "EIDBEAUTY", desc: "Eid special beauty combo", type: "Percentage", value: "25%", usage: "5,000 / 5,000", status: "Expired" },
-];
+type PromoType = "percentage" | "fixed" | "shipping";
+type PromoStatus = "active" | "scheduled" | "expired" | "disabled";
+type Promo = {
+  id: string;
+  code: string;
+  description: string | null;
+  type: PromoType;
+  value: number;
+  usage_count: number;
+  usage_limit: number | null;
+  status: PromoStatus;
+};
+type FormState = Partial<Promo>;
+const empty: FormState = { code: "", description: "", type: "percentage", value: 0, usage_count: 0, status: "active" };
 
-const statusStyle: Record<string, string> = {
-  Active: "bg-emerald-100 text-emerald-700",
-  Expired: "bg-muted text-muted-foreground",
-  Scheduled: "bg-sky-100 text-sky-700",
+const statusStyle: Record<PromoStatus, string> = {
+  active: "bg-emerald-100 text-emerald-700",
+  scheduled: "bg-sky-100 text-sky-700",
+  expired: "bg-muted text-muted-foreground",
+  disabled: "bg-rose-100 text-rose-700",
 };
 
 function PromotionsPage() {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Promo | null>(null);
+  const [form, setForm] = useState<FormState>(empty);
+
+  const q = useQuery({
+    queryKey: ["admin", "promotions"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("promotions").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as Promo[];
+    },
+  });
+
+  const save = useMutation({
+    mutationFn: async (p: FormState) => {
+      const payload = { ...p, code: p.code?.toUpperCase() };
+      const { error } = editing
+        ? await supabase.from("promotions").update(payload).eq("id", editing.id)
+        : await supabase.from("promotions").insert(payload as any);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success(editing ? "Updated" : "Created"); qc.invalidateQueries({ queryKey: ["admin", "promotions"] }); setOpen(false); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const del = useMutation({
+    mutationFn: async (id: string) => { const { error } = await supabase.from("promotions").delete().eq("id", id); if (error) throw error; },
+    onSuccess: () => { toast.success("Deleted"); qc.invalidateQueries({ queryKey: ["admin", "promotions"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const promos = q.data ?? [];
+
   return (
     <>
       <AdminTopbar title="Promotions" subtitle="Discount codes and campaigns" action={
-        <button className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
+        <button onClick={() => { setEditing(null); setForm(empty); setOpen(true); }} className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
           <Plus className="h-4 w-4" /> Create promo
         </button>
       }/>
@@ -39,23 +86,29 @@ function PromotionsPage() {
                 <th className="px-5 py-3 text-left font-semibold">Value</th>
                 <th className="px-5 py-3 text-left font-semibold">Usage</th>
                 <th className="px-5 py-3 text-left font-semibold">Status</th>
+                <th className="px-5 py-3"></th>
               </tr>
             </thead>
             <tbody>
+              {q.isLoading && <tr><td colSpan={7} className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></td></tr>}
+              {!q.isLoading && promos.length === 0 && <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">No promo codes yet.</td></tr>}
               {promos.map((p) => (
-                <tr key={p.code} className="border-t border-border hover:bg-muted/30">
+                <tr key={p.id} className="border-t border-border hover:bg-muted/30">
                   <td className="px-5 py-3">
-                    <div className="inline-flex items-center gap-2 font-mono font-bold bg-muted px-2 py-1 rounded">
-                      {p.code}
-                      <Copy className="h-3 w-3 opacity-60 cursor-pointer" />
-                    </div>
+                    <button onClick={() => { navigator.clipboard.writeText(p.code); toast.success("Code copied"); }} className="inline-flex items-center gap-2 font-mono font-bold bg-muted px-2 py-1 rounded hover:bg-muted/70">
+                      {p.code} <Copy className="h-3 w-3 opacity-60" />
+                    </button>
                   </td>
-                  <td className="px-5 py-3">{p.desc}</td>
-                  <td className="px-5 py-3 text-xs">{p.type}</td>
-                  <td className="px-5 py-3 font-semibold">{p.value}</td>
-                  <td className="px-5 py-3 text-xs text-muted-foreground">{p.usage}</td>
-                  <td className="px-5 py-3">
-                    <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${statusStyle[p.status]}`}>{p.status}</span>
+                  <td className="px-5 py-3">{p.description}</td>
+                  <td className="px-5 py-3 text-xs capitalize">{p.type}</td>
+                  <td className="px-5 py-3 font-semibold">{p.type === "percentage" ? `${p.value}%` : `৳${p.value}`}</td>
+                  <td className="px-5 py-3 text-xs text-muted-foreground">{p.usage_count} / {p.usage_limit ?? "∞"}</td>
+                  <td className="px-5 py-3"><span className={`text-[10px] font-bold px-2 py-1 rounded-full capitalize ${statusStyle[p.status]}`}>{p.status}</span></td>
+                  <td className="px-5 py-3 text-right">
+                    <div className="flex justify-end gap-1">
+                      <button onClick={() => { setEditing(p); setForm(p); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted"><Edit2 className="h-3.5 w-3.5"/></button>
+                      <button onClick={() => confirm(`Delete "${p.code}"?`) && del.mutate(p.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-3.5 w-3.5"/></button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -63,6 +116,33 @@ function PromotionsPage() {
           </table>
         </div>
       </div>
+
+      <AdminModal open={open} onClose={() => setOpen(false)} title={editing ? "Edit promo" : "New promo"}>
+        <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="space-y-4">
+          <Field label="Code"><input required className={inputCls + " font-mono uppercase"} value={form.code ?? ""} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} /></Field>
+          <Field label="Description"><input className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Type">
+              <select className={inputCls} value={form.type ?? "percentage"} onChange={(e) => setForm({ ...form, type: e.target.value as PromoType })}>
+                <option value="percentage">Percentage</option>
+                <option value="fixed">Fixed amount</option>
+                <option value="shipping">Free shipping</option>
+              </select>
+            </Field>
+            <Field label="Value"><input required type="number" step="0.01" className={inputCls} value={form.value ?? 0} onChange={(e) => setForm({ ...form, value: Number(e.target.value) })} /></Field>
+            <Field label="Usage limit (blank = unlimited)"><input type="number" className={inputCls} value={form.usage_limit ?? ""} onChange={(e) => setForm({ ...form, usage_limit: e.target.value ? Number(e.target.value) : null })} /></Field>
+            <Field label="Status">
+              <select className={inputCls} value={form.status ?? "active"} onChange={(e) => setForm({ ...form, status: e.target.value as PromoStatus })}>
+                {["active","scheduled","expired","disabled"].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </Field>
+          </div>
+          <div className="flex justify-end gap-2 pt-4 border-t border-border">
+            <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancel</button>
+            <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90">{save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}Save</button>
+          </div>
+        </form>
+      </AdminModal>
     </>
   );
 }
