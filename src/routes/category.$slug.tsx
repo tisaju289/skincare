@@ -96,7 +96,7 @@ function CategoryPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((p) => (
+            {products.map((p: Product) => (
               <Link to="/product/$slug" params={{ slug: p.slug }} key={p.slug} className="group bg-white rounded-2xl border border-border overflow-hidden hover:shadow-lg transition">
                 <div className={`relative aspect-square ${p.color} overflow-hidden`}>
                   <span className="absolute top-2 left-2 z-10 bg-[color:var(--brand-pink)] text-white text-[10px] font-bold px-2 py-1 rounded">{p.tag}</span>
