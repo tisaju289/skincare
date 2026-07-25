@@ -3,7 +3,7 @@ import { Heart, ShoppingBag, Star, ChevronRight, SlidersHorizontal } from "lucid
 import { getCategory, getProductsByCategory, categories, type Product, type Category } from "@/lib/shop-data";
 
 export const Route = createFileRoute("/category/$slug")({
-  loader: ({ params }) => {
+  loader: ({ params }): { category: Category; products: Product[] } => {
     const category = getCategory(params.slug);
     if (!category) throw notFound();
     return { category, products: getProductsByCategory(params.slug) };
