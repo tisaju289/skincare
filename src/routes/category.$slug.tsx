@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Heart, ShoppingBag, Star, ChevronRight, SlidersHorizontal } from "lucide-react";
-import { getCategory, getProductsByCategory, categories } from "@/lib/shop-data";
+import { getCategory, getProductsByCategory, categories, type Product, type Category } from "@/lib/shop-data";
 
 export const Route = createFileRoute("/category/$slug")({
   loader: ({ params }) => {
