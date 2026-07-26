@@ -106,7 +106,7 @@ function ProductsPage() {
         subtitle={`${products.length} products in your catalog`}
         action={
           <button onClick={openNew} className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
-            <Plus className="h-4 w-4" /> Add product
+            <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Add product</span>
           </button>
         }
       />

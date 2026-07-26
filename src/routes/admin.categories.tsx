@@ -53,7 +53,7 @@ function CategoriesPage() {
     <>
       <AdminTopbar title="Categories" subtitle="Organize products into browseable categories" action={
         <button onClick={() => { setEditing(null); setForm(empty); setOpen(true); }} className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
-          <Plus className="h-4 w-4" /> New category
+          <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New category</span>
         </button>
       }/>
       <div className="p-4 sm:p-6">

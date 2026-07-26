@@ -72,7 +72,7 @@ function PromotionsPage() {
     <>
       <AdminTopbar title="Promotions" subtitle="Discount codes and campaigns" action={
         <button onClick={() => { setEditing(null); setForm(empty); setOpen(true); }} className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
-          <Plus className="h-4 w-4" /> Create promo
+          <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Create promo</span>
         </button>
       }/>
       <div className="p-4 sm:p-6">

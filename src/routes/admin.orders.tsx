@@ -81,7 +81,7 @@ function OrdersPage() {
     <>
       <AdminTopbar title="Orders" subtitle={`${orders.length} total orders`} action={
         <button onClick={() => { setEditing(null); setForm({ ...empty, order_number: `SJ-${Date.now().toString().slice(-6)}` }); setOpen(true); }} className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
-          <Plus className="h-4 w-4" /> New order
+          <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New order</span>
         </button>
       } />
       <div className="p-4 sm:p-6 space-y-4">
