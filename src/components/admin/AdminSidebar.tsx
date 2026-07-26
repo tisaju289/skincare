@@ -86,15 +86,24 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
         </Link>
       </div>
 
-      <div className="p-3 border-t border-border">
-        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer">
-          <div className="h-9 w-9 shrink-0 rounded-full bg-gradient-to-br from-pink-400 to-fuchsia-500 grid place-items-center text-white font-bold text-sm">A</div>
+      <div className="p-3 border-t border-border space-y-2">
+        <div className="flex items-center gap-3 p-2 rounded-lg">
+          <div className="h-9 w-9 shrink-0 rounded-full bg-gradient-to-br from-pink-400 to-fuchsia-500 grid place-items-center text-white font-bold text-sm">
+            {(email || "A").charAt(0).toUpperCase()}
+          </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold truncate">Admin User</p>
-            <p className="text-xs text-muted-foreground truncate">admin@shajgoj.com</p>
+            <p className="text-xs text-muted-foreground truncate">{email || "—"}</p>
           </div>
-          <LogOut className="h-4 w-4 shrink-0 text-muted-foreground" />
         </div>
+        <button
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold border border-border hover:bg-muted transition disabled:opacity-60"
+        >
+          <LogOut className="h-4 w-4" />
+          {signingOut ? "Signing out…" : "Log out"}
+        </button>
       </div>
     </>
   );
