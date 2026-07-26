@@ -28,13 +28,11 @@ export function AdminTopbar({ title, subtitle, action }: { title: string; subtit
             <Bell className="h-4 w-4" />
             <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-[color:var(--brand-pink)] rounded-full" />
           </button>
-          <div className="[&_button]:whitespace-nowrap [&_button>span]:hidden sm:[&_button>span]:inline">
-            {action ?? (
-              <button className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-3 sm:px-4 py-2 rounded-lg hover:opacity-90">
-                <Plus className="h-4 w-4" /> <span>New</span>
-              </button>
-            )}
-          </div>
+          {action ?? (
+            <button className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 whitespace-nowrap">
+              <Plus className="h-4 w-4" /> New
+            </button>
+          )}
         </div>
       </div>
     </header>
