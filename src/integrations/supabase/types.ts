@@ -113,6 +113,24 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -500,6 +518,29 @@ export type Database = {
         }
         Returns: boolean
       }
+      place_order: {
+        Args: {
+          p_address: string
+          p_email: string
+          p_items: Json
+          p_name: string
+          p_notes?: string
+          p_payment_method?: Database["public"]["Enums"]["payment_method"]
+          p_phone: string
+          p_promo_code?: string
+        }
+        Returns: string
+      }
+      submit_review: {
+        Args: {
+          p_comment: string
+          p_product_slug: string
+          p_rating: number
+          p_user_name: string
+        }
+        Returns: undefined
+      }
+      subscribe_newsletter: { Args: { p_email: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

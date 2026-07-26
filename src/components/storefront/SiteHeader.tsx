@@ -1,0 +1,118 @@
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { Search, Heart, ShoppingBag, LayoutDashboard } from "lucide-react";
+import type { Category } from "@/lib/shop-data";
+import { useCart } from "@/lib/cart";
+import { CartDrawer } from "./CartDrawer";
+
+const pillNav = [
+  { name: "UNDERGARMENTS", bg: "bg-[color:var(--brand-pink)]" },
+  { name: "COMBO", bg: "bg-[color:var(--brand-magenta)]" },
+  { name: "JEWELLERY", bg: "bg-[color:var(--brand-purple)]" },
+  { name: "CLEARANCE SALE", bg: "bg-[color:var(--brand-teal)]" },
+  { name: "MEN", bg: "bg-[color:var(--brand-green)]" },
+];
+
+export function SiteHeader({ categories = [] }: { categories?: Category[] }) {
+  const navigate = useNavigate();
+  const { count } = useCart();
+  const [q, setQ] = useState("");
+  const [cartOpen, setCartOpen] = useState(false);
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    navigate({ to: "/search", search: { q } });
+  }
+
+  return (
+    <>
+      <div className="bg-[color:var(--brand-pink)] text-white text-xs sm:text-sm text-center py-2 px-4">
+        Free delivery on orders over ৳999 · Cash on delivery available all over Bangladesh
+      </div>
+
+      <header className="sticky top-0 z-40 bg-background border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
+          <Link to="/" className="text-xl sm:text-3xl font-black tracking-tight text-foreground shrink-0">
+            SHAJGOJ
+          </Link>
+          <form onSubmit={submit} className="hidden md:block flex-1 relative min-w-0">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              type="search"
+              placeholder="Search for products, brands and more…"
+              aria-label="Search products"
+              className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-4 py-2.5 text-sm bg-white"
+            />
+          </form>
+          <div className="ml-auto flex items-center gap-2 shrink-0">
+            <Link
+              to="/search"
+              search={{ q: "" }}
+              className="hidden lg:flex items-center gap-2 rounded-full bg-foreground text-background px-4 py-2 text-xs font-semibold"
+            >
+              <Heart className="h-4 w-4" /> ALL PRODUCTS
+            </Link>
+            <Link
+              to="/admin"
+              className="hidden sm:flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-semibold hover:bg-muted"
+            >
+              <LayoutDashboard className="h-4 w-4" /> ADMIN
+            </Link>
+            <button
+              onClick={() => setCartOpen(true)}
+              className="flex items-center gap-2 rounded-full bg-[color:var(--brand-pink)] text-white px-3 sm:px-4 py-2 text-xs font-semibold"
+            >
+              <ShoppingBag className="h-4 w-4" /> <span className="hidden sm:inline">BAG</span>
+              <span className="bg-white text-[color:var(--brand-pink)] rounded-full h-5 w-5 grid place-items-center text-[10px] font-bold">
+                {count}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={submit} className="md:hidden px-4 pb-3 relative">
+          <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            type="search"
+            placeholder="Search products…"
+            aria-label="Search products"
+            className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-4 py-2.5 text-sm bg-white"
+          />
+        </form>
+
+        {categories.length > 0 && (
+          <div className="max-w-7xl mx-auto px-4 pb-3 flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar">
+            {categories.map((c) => (
+              <Link
+                key={c.slug}
+                to="/category/$slug"
+                params={{ slug: c.slug }}
+                className="text-sm font-semibold text-foreground/80 hover:text-[color:var(--brand-pink)] whitespace-nowrap py-1"
+              >
+                {c.name}
+              </Link>
+            ))}
+            <div className="flex items-center gap-2 lg:ml-auto">
+              {pillNav.map((p) => (
+                <Link
+                  key={p.name}
+                  to="/search"
+                  search={{ q: "" }}
+                  className={`${p.bg} text-white text-[11px] font-bold px-4 py-1.5 rounded-full whitespace-nowrap`}
+                >
+                  {p.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </header>
+
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+    </>
+  );
+}
