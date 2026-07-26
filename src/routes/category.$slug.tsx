@@ -57,6 +57,24 @@ function CategoryPage() {
   const data = Route.useLoaderData() as { category: Category; products: Product[]; categories: Category[] };
   const { category, products, categories } = data;
 
+  const bounds = useMemo<[number, number]>(() => {
+    if (!products.length) return [0, 5000];
+    const prices = products.map((p) => p.price);
+    return [Math.floor(Math.min(...prices)), Math.ceil(Math.max(...prices))];
+  }, [products]);
+
+  const [range, setRange] = useState<[number, number]>(bounds);
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return products.filter(
+      (p) =>
+        p.price >= range[0] &&
+        p.price <= range[1] &&
+        (!q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)),
+    );
+  }, [products, range, query]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -71,23 +89,36 @@ function CategoryPage() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 mt-8">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <p className="text-sm text-muted-foreground">Showing {products.length} results</p>
-        </div>
+      <section className="max-w-7xl mx-auto px-4 mt-8 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <ShopFilters
+          categories={categories}
+          activeSlug={category.slug}
+          min={bounds[0]}
+          max={bounds[1]}
+          value={range}
+          onChange={setRange}
+        />
 
-        {products.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-12 text-center">No products in this category yet.</p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {products.map((p) => (
-              <ProductCard key={p.slug} product={p} />
-            ))}
+        <div className="min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+            <ProductSearchBar value={query} onChange={setQuery} placeholder={`Search in ${category.name}…`} />
+            <p className="text-sm text-muted-foreground shrink-0">{filtered.length} results</p>
           </div>
-        )}
+
+          {filtered.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-12 text-center">No products match your filters.</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filtered.map((p) => (
+                <ProductCard key={p.slug} product={p} />
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
       <SiteFooter categories={categories} />
     </div>
   );
 }
+
