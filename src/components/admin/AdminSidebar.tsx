@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, Package, ShoppingCart, Users, Tag, BarChart3, Settings,
+  LayoutDashboard, Package, ShoppingCart, Tag, BarChart3, Settings,
   Percent, MessageSquare, LogOut, ExternalLink, X,
 } from "lucide-react";
 import { setAdminNavOpen, useAdminNavOpen } from "./admin-nav";
