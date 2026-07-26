@@ -42,28 +42,64 @@ function SearchPage() {
   const data = Route.useLoaderData() as { q: string; products: Product[]; categories: Category[] };
   const { q, products, categories } = data;
 
+  const bounds = useMemo<[number, number]>(() => {
+    if (!products.length) return [0, 5000];
+    const prices = products.map((p) => p.price);
+    return [Math.floor(Math.min(...prices)), Math.ceil(Math.max(...prices))];
+  }, [products]);
+
+  const [range, setRange] = useState<[number, number]>(bounds);
+  const [query, setQuery] = useState(q);
+
+  const filtered = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    return products.filter(
+      (p) =>
+        p.price >= range[0] &&
+        p.price <= range[1] &&
+        (!term || p.name.toLowerCase().includes(term) || p.brand.toLowerCase().includes(term)),
+    );
+  }, [products, range, query]);
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader categories={categories} />
 
       <section className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl sm:text-3xl font-black">{q ? `Results for “${q}”` : "All products"}</h1>
-        <p className="text-sm text-muted-foreground mt-1">{products.length} products</p>
 
-        {products.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-16 text-center">
-            No products matched your search. Try a different keyword.
-          </p>
-        ) : (
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {products.map((p) => (
-              <ProductCard key={p.slug} product={p} />
-            ))}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+          <ShopFilters
+            categories={categories}
+            min={bounds[0]}
+            max={bounds[1]}
+            value={range}
+            onChange={setRange}
+          />
+
+          <div className="min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+              <ProductSearchBar value={query} onChange={setQuery} />
+              <p className="text-sm text-muted-foreground shrink-0">{filtered.length} products</p>
+            </div>
+
+            {filtered.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-16 text-center">
+                No products matched your search. Try a different keyword.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filtered.map((p) => (
+                  <ProductCard key={p.slug} product={p} />
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </section>
 
       <SiteFooter categories={categories} />
     </div>
   );
 }
+
