@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, Package, ShoppingCart, Tag, BarChart3, Settings,
+  LayoutDashboard, Package, ShoppingCart, Tag, Settings,
   Percent, MessageSquare, LogOut, ExternalLink, X,
 } from "lucide-react";
 import { setAdminNavOpen, useAdminNavOpen } from "./admin-nav";
@@ -15,7 +15,6 @@ const nav = [
   { title: "Products", url: "/admin/products", icon: Package },
   { title: "Categories", url: "/admin/categories", icon: Tag },
   { title: "Promotions", url: "/admin/promotions", icon: Percent },
-  { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
   { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
   { title: "Settings", url: "/admin/settings", icon: Settings },
 ] as const;
