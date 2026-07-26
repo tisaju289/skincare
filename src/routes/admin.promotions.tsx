@@ -75,7 +75,7 @@ function PromotionsPage() {
           <Plus className="h-4 w-4" /> Create promo
         </button>
       }/>
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <table className="w-full text-sm">
             <thead className="text-xs text-muted-foreground bg-muted/40">
@@ -121,7 +121,7 @@ function PromotionsPage() {
         <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="space-y-4">
           <Field label="Code"><input required className={inputCls + " font-mono uppercase"} value={form.code ?? ""} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} /></Field>
           <Field label="Description"><input className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Type">
               <select className={inputCls} value={form.type ?? "percentage"} onChange={(e) => setForm({ ...form, type: e.target.value as PromoType })}>
                 <option value="percentage">Percentage</option>

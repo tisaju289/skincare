@@ -67,7 +67,7 @@ function CustomersPage() {
           <Plus className="h-4 w-4" /> Add customer
         </button>
       } />
-      <div className="p-6 space-y-4">
+      <div className="p-4 sm:p-6 space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Total customers", value: total.toLocaleString() },
@@ -132,7 +132,7 @@ function CustomersPage() {
       <AdminModal open={open} onClose={() => setOpen(false)} title={editing ? "Edit customer" : "New customer"}>
         <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="space-y-4">
           <Field label="Name"><input required className={inputCls} value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Email"><input type="email" className={inputCls} value={form.email ?? ""} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
             <Field label="Phone"><input className={inputCls} value={form.phone ?? ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field>
             <Field label="Tier">

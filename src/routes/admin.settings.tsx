@@ -56,7 +56,7 @@ function SettingsPage() {
   return (
     <>
       <AdminTopbar title="Settings" subtitle="Configure your store" />
-      <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <aside className="space-y-1">
           {sections.map((s, i) => {
             const Icon = s.icon;
@@ -86,7 +86,7 @@ function SettingsPage() {
               <Field label="Support email" value={form.support_email ?? ""} onChange={(v) => setForm({ ...form, support_email: v })} />
               <Field label="Phone" value={form.phone ?? ""} onChange={(v) => setForm({ ...form, phone: v })} />
               <Field label="Business address" value={form.business_address ?? ""} onChange={(v) => setForm({ ...form, business_address: v })} />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Currency" value={form.currency ?? ""} onChange={(v) => setForm({ ...form, currency: v })} />
                 <Field label="Timezone" value={form.timezone ?? ""} onChange={(v) => setForm({ ...form, timezone: v })} />
               </div>

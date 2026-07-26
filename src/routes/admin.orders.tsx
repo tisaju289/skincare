@@ -84,7 +84,7 @@ function OrdersPage() {
           <Plus className="h-4 w-4" /> New order
         </button>
       } />
-      <div className="p-6 space-y-4">
+      <div className="p-4 sm:p-6 space-y-4">
         <div className="flex flex-wrap gap-2">
           {tabs.map((t) => {
             const count = t === "all" ? orders.length : orders.filter(o => o.status === t).length;
@@ -137,7 +137,7 @@ function OrdersPage() {
 
       <AdminModal open={open} onClose={() => setOpen(false)} title={editing ? "Edit order" : "New order"}>
         <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Order number"><input required className={inputCls} value={form.order_number ?? ""} onChange={(e) => setForm({ ...form, order_number: e.target.value })} /></Field>
             <Field label="Customer">
               <select className={inputCls} value={form.customer_id ?? ""} onChange={(e) => setForm({ ...form, customer_id: e.target.value || null })}>

@@ -56,7 +56,7 @@ function CategoriesPage() {
           <Plus className="h-4 w-4" /> New category
         </button>
       }/>
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {q.isLoading && <div className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></div>}
         {!q.isLoading && cats.length === 0 && <p className="text-center text-muted-foreground py-10">No categories yet.</p>}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

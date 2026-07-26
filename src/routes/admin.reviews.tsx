@@ -52,7 +52,7 @@ function ReviewsPage() {
   return (
     <>
       <AdminTopbar title="Reviews" subtitle="Moderate customer product reviews" />
-      <div className="p-6 space-y-4">
+      <div className="p-4 sm:p-6 space-y-4">
         {q.isLoading && <div className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></div>}
         {!q.isLoading && reviews.length === 0 && <p className="text-center text-muted-foreground py-10">No reviews yet.</p>}
         {reviews.map((r) => (
