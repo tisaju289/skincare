@@ -23,8 +23,34 @@ const nav = [
 
 function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [email, setEmail] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
+  }, []);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    try {
+      onNavigate?.();
+      await queryClient.cancelQueries();
+      queryClient.clear();
+      await supabase.auth.signOut();
+      toast.success("Signed out");
+      navigate({ to: "/auth", replace: true });
+    } catch {
+      toast.error("Could not sign out");
+    } finally {
+      setSigningOut(false);
+    }
+  };
+
   const isActive = (url: string, exact?: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(url + "/");
+
 
   return (
     <>
