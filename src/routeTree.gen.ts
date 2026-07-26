@@ -24,6 +24,7 @@ import { Route as AdminProductsRouteImport } from './routes/admin.products'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 
 const SearchRoute = SearchRouteImport.update({
@@ -101,6 +102,11 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBrandsRoute = AdminBrandsRouteImport.update({
+  id: '/brands',
+  path: '/brands',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/search': typeof SearchRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/brands': typeof AdminBrandsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/search': typeof SearchRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/brands': typeof AdminBrandsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/search': typeof SearchRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/brands': typeof AdminBrandsRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/search'
     | '/admin/analytics'
+    | '/admin/brands'
     | '/admin/categories'
     | '/admin/customers'
     | '/admin/orders'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/search'
     | '/admin/analytics'
+    | '/admin/brands'
     | '/admin/categories'
     | '/admin/customers'
     | '/admin/orders'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/search'
     | '/admin/analytics'
+    | '/admin/brands'
     | '/admin/categories'
     | '/admin/customers'
     | '/admin/orders'
@@ -334,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/brands': {
+      id: '/admin/brands'
+      path: '/brands'
+      fullPath: '/admin/brands'
+      preLoaderRoute: typeof AdminBrandsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/analytics': {
       id: '/admin/analytics'
       path: '/analytics'
@@ -346,6 +365,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminBrandsRoute: typeof AdminBrandsRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -358,6 +378,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminBrandsRoute: AdminBrandsRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminCustomersRoute: AdminCustomersRoute,
   AdminOrdersRoute: AdminOrdersRoute,

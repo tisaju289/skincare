@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   LayoutDashboard, Package, ShoppingCart, Tag, Settings,
-  Percent, MessageSquare, LogOut, ExternalLink, X,
+  Percent, MessageSquare, LogOut, ExternalLink, X, Sparkles,
 } from "lucide-react";
 import { setAdminNavOpen, useAdminNavOpen } from "./admin-nav";
 
@@ -14,10 +14,12 @@ const nav = [
   { title: "Orders", url: "/admin/orders", icon: ShoppingCart, badge: "12" },
   { title: "Products", url: "/admin/products", icon: Package },
   { title: "Categories", url: "/admin/categories", icon: Tag },
+  { title: "Brands", url: "/admin/brands", icon: Sparkles },
   { title: "Promotions", url: "/admin/promotions", icon: Percent },
   { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
   { title: "Settings", url: "/admin/settings", icon: Settings },
 ] as const;
+
 
 function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
