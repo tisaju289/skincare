@@ -77,7 +77,7 @@ function PromotionsPage() {
       }/>
       <div className="p-4 sm:p-6">
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="text-xs text-muted-foreground bg-muted/40">
               <tr>
                 <th className="px-5 py-3 text-left font-semibold">Code</th>
