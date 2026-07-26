@@ -161,13 +161,13 @@ export const placeOrder = createServerFn({ method: "POST" })
 
     const { data: orderNumber, error } = await supabase.rpc("place_order", {
       p_name: data.name,
-      p_email: data.email || null,
+      p_email: data.email || "",
       p_phone: data.phone,
       p_address: data.address,
       p_items: data.items,
       p_payment_method: data.paymentMethod,
-      p_promo_code: data.promoCode || null,
-      p_notes: data.notes || null,
+      p_promo_code: data.promoCode || undefined,
+      p_notes: data.notes || undefined,
     });
 
     if (error) throw new Error(error.message);
@@ -192,7 +192,7 @@ export const submitReview = createServerFn({ method: "POST" })
       p_product_slug: data.slug,
       p_user_name: data.name,
       p_rating: data.rating,
-      p_comment: data.comment ?? null,
+      p_comment: data.comment ?? "",
     });
     if (error) throw new Error(error.message);
     return { ok: true };
