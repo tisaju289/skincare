@@ -72,12 +72,13 @@ function PromotionsPage() {
     <>
       <AdminTopbar title="Promotions" subtitle="Discount codes and campaigns" action={
         <button onClick={() => { setEditing(null); setForm(empty); setOpen(true); }} className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
-          <Plus className="h-4 w-4" /> Create promo
+          <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Create promo</span>
         </button>
       }/>
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="text-xs text-muted-foreground bg-muted/40">
               <tr>
                 <th className="px-5 py-3 text-left font-semibold">Code</th>
@@ -114,6 +115,7 @@ function PromotionsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
 
@@ -121,7 +123,7 @@ function PromotionsPage() {
         <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="space-y-4">
           <Field label="Code"><input required className={inputCls + " font-mono uppercase"} value={form.code ?? ""} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} /></Field>
           <Field label="Description"><input className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Type">
               <select className={inputCls} value={form.type ?? "percentage"} onChange={(e) => setForm({ ...form, type: e.target.value as PromoType })}>
                 <option value="percentage">Percentage</option>

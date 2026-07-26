@@ -47,7 +47,7 @@ function Dashboard() {
   return (
     <>
       <AdminTopbar title="Dashboard" subtitle="Welcome back, here's what's happening today." />
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {stats.map((st) => {
             const Icon = st.icon;
@@ -74,7 +74,7 @@ function Dashboard() {
             </Link>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[720px] text-sm">
               <thead className="text-xs text-muted-foreground bg-muted/40">
                 <tr>
                   <th className="text-left font-semibold px-5 py-3">Order</th>

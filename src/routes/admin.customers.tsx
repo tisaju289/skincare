@@ -64,10 +64,10 @@ function CustomersPage() {
     <>
       <AdminTopbar title="Customers" subtitle={`${total} total customers`} action={
         <button onClick={() => { setEditing(null); setForm(empty); setOpen(true); }} className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
-          <Plus className="h-4 w-4" /> Add customer
+          <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Add customer</span>
         </button>
       } />
-      <div className="p-6 space-y-4">
+      <div className="p-4 sm:p-6 space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Total customers", value: total.toLocaleString() },
@@ -84,7 +84,7 @@ function CustomersPage() {
 
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[720px] text-sm">
               <thead className="text-xs text-muted-foreground bg-muted/40">
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Customer</th>
@@ -132,7 +132,7 @@ function CustomersPage() {
       <AdminModal open={open} onClose={() => setOpen(false)} title={editing ? "Edit customer" : "New customer"}>
         <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="space-y-4">
           <Field label="Name"><input required className={inputCls} value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Email"><input type="email" className={inputCls} value={form.email ?? ""} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
             <Field label="Phone"><input className={inputCls} value={form.phone ?? ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field>
             <Field label="Tier">

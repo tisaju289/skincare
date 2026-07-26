@@ -106,14 +106,14 @@ function ProductsPage() {
         subtitle={`${products.length} products in your catalog`}
         action={
           <button onClick={openNew} className="inline-flex items-center gap-2 bg-[color:var(--brand-pink)] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90">
-            <Plus className="h-4 w-4" /> Add product
+            <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Add product</span>
           </button>
         }
       />
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[720px] text-sm">
               <thead className="text-xs text-muted-foreground bg-muted/40">
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Product</th>
@@ -180,7 +180,7 @@ function ProductsPage() {
           onSubmit={(e) => { e.preventDefault(); save.mutate(form); }}
           className="space-y-4"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Name"><input required className={inputCls} value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
             <Field label="Slug"><input required className={inputCls} value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></Field>
             <Field label="Category">

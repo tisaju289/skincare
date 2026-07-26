@@ -61,7 +61,7 @@ function ProductPage() {
         <span className="text-foreground">{product.name}</span>
       </div>
 
-      <section className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-8">
+      <section className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-6 md:gap-8">
         <div className="space-y-3">
           <div className={`aspect-square rounded-3xl overflow-hidden ${product.color}`}>
             <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
@@ -77,33 +77,33 @@ function ProductPage() {
 
         <div>
           <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">{product.brand}</p>
-          <h1 className="mt-2 text-3xl md:text-4xl font-black leading-tight">{product.name}</h1>
+          <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl font-black leading-tight">{product.name}</h1>
           <div className="mt-3 flex items-center gap-2">
             {[1,2,3,4,5].map(i => <Star key={i} className={`h-4 w-4 ${i <= Math.round(product.rating) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />)}
             <span className="text-sm text-muted-foreground">{product.rating} ({product.reviews} reviews)</span>
           </div>
-          <div className="mt-6 flex items-baseline gap-3">
-            <span className="text-4xl font-black text-[color:var(--brand-pink)]">৳{product.price}</span>
-            <span className="text-lg text-muted-foreground line-through">৳{product.old}</span>
+          <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+            <span className="text-3xl sm:text-4xl font-black text-[color:var(--brand-pink)]">৳{product.price}</span>
+            <span className="text-base sm:text-lg text-muted-foreground line-through">৳{product.old}</span>
             <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded">{product.tag}</span>
           </div>
           <p className="mt-6 text-sm text-foreground/80 leading-relaxed">{product.description}</p>
 
-          <div className="mt-6 flex items-center gap-3">
-            <div className="flex items-center border border-border rounded-full">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="flex items-center border border-border rounded-full shrink-0">
               <button className="h-10 w-10 grid place-items-center"><Minus className="h-4 w-4" /></button>
               <span className="w-10 text-center font-bold">1</span>
               <button className="h-10 w-10 grid place-items-center"><Plus className="h-4 w-4" /></button>
             </div>
-            <button className="flex-1 rounded-full bg-[color:var(--brand-pink)] text-white font-bold py-3 flex items-center justify-center gap-2 hover:opacity-90">
+            <button className="flex-1 min-w-[10rem] rounded-full bg-[color:var(--brand-pink)] text-white font-bold py-3 flex items-center justify-center gap-2 hover:opacity-90">
               <ShoppingBag className="h-4 w-4" /> Add to Bag
             </button>
-            <button className="h-12 w-12 rounded-full border border-border grid place-items-center hover:bg-muted">
+            <button className="h-12 w-12 shrink-0 rounded-full border border-border grid place-items-center hover:bg-muted">
               <Heart className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="mt-8 grid grid-cols-3 gap-3 border-t border-border pt-6">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-border pt-6">
             {[
               { icon: Truck, title: "Free Delivery", sub: "Over ৳999" },
               { icon: ShieldCheck, title: "Authentic", sub: "Guaranteed" },
@@ -123,7 +123,7 @@ function ProductPage() {
 
       {related.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 mt-16">
-          <h2 className="text-2xl font-black mb-6">You might also like</h2>
+          <h2 className="text-xl sm:text-2xl font-black mb-6">You might also like</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {related.map((p) => (
               <Link to="/product/$slug" params={{ slug: p.slug }} key={p.slug} className="group bg-white rounded-2xl border border-border overflow-hidden hover:shadow-lg transition">
