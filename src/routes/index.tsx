@@ -115,13 +115,13 @@ function Index() {
 
       {/* Category circles */}
       <section className="max-w-7xl mx-auto px-4 mt-10">
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 sm:gap-6">
           {categories.map((c) => (
             <Link key={c.slug} to="/category/$slug" params={{ slug: c.slug }} className="flex flex-col items-center gap-2 group">
-              <div className={`h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-gradient-to-br ${c.color} shadow-lg group-hover:scale-105 transition overflow-hidden ring-4 ring-white`}>
+              <div className={`h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-gradient-to-br ${c.color} shadow-lg group-hover:scale-105 transition overflow-hidden ring-4 ring-white`}>
                 <img src={c.image} alt={c.name} className="h-full w-full object-cover mix-blend-multiply opacity-90" />
               </div>
-              <span className="text-sm font-semibold">{c.name}</span>
+              <span className="text-xs sm:text-sm font-semibold text-center">{c.name}</span>
             </Link>
           ))}
         </div>
@@ -129,13 +129,13 @@ function Index() {
 
       {/* Beauty must haves banner */}
       <section className="max-w-7xl mx-auto px-4 mt-10">
-        <div className="rounded-2xl overflow-hidden bg-gradient-to-r from-sky-100 via-white to-pink-100 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="rounded-2xl overflow-hidden bg-gradient-to-r from-sky-100 via-white to-pink-100 p-6 sm:p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <div>
-            <p className="text-3xl md:text-5xl font-black text-blue-900">BEAUTY MUST HAVES</p>
-            <div className="mt-3 inline-block bg-blue-900 text-white font-bold px-4 py-1.5 rounded">EXCLUSIVE SAVINGS</div>
+            <p className="text-2xl sm:text-3xl md:text-5xl font-black text-blue-900">BEAUTY MUST HAVES</p>
+            <div className="mt-3 inline-block bg-blue-900 text-white font-bold px-4 py-1.5 rounded text-sm">EXCLUSIVE SAVINGS</div>
           </div>
-          <img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=400&q=80" alt="" className="h-32 rounded-xl object-cover" />
-          <button className="rounded-full bg-blue-900 text-white font-bold px-6 py-3">Explore →</button>
+          <img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=400&q=80" alt="" className="h-24 sm:h-32 rounded-xl object-cover" />
+          <button className="rounded-full bg-blue-900 text-white font-bold px-6 py-3 whitespace-nowrap">Explore →</button>
         </div>
       </section>
 
