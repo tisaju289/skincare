@@ -93,20 +93,20 @@ function Index() {
           <div className="absolute inset-0 opacity-40" style={{
             backgroundImage: "repeating-conic-gradient(from 0deg, oklch(0.95 0.05 300) 0deg 10deg, transparent 10deg 20deg)",
           }} />
-          <div className="relative grid md:grid-cols-2 gap-6 p-8 md:p-14 items-center">
+          <div className="relative grid md:grid-cols-2 gap-6 p-6 sm:p-8 md:p-14 items-center">
             <div>
-              <p className="text-sm font-bold tracking-widest text-blue-700">UNILEVER <span className="text-foreground/70">PRESENTS</span></p>
-              <div className="mt-4 inline-block bg-pink-500 text-white text-3xl sm:text-4xl font-black px-4 py-2 rounded">JULY</div>
-              <h1 className="mt-3 text-5xl sm:text-7xl font-black leading-none text-blue-900 -rotate-2">JAW<br />DROPPERS</h1>
-              <button className="mt-8 inline-flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white font-bold px-8 py-3 rounded-full">
+              <p className="text-xs sm:text-sm font-bold tracking-widest text-blue-700">UNILEVER <span className="text-foreground/70">PRESENTS</span></p>
+              <div className="mt-3 sm:mt-4 inline-block bg-pink-500 text-white text-2xl sm:text-4xl font-black px-3 sm:px-4 py-1.5 sm:py-2 rounded">JULY</div>
+              <h1 className="mt-3 text-4xl sm:text-6xl lg:text-7xl font-black leading-none text-blue-900 -rotate-2">JAW<br />DROPPERS</h1>
+              <button className="mt-6 sm:mt-8 inline-flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white font-bold px-6 sm:px-8 py-3 rounded-full text-sm sm:text-base">
                 SHOP NOW <ChevronRight className="h-4 w-4" />
               </button>
             </div>
-            <div className="relative flex justify-end items-center">
-              <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80" alt="Beauty products" className="rounded-2xl shadow-2xl max-h-72 object-cover" />
-              <div className="absolute -bottom-2 right-0 text-right">
-                <p className="text-xl font-bold text-blue-900">UP TO</p>
-                <p className="text-6xl sm:text-8xl font-black text-blue-900 leading-none drop-shadow">45%<span className="text-4xl"> OFF</span></p>
+            <div className="relative flex justify-center md:justify-end items-center pb-10 md:pb-0">
+              <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80" alt="Beauty products" className="rounded-2xl shadow-2xl max-h-56 sm:max-h-72 w-full object-cover" />
+              <div className="absolute -bottom-1 right-0 text-right">
+                <p className="text-base sm:text-xl font-bold text-blue-900">UP TO</p>
+                <p className="text-5xl sm:text-7xl lg:text-8xl font-black text-blue-900 leading-none drop-shadow">45%<span className="text-2xl sm:text-4xl"> OFF</span></p>
               </div>
             </div>
           </div>
