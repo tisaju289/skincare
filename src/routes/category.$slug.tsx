@@ -3,6 +3,7 @@ import { getCategoryPage } from "@/lib/storefront.functions";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
+import type { Category, Product } from "@/lib/shop-data";
 
 export const Route = createFileRoute("/category/$slug")({
   loader: async ({ params }) => {
@@ -50,7 +51,9 @@ export const Route = createFileRoute("/category/$slug")({
 });
 
 function CategoryPage() {
-  const { category, products, categories } = Route.useLoaderData();
+  const data = Route.useLoaderData() as { category: Category; products: Product[]; categories: Category[] };
+  const { category, products, categories } = data;
+
 
   return (
     <div className="min-h-screen bg-background">

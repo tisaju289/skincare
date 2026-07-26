@@ -4,6 +4,7 @@ import { getHomeData } from "@/lib/storefront.functions";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
+import type { Category, Product } from "@/lib/shop-data";
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
@@ -49,7 +50,13 @@ const brandColors = [
 ];
 
 function Index() {
-  const { categories, trending, brands } = Route.useLoaderData();
+  const data = Route.useLoaderData() as {
+    categories: Category[];
+    trending: Product[];
+    brands: { slug: string; name: string }[];
+  };
+  const { categories, trending, brands } = data;
+
 
   return (
     <div className="min-h-screen bg-background">
