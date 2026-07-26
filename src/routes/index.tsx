@@ -144,9 +144,9 @@ function Index() {
         <h2 className="text-center text-lg font-black tracking-widest text-foreground">DEALS YOU CANNOT MISS</h2>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
           {dealBanners.map((d) => (
-            <div key={d.title} className={`aspect-square rounded-2xl bg-gradient-to-br ${d.from} ${d.to} p-6 flex flex-col justify-between shadow-sm`}>
-              <p className="text-sm font-bold text-foreground/80">{d.title}</p>
-              <p className="text-3xl font-black text-foreground">{d.sub}</p>
+            <div key={d.title} className={`aspect-square rounded-2xl bg-gradient-to-br ${d.from} ${d.to} p-4 sm:p-6 flex flex-col justify-between shadow-sm`}>
+              <p className="text-xs sm:text-sm font-bold text-foreground/80">{d.title}</p>
+              <p className="text-xl sm:text-3xl font-black text-foreground">{d.sub}</p>
               <button className="self-start text-xs font-bold bg-white/80 rounded-full px-3 py-1.5">Shop now</button>
             </div>
           ))}
@@ -207,19 +207,19 @@ function Index() {
       {/* Wide promo strip */}
       <section className="max-w-7xl mx-auto px-4 mt-14">
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="relative rounded-3xl p-8 bg-gradient-to-br from-fuchsia-500 to-pink-500 text-white overflow-hidden">
-            <div className="relative z-10 max-w-[60%]">
+          <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-fuchsia-500 to-pink-500 text-white overflow-hidden">
+            <div className="relative z-10 max-w-[65%] sm:max-w-[60%]">
               <p className="text-xs font-bold tracking-widest opacity-80">NEW ARRIVALS</p>
-              <h3 className="mt-2 text-3xl font-black">Korean Skincare Edit</h3>
+              <h3 className="mt-2 text-2xl sm:text-3xl font-black">Korean Skincare Edit</h3>
               <p className="mt-1 text-sm opacity-90">Glass-skin favourites, freshly landed.</p>
               <button className="mt-6 bg-white text-fuchsia-600 font-bold rounded-full px-6 py-2.5 text-sm">Discover</button>
             </div>
             <img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=400&q=80" alt="" className="absolute right-0 bottom-0 h-full w-1/2 object-cover opacity-60" />
           </div>
-          <div className="relative rounded-3xl p-8 bg-gradient-to-br from-violet-500 to-purple-700 text-white overflow-hidden">
-            <div className="relative z-10 max-w-[60%]">
+          <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-violet-500 to-purple-700 text-white overflow-hidden">
+            <div className="relative z-10 max-w-[65%] sm:max-w-[60%]">
               <p className="text-xs font-bold tracking-widest opacity-80">FRAGRANCE</p>
-              <h3 className="mt-2 text-3xl font-black">Signature Scents Under ৳1500</h3>
+              <h3 className="mt-2 text-2xl sm:text-3xl font-black">Signature Scents Under ৳1500</h3>
               <p className="mt-1 text-sm opacity-90">Find your everyday perfume.</p>
               <button className="mt-6 bg-white text-purple-700 font-bold rounded-full px-6 py-2.5 text-sm">Shop now</button>
             </div>
@@ -238,8 +238,8 @@ function Index() {
             { icon: Headphones, title: "24/7 Support", sub: "Talk to our team" },
           ].map(({ icon: Icon, title, sub }) => (
             <div key={title} className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-[color:var(--brand-pink)]/10 grid place-items-center text-[color:var(--brand-pink)]">
-                <Icon className="h-6 w-6" />
+              <div className="h-10 w-10 sm:h-12 sm:w-12 shrink-0 rounded-full bg-[color:var(--brand-pink)]/10 grid place-items-center text-[color:var(--brand-pink)]">
+                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div>
                 <p className="font-bold text-sm">{title}</p>
@@ -252,12 +252,12 @@ function Index() {
 
       {/* Newsletter */}
       <section className="max-w-7xl mx-auto px-4 mt-14">
-        <div className="rounded-3xl bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white p-8 md:p-12 text-center">
-          <h3 className="text-2xl md:text-3xl font-black">Join the Shajgoj beauty club</h3>
+        <div className="rounded-3xl bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white p-6 sm:p-8 md:p-12 text-center">
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-black">Join the Shajgoj beauty club</h3>
           <p className="mt-2 opacity-90 text-sm">Get 10% off your first order + weekly beauty tips.</p>
-          <form className="mt-6 max-w-md mx-auto flex gap-2">
-            <input type="email" placeholder="Enter your email" className="flex-1 rounded-full px-5 py-3 text-foreground outline-none" />
-            <button className="rounded-full bg-foreground text-background font-bold px-6 py-3 text-sm">Subscribe</button>
+          <form className="mt-6 max-w-md mx-auto flex flex-col sm:flex-row gap-2">
+            <input type="email" placeholder="Enter your email" className="flex-1 min-w-0 rounded-full px-5 py-3 text-foreground outline-none" />
+            <button className="rounded-full bg-foreground text-background font-bold px-6 py-3 text-sm whitespace-nowrap">Subscribe</button>
           </form>
         </div>
       </section>
