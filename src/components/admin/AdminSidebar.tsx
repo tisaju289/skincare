@@ -14,7 +14,6 @@ const nav = [
   { title: "Orders", url: "/admin/orders", icon: ShoppingCart, badge: "12" },
   { title: "Products", url: "/admin/products", icon: Package },
   { title: "Categories", url: "/admin/categories", icon: Tag },
-  { title: "Customers", url: "/admin/customers", icon: Users },
   { title: "Promotions", url: "/admin/promotions", icon: Percent },
   { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
   { title: "Reviews", url: "/admin/reviews", icon: MessageSquare },
