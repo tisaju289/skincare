@@ -1,5 +1,8 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Tag, BarChart3, Settings,
   Percent, MessageSquare, LogOut, ExternalLink, X,
