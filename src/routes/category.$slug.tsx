@@ -64,19 +64,19 @@ function CategoryPage() {
       </div>
 
       <section className="max-w-7xl mx-auto px-4">
-        <div className={`relative rounded-3xl overflow-hidden bg-gradient-to-br ${category.color} p-8 md:p-12 text-white`}>
+        <div className={`relative rounded-3xl overflow-hidden bg-gradient-to-br ${category.color} p-6 sm:p-8 md:p-12 text-white`}>
           <div className="relative z-10 max-w-xl">
-            <h1 className="text-4xl md:text-6xl font-black">{category.name}</h1>
-            <p className="mt-2 opacity-90">{products.length} products · Curated for you</p>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black">{category.name}</h1>
+            <p className="mt-2 opacity-90 text-sm sm:text-base">{products.length} products · Curated for you</p>
           </div>
           <img src={category.image} alt="" className="absolute right-0 top-0 h-full w-1/2 object-cover opacity-40" />
         </div>
       </section>
 
       <section className="max-w-7xl mx-auto px-4 mt-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <p className="text-sm text-muted-foreground">Showing {products.length} results</p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button className="flex items-center gap-2 text-sm font-semibold border border-border rounded-full px-4 py-2">
               <SlidersHorizontal className="h-4 w-4" /> Filters
             </button>
