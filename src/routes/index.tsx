@@ -44,32 +44,39 @@ function Index() {
       </div>
 
       <header className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
-          <Link to="/" className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">SHAJGOJ</Link>
-          <button className="hidden md:block text-sm font-semibold text-foreground/70 hover:text-foreground">BRANDS</button>
-          <div className="flex-1 relative">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
+          <Link to="/" className="text-xl sm:text-3xl font-black tracking-tight text-foreground shrink-0">SHAJGOJ</Link>
+          <button className="hidden lg:block text-sm font-semibold text-foreground/70 hover:text-foreground shrink-0">BRANDS</button>
+          <div className="hidden md:block flex-1 relative min-w-0">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
             <input type="text" placeholder="Search for products, brands and more…" className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-4 py-2.5 text-sm bg-white" />
           </div>
-          <button className="hidden sm:flex items-center gap-2 rounded-full bg-foreground text-background px-4 py-2 text-xs font-semibold">
-            <Heart className="h-4 w-4" /> WISHLIST
-          </button>
-          <button className="hidden sm:flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-semibold">
-            <User className="h-4 w-4" /> LOGIN
-          </button>
-          <button className="flex items-center gap-2 rounded-full bg-[color:var(--brand-pink)] text-white px-4 py-2 text-xs font-semibold">
-            <ShoppingBag className="h-4 w-4" /> BAG
-            <span className="bg-white text-[color:var(--brand-pink)] rounded-full h-5 w-5 grid place-items-center text-[10px] font-bold">0</span>
-          </button>
+          <div className="ml-auto flex items-center gap-2 shrink-0">
+            <button className="hidden lg:flex items-center gap-2 rounded-full bg-foreground text-background px-4 py-2 text-xs font-semibold">
+              <Heart className="h-4 w-4" /> WISHLIST
+            </button>
+            <button className="hidden sm:flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-semibold">
+              <User className="h-4 w-4" /> LOGIN
+            </button>
+            <button className="flex items-center gap-2 rounded-full bg-[color:var(--brand-pink)] text-white px-3 sm:px-4 py-2 text-xs font-semibold">
+              <ShoppingBag className="h-4 w-4" /> <span className="hidden sm:inline">BAG</span>
+              <span className="bg-white text-[color:var(--brand-pink)] rounded-full h-5 w-5 grid place-items-center text-[10px] font-bold">0</span>
+            </button>
+          </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 pb-3 flex items-center gap-2 sm:gap-6 overflow-x-auto no-scrollbar">
+        <div className="md:hidden px-4 pb-3 relative">
+          <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
+          <input type="text" placeholder="Search products…" className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-4 py-2.5 text-sm bg-white" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 pb-3 flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar">
           {categories.map((c) => (
             <Link key={c.slug} to="/category/$slug" params={{ slug: c.slug }} className="text-sm font-semibold text-foreground/80 hover:text-[color:var(--brand-pink)] whitespace-nowrap py-1">
               {c.name}
             </Link>
           ))}
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-2 lg:ml-auto">
             {pillNav.map((p) => (
               <button key={p.name} className={`${p.bg} text-white text-[11px] font-bold px-4 py-1.5 rounded-full whitespace-nowrap`}>
                 {p.name}
@@ -78,6 +85,7 @@ function Index() {
           </div>
         </div>
       </header>
+
 
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-4 pt-6">
