@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Package, ShoppingCart, Users, Tag, BarChart3, Settings, Percent, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Users, Tag, BarChart3, Settings, Percent, MessageSquare, LogOut, ExternalLink } from "lucide-react";
 
 const nav = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard, exact: true },
@@ -55,6 +55,18 @@ export function AdminSidebar() {
           );
         })}
       </nav>
+
+      <div className="px-3 pb-3">
+        <Link
+          to="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold border border-border hover:bg-muted transition"
+        >
+          <ExternalLink className="h-4 w-4" />
+          Visit site
+        </Link>
+      </div>
 
       <div className="p-3 border-t border-border">
         <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer">
