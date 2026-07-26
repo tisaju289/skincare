@@ -1,8 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { getCategoryPage } from "@/lib/storefront.functions";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
+import { ShopFilters } from "@/components/storefront/ShopFilters";
+import { ProductSearchBar } from "@/components/storefront/ProductSearchBar";
 import type { Category, Product } from "@/lib/shop-data";
 
 export const Route = createFileRoute("/category/$slug")({
