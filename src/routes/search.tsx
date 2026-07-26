@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { searchProducts } from "@/lib/storefront.functions";
 import type { Category, Product } from "@/lib/shop-data";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
+import { ShopFilters } from "@/components/storefront/ShopFilters";
+import { ProductSearchBar } from "@/components/storefront/ProductSearchBar";
 
 export const Route = createFileRoute("/search")({
   validateSearch: (search: Record<string, unknown>) => ({ q: String(search.q ?? "") }),
