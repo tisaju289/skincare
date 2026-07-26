@@ -102,9 +102,9 @@ function Index() {
                 SHOP NOW <ChevronRight className="h-4 w-4" />
               </button>
             </div>
-            <div className="relative flex justify-center md:justify-end items-center pb-10 md:pb-0">
+            <div className="relative flex flex-col md:block items-center md:justify-end md:pb-0">
               <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80" alt="Beauty products" className="rounded-2xl shadow-2xl max-h-56 sm:max-h-72 w-full object-cover" />
-              <div className="absolute -bottom-1 right-0 text-right">
+              <div className="mt-3 md:mt-0 text-center md:text-right md:absolute md:-bottom-6 md:right-0">
                 <p className="text-base sm:text-xl font-bold text-blue-900">UP TO</p>
                 <p className="text-5xl sm:text-7xl lg:text-8xl font-black text-blue-900 leading-none drop-shadow">45%<span className="text-2xl sm:text-4xl"> OFF</span></p>
               </div>
