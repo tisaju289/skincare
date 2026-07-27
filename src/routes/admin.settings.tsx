@@ -523,12 +523,6 @@ function SettingsPage() {
                       value={String(num("shipping_outside_dhaka"))}
                       onChange={(v) => set("shipping_outside_dhaka", Number(v))}
                     />
-                    <Field
-                      label="Free delivery above (৳)"
-                      type="number"
-                      value={String(num("free_shipping_threshold"))}
-                      onChange={(v) => set("free_shipping_threshold", Number(v))}
-                    />
                   </div>
                   <Field
                     label="Delivery partner"
