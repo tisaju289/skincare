@@ -18,6 +18,35 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
 
   return (
     <aside className="space-y-3">
+      {/* Mobile category nav */}
+      <div className="lg:hidden -mx-4 px-4 flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <Link
+          to="/search"
+          search={{ q: "" }}
+          className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-bold whitespace-nowrap ${
+            activeSlug
+              ? "border-border text-foreground/70 bg-white"
+              : "border-transparent bg-[color:var(--brand-pink)] text-white"
+          }`}
+        >
+          All
+        </Link>
+        {categories.filter((c) => !c.parent).map((c) => (
+          <Link
+            key={c.slug}
+            to="/category/$slug"
+            params={{ slug: c.slug }}
+            className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-bold whitespace-nowrap ${
+              activeSlug === c.slug
+                ? "border-transparent bg-[color:var(--brand-pink)] text-white"
+                : "border-border text-foreground/70 bg-white"
+            }`}
+          >
+            {c.name}
+          </Link>
+        ))}
+      </div>
+
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
@@ -29,6 +58,7 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
         </span>
         <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
+
 
       <div className={`${open ? "block" : "hidden"} lg:block space-y-4`}>
       {/* Price range */}
