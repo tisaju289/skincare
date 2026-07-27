@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeRow } from "@/lib/db";
 import { Store, CreditCard, Truck, Bell, Image as ImageIcon, Search, Palette, Loader2 } from "lucide-react";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
@@ -52,8 +53,7 @@ function SettingsPage() {
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const { id, ...payload } = form as SiteSettings & { id?: string };
-      void id;
+      const payload = sanitizeRow(form as Record<string, any>);
       const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
