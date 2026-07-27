@@ -42,8 +42,7 @@ function CheckoutPage() {
     zone === "outside"
       ? Number(settings.shipping_outside_dhaka ?? 120)
       : Number(settings.shipping_inside_dhaka ?? 60);
-  const shipping =
-    subtotal === 0 || subtotal >= Number(settings.free_shipping_threshold) ? 0 : zoneRate;
+  const shipping = subtotal === 0 ? 0 : zoneRate;
   const total = subtotal + shipping;
 
   function set(key: keyof typeof form, value: string) {
@@ -182,7 +181,7 @@ function CheckoutPage() {
               </ul>
               <div className="mt-4 space-y-1 text-sm border-t border-border pt-4">
                 <Row label="Subtotal" value={`৳${subtotal}`} />
-                <Row label="Shipping" value={shipping ? `৳${shipping}` : "Free"} />
+                <Row label="Delivery charge" value={`৳${shipping}`} />
                 {settings.delivery_partner && (
                   <p className="text-xs text-muted-foreground">Delivered by {settings.delivery_partner}</p>
                 )}
