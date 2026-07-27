@@ -288,6 +288,7 @@ export type Database = {
           is_flash_sale: boolean
           is_new_arrival: boolean
           is_trending: boolean
+          long_description: string | null
           name: string
           old_price: number | null
           price: number
@@ -311,6 +312,7 @@ export type Database = {
           is_flash_sale?: boolean
           is_new_arrival?: boolean
           is_trending?: boolean
+          long_description?: string | null
           name: string
           old_price?: number | null
           price?: number
@@ -334,6 +336,7 @@ export type Database = {
           is_flash_sale?: boolean
           is_new_arrival?: boolean
           is_trending?: boolean
+          long_description?: string | null
           name?: string
           old_price?: number | null
           price?: number

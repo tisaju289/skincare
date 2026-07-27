@@ -24,6 +24,7 @@ type Product = {
   old_price: number | null;
   image: string | null;
   description: string | null;
+  long_description: string | null;
   stock: number;
   status: "active" | "draft" | "out_of_stock" | "low_stock";
   is_trending?: boolean;
@@ -91,6 +92,7 @@ function ProductsPage() {
         old_price: form.old_price ?? null,
         image: form.image ?? null,
         description: form.description ?? null,
+        long_description: form.long_description ?? null,
         stock: Number(form.stock ?? 0),
         status: form.status ?? "active",
         is_trending: !!form.is_trending,
@@ -216,7 +218,7 @@ function ProductsPage() {
           exportRows={filtered.map(({ brands, categories, ...r }: any) => r)}
           exportName="products"
           importTable="products"
-          importColumns={["slug", "name", "price", "old_price", "tag", "is_trending", "is_best_seller", "is_flash_sale", "is_new_arrival", "image", "description", "color", "stock", "status", "brand_id", "category_id"]}
+          importColumns={["slug", "name", "price", "old_price", "tag", "is_trending", "is_best_seller", "is_flash_sale", "is_new_arrival", "image", "description", "long_description", "color", "stock", "status", "brand_id", "category_id"]}
           onImported={() => qc.invalidateQueries({ queryKey: ["admin", "products"] })}
           resultCount={filtered.length}
         />
@@ -394,7 +396,8 @@ function ProductsPage() {
               </div>
             ))}
           </div>
-          <Field label="Description"><textarea rows={3} className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
+          <Field label="Short description"><textarea rows={2} className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
+          <Field label="Long description"><textarea rows={6} className={inputCls} value={form.long_description ?? ""} onChange={(e) => setForm({ ...form, long_description: e.target.value })} /></Field>
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
             <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancel</button>
             <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90 disabled:opacity-60">
