@@ -14,9 +14,23 @@ type Props = {
 
 export function ShopFilters({ categories, activeSlug, min, max, value, onChange }: Props) {
   const [lo, hi] = value;
+  const [open, setOpen] = useState(false);
 
   return (
-    <aside className="space-y-4">
+    <aside className="space-y-3">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="lg:hidden w-full flex items-center justify-between gap-2 rounded-2xl border border-border bg-white px-4 py-3 text-sm font-black"
+      >
+        <span className="flex items-center gap-2">
+          <SlidersHorizontal className="h-4 w-4 text-[color:var(--brand-pink)]" />
+          Filters &amp; categories
+        </span>
+        <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      <div className={`${open ? "block" : "hidden"} lg:block space-y-4`}>
       {/* Price range */}
       <div className="rounded-2xl border border-border bg-white p-4">
         <div className="flex items-center gap-2">
