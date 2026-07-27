@@ -47,6 +47,8 @@ function Index() {
   const { categories, trending, brands, settings } = data;
   const topCategories = categories.filter((c) => !c.parent);
   const [showAllCats, setShowAllCats] = useState(false);
+  const [showAllBrands, setShowAllBrands] = useState(false);
+
 
 
 
