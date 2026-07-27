@@ -4,64 +4,88 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { supabase } from "@/integrations/supabase/client";
-import { Store, CreditCard, Truck, Bell, Shield, Loader2 } from "lucide-react";
+import { Store, CreditCard, Truck, Bell, Image as ImageIcon, Search, Palette, Loader2 } from "lucide-react";
+import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
 });
 
-type Settings = {
-  id: string;
-  store_name: string;
-  support_email: string | null;
-  phone: string | null;
-  business_address: string | null;
-  currency: string;
-  timezone: string;
-};
-
 const sections = [
-  { icon: Store, title: "Store details", desc: "Store name, contact info, business address" },
-  { icon: CreditCard, title: "Payments", desc: "bKash, Nagad, cards, cash on delivery" },
-  { icon: Truck, title: "Shipping", desc: "Zones, rates, delivery partners" },
-  { icon: Bell, title: "Notifications", desc: "Email & SMS alerts for orders and stock" },
-  { icon: Shield, title: "Team & permissions", desc: "Admin accounts and roles" },
-];
+  { id: "store", icon: Store, title: "Store details", desc: "Name, contact info, currency" },
+  { id: "branding", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
+  { id: "seo", icon: Search, title: "SEO & sharing", desc: "Title, description, keywords, OG image" },
+  { id: "theme", icon: Palette, title: "Theme", desc: "Brand colours used across the site" },
+  { id: "payments", icon: CreditCard, title: "Payments", desc: "bKash, Nagad, cards, cash on delivery" },
+  { id: "shipping", icon: Truck, title: "Shipping", desc: "Delivery charge, free delivery, partner" },
+  { id: "notifications", icon: Bell, title: "Notifications", desc: "Order & low stock alerts" },
+] as const;
+
+type Tab = (typeof sections)[number]["id"];
 
 function SettingsPage() {
   const qc = useQueryClient();
-  const [form, setForm] = useState<Partial<Settings>>({});
+  const [tab, setTab] = useState<Tab>("store");
+  const [form, setForm] = useState<Partial<SiteSettings>>({});
 
   const q = useQuery({
     queryKey: ["admin", "settings"],
     queryFn: async () => {
       const { data, error } = await supabase.from("store_settings").select("*").limit(1).maybeSingle();
       if (error) throw error;
-      return data as Settings | null;
+      if (data) return data as unknown as SiteSettings;
+      const { data: created, error: insErr } = await supabase
+        .from("store_settings")
+        .insert({ store_name: DEFAULT_SETTINGS.store_name })
+        .select("*")
+        .single();
+      if (insErr) throw insErr;
+      return created as unknown as SiteSettings;
     },
   });
 
-  useEffect(() => { if (q.data) setForm(q.data); }, [q.data]);
+  useEffect(() => {
+    if (q.data) setForm(q.data);
+  }, [q.data]);
 
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const { error } = await supabase.from("store_settings").update(form).eq("id", q.data.id);
+      const { id, ...payload } = form as SiteSettings & { id?: string };
+      void id;
+      const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Settings saved"); qc.invalidateQueries({ queryKey: ["admin", "settings"] }); },
+    onSuccess: () => {
+      toast.success("Settings saved");
+      qc.invalidateQueries({ queryKey: ["admin", "settings"] });
+    },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const set = <K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) =>
+    setForm((f) => ({ ...f, [key]: value }));
+  const str = (k: keyof SiteSettings) => (form[k] as string | null) ?? "";
+  const num = (k: keyof SiteSettings) => Number(form[k] ?? 0);
+  const bool = (k: keyof SiteSettings) => Boolean(form[k]);
+
+  const active = sections.find((s) => s.id === tab)!;
 
   return (
     <>
       <AdminTopbar title="Settings" subtitle="Configure your store" />
       <div className="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <aside className="space-y-1">
-          {sections.map((s, i) => {
+          {sections.map((s) => {
             const Icon = s.icon;
             return (
-              <button key={s.title} className={`w-full text-left flex items-start gap-3 p-3 rounded-xl ${i===0 ? "bg-card border border-border" : "hover:bg-muted"}`}>
+              <button
+                key={s.id}
+                onClick={() => setTab(s.id)}
+                className={`w-full text-left flex items-start gap-3 p-3 rounded-xl ${
+                  tab === s.id ? "bg-card border border-border" : "hover:bg-muted"
+                }`}
+              >
                 <div className="h-9 w-9 rounded-lg bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)] grid place-items-center shrink-0">
                   <Icon className="h-4 w-4" />
                 </div>
@@ -75,24 +99,196 @@ function SettingsPage() {
         </aside>
 
         <section className="lg:col-span-2 bg-card border border-border rounded-2xl p-6">
-          <h3 className="font-bold">Store details</h3>
-          <p className="text-xs text-muted-foreground">Basic information about your store</p>
+          <h3 className="font-bold">{active.title}</h3>
+          <p className="text-xs text-muted-foreground">{active.desc}</p>
 
           {q.isLoading ? (
-            <div className="py-10 text-center"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></div>
+            <div className="py-10 text-center">
+              <Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" />
+            </div>
           ) : (
-            <form onSubmit={(e) => { e.preventDefault(); save.mutate(); }} className="mt-6 space-y-4">
-              <Field label="Store name" value={form.store_name ?? ""} onChange={(v) => setForm({ ...form, store_name: v })} />
-              <Field label="Support email" value={form.support_email ?? ""} onChange={(v) => setForm({ ...form, support_email: v })} />
-              <Field label="Phone" value={form.phone ?? ""} onChange={(v) => setForm({ ...form, phone: v })} />
-              <Field label="Business address" value={form.business_address ?? ""} onChange={(v) => setForm({ ...form, business_address: v })} />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Currency" value={form.currency ?? ""} onChange={(v) => setForm({ ...form, currency: v })} />
-                <Field label="Timezone" value={form.timezone ?? ""} onChange={(v) => setForm({ ...form, timezone: v })} />
-              </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                save.mutate();
+              }}
+              className="mt-6 space-y-4"
+            >
+              {tab === "store" && (
+                <>
+                  <Field label="Store name" value={str("store_name")} onChange={(v) => set("store_name", v)} />
+                  <Field label="Support email" value={str("support_email")} onChange={(v) => set("support_email", v)} />
+                  <Field label="Phone" value={str("phone")} onChange={(v) => set("phone", v)} />
+                  <Field
+                    label="Business address"
+                    value={str("business_address")}
+                    onChange={(v) => set("business_address", v)}
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Field label="Currency" value={str("currency")} onChange={(v) => set("currency", v)} />
+                    <Field label="Timezone" value={str("timezone")} onChange={(v) => set("timezone", v)} />
+                  </div>
+                </>
+              )}
+
+              {tab === "branding" && (
+                <>
+                  <Field
+                    label="Logo URL"
+                    value={str("logo_url")}
+                    onChange={(v) => set("logo_url", v)}
+                    hint="Shown in the header and footer. Leave empty to show the store name as text."
+                  />
+                  {form.logo_url && (
+                    <img src={form.logo_url} alt="Logo preview" className="h-12 w-auto object-contain" />
+                  )}
+                  <Field
+                    label="Favicon URL"
+                    value={str("favicon_url")}
+                    onChange={(v) => set("favicon_url", v)}
+                    hint="Small icon shown in the browser tab (.png / .ico / .svg)."
+                  />
+                  <Field
+                    label="Announcement bar text"
+                    value={str("announcement_text")}
+                    onChange={(v) => set("announcement_text", v)}
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <Field label="Facebook URL" value={str("facebook_url")} onChange={(v) => set("facebook_url", v)} />
+                    <Field
+                      label="Instagram URL"
+                      value={str("instagram_url")}
+                      onChange={(v) => set("instagram_url", v)}
+                    />
+                    <Field label="YouTube URL" value={str("youtube_url")} onChange={(v) => set("youtube_url", v)} />
+                  </div>
+                </>
+              )}
+
+              {tab === "seo" && (
+                <>
+                  <Field
+                    label="SEO title"
+                    value={str("seo_title")}
+                    onChange={(v) => set("seo_title", v)}
+                    hint="Under 60 characters works best."
+                  />
+                  <Field
+                    label="Meta description"
+                    value={str("seo_description")}
+                    onChange={(v) => set("seo_description", v)}
+                    hint="Under 160 characters."
+                  />
+                  <Field
+                    label="Keywords"
+                    value={str("seo_keywords")}
+                    onChange={(v) => set("seo_keywords", v)}
+                    hint="Comma separated."
+                  />
+                  <Field
+                    label="Social share image (OG image) URL"
+                    value={str("og_image_url")}
+                    onChange={(v) => set("og_image_url", v)}
+                    hint="Use a full https:// URL, 1200×630 recommended."
+                  />
+                  {form.og_image_url && (
+                    <img
+                      src={form.og_image_url}
+                      alt="Share preview"
+                      className="h-32 w-auto rounded-lg object-cover border border-border"
+                    />
+                  )}
+                </>
+              )}
+
+              {tab === "theme" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <ColorField label="Primary (pink)" value={str("theme_pink")} onChange={(v) => set("theme_pink", v)} />
+                  <ColorField
+                    label="Magenta"
+                    value={str("theme_magenta")}
+                    onChange={(v) => set("theme_magenta", v)}
+                  />
+                  <ColorField label="Purple" value={str("theme_purple")} onChange={(v) => set("theme_purple", v)} />
+                  <ColorField label="Teal" value={str("theme_teal")} onChange={(v) => set("theme_teal", v)} />
+                  <ColorField label="Green" value={str("theme_green")} onChange={(v) => set("theme_green", v)} />
+                </div>
+              )}
+
+              {tab === "payments" && (
+                <>
+                  <Toggle label="bKash" checked={bool("pay_bkash")} onChange={(v) => set("pay_bkash", v)} />
+                  <Toggle label="Nagad" checked={bool("pay_nagad")} onChange={(v) => set("pay_nagad", v)} />
+                  <Toggle label="Card" checked={bool("pay_card")} onChange={(v) => set("pay_card", v)} />
+                  <Toggle label="Cash on delivery" checked={bool("pay_cod")} onChange={(v) => set("pay_cod", v)} />
+                </>
+              )}
+
+              {tab === "shipping" && (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Field
+                      label="Flat delivery charge (৳)"
+                      type="number"
+                      value={String(num("shipping_flat_rate"))}
+                      onChange={(v) => set("shipping_flat_rate", Number(v))}
+                    />
+                    <Field
+                      label="Free delivery above (৳)"
+                      type="number"
+                      value={String(num("free_shipping_threshold"))}
+                      onChange={(v) => set("free_shipping_threshold", Number(v))}
+                    />
+                  </div>
+                  <Field
+                    label="Delivery partner"
+                    value={str("delivery_partner")}
+                    onChange={(v) => set("delivery_partner", v)}
+                  />
+                </>
+              )}
+
+              {tab === "notifications" && (
+                <>
+                  <Toggle
+                    label="Email me on new orders"
+                    checked={bool("notify_order_email")}
+                    onChange={(v) => set("notify_order_email", v)}
+                  />
+                  <Toggle
+                    label="SMS on new orders"
+                    checked={bool("notify_order_sms")}
+                    onChange={(v) => set("notify_order_sms", v)}
+                  />
+                  <Toggle
+                    label="Email me on low stock"
+                    checked={bool("notify_low_stock_email")}
+                    onChange={(v) => set("notify_low_stock_email", v)}
+                  />
+                  <Field
+                    label="Low stock threshold"
+                    type="number"
+                    value={String(num("low_stock_threshold"))}
+                    onChange={(v) => set("low_stock_threshold", Number(v))}
+                  />
+                </>
+              )}
+
               <div className="mt-6 flex justify-end gap-2 pt-4 border-t border-border">
-                <button type="button" onClick={() => q.data && setForm(q.data)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Reset</button>
-                <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90">{save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}Save changes</button>
+                <button
+                  type="button"
+                  onClick={() => q.data && setForm(q.data)}
+                  className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted"
+                >
+                  Reset
+                </button>
+                <button
+                  disabled={save.isPending}
+                  type="submit"
+                  className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90"
+                >
+                  {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}Save changes
+                </button>
               </div>
             </form>
           )}
@@ -102,11 +298,72 @@ function SettingsPage() {
   );
 }
 
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function Field({
+  label,
+  value,
+  onChange,
+  hint,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  hint?: string;
+  type?: string;
+}) {
   return (
     <label className="block">
       <span className="text-xs font-semibold text-muted-foreground">{label}</span>
-      <input value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm outline-none focus:border-[color:var(--brand-pink)]" />
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm outline-none focus:border-[color:var(--brand-pink)]"
+      />
+      {hint && <span className="mt-1 block text-[11px] text-muted-foreground">{hint}</span>}
+    </label>
+  );
+}
+
+function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="block">
+      <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+      <div className="mt-1 flex items-center gap-2">
+        <input
+          type="color"
+          value={/^#[0-9a-fA-F]{6}$/.test(value) ? value : "#e6007e"}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-9 w-12 rounded border border-border bg-background"
+          aria-label={`${label} colour picker`}
+        />
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1 px-3 py-2 rounded-lg border border-border bg-background text-sm outline-none focus:border-[color:var(--brand-pink)]"
+        />
+      </div>
+    </label>
+  );
+}
+
+function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="flex items-center justify-between rounded-xl border border-border px-4 py-3">
+      <span className="text-sm font-medium">{label}</span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={`h-6 w-11 rounded-full transition-colors relative ${
+          checked ? "bg-[color:var(--brand-pink)]" : "bg-muted-foreground/30"
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${checked ? "left-5.5" : "left-0.5"}`}
+        />
+      </button>
     </label>
   );
 }
