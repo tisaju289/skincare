@@ -7,6 +7,7 @@ import { getProductPage, submitReview } from "@/lib/storefront.functions";
 import type { Category, Product, Review } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { siteHead, DEFAULT_SETTINGS, normalizeProductBadges, type SiteSettings } from "@/lib/site-settings";
+import { imgProps } from "@/lib/image";
 
 const PRODUCT_BADGE_ICON_MAP = {
   truck: Truck,
