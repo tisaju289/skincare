@@ -128,10 +128,51 @@ export function normalizeHeroSlides(value: unknown): HeroSlide[] {
   return clean.length ? clean : DEFAULT_HERO_SLIDES;
 }
 
+export const PRODUCT_BADGE_ICONS = {
+  truck: "Delivery truck",
+  shield: "Shield / authentic",
+  refresh: "Return / refresh",
+  headphones: "Support",
+  gift: "Gift",
+  tag: "Price tag",
+  wallet: "Cash on delivery",
+  clock: "Fast / time",
+} as const;
+
+export type ProductBadgeIcon = keyof typeof PRODUCT_BADGE_ICONS;
+
+export type ProductBadge = {
+  icon: ProductBadgeIcon;
+  title: string;
+  subtitle: string;
+  enabled: boolean;
+};
+
+export const DEFAULT_PRODUCT_BADGES: ProductBadge[] = [
+  { icon: "truck", title: "Free Delivery", subtitle: "Over ৳999", enabled: true },
+  { icon: "shield", title: "Authentic", subtitle: "Guaranteed", enabled: true },
+  { icon: "refresh", title: "7-day Return", subtitle: "No hassle", enabled: true },
+];
+
+export function normalizeProductBadges(value: unknown): ProductBadge[] {
+  const stored = Array.isArray(value) ? value : [];
+  const clean = stored
+    .filter((b) => b && typeof b === "object")
+    .map((b: any) => ({
+      icon: (b.icon in PRODUCT_BADGE_ICONS ? b.icon : "truck") as ProductBadgeIcon,
+      title: String(b.title ?? ""),
+      subtitle: String(b.subtitle ?? ""),
+      enabled: b.enabled !== false,
+    }));
+  return clean.length ? clean : DEFAULT_PRODUCT_BADGES.map((b) => ({ ...b }));
+}
+
 export type SiteSettings = {
   id?: string;
   home_sections: HomeSection[];
   hero_slides: HeroSlide[];
+  product_badges: ProductBadge[];
+
   store_name: string;
   support_email: string | null;
   phone: string | null;
