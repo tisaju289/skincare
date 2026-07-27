@@ -139,6 +139,7 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
           })}
         </ul>
       </div>
+      </div>
     </aside>
   );
 }
