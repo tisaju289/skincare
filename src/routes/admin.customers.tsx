@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeRow } from "@/lib/db";
 import { Mail, Phone, Plus, Edit2, Trash2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/customers")({
@@ -39,9 +40,10 @@ function CustomersPage() {
 
   const save = useMutation({
     mutationFn: async (p: FormState) => {
+      const payload = sanitizeRow(p);
       const { error } = editing
-        ? await supabase.from("customers").update(p).eq("id", editing.id)
-        : await supabase.from("customers").insert(p as any);
+        ? await supabase.from("customers").update(payload as never).eq("id", editing.id)
+        : await supabase.from("customers").insert(payload as any);
       if (error) throw error;
     },
     onSuccess: () => { toast.success(editing ? "Updated" : "Created"); qc.invalidateQueries({ queryKey: ["admin", "customers"] }); setOpen(false); },

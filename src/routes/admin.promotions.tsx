@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeRow } from "@/lib/db";
 import { TableToolbar } from "@/components/admin/TableToolbar";
 import { matchesQuery } from "@/lib/csv";
 import { Plus, Copy, Edit2, Trash2, Loader2 } from "lucide-react";
@@ -55,9 +56,9 @@ function PromotionsPage() {
 
   const save = useMutation({
     mutationFn: async (p: FormState) => {
-      const payload = { ...p, code: p.code?.toUpperCase() };
+      const payload = sanitizeRow({ ...p, code: p.code?.toUpperCase() });
       const { error } = editing
-        ? await supabase.from("promotions").update(payload).eq("id", editing.id)
+        ? await supabase.from("promotions").update(payload as never).eq("id", editing.id)
         : await supabase.from("promotions").insert(payload as any);
       if (error) throw error;
     },
