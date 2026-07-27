@@ -51,45 +51,74 @@ function ReviewsPage() {
 
   return (
     <>
-      <AdminTopbar title="Reviews" subtitle="Moderate customer product reviews" />
-      <div className="p-4 sm:p-6 space-y-4">
-        {q.isLoading && <div className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></div>}
-        {!q.isLoading && reviews.length === 0 && <p className="text-center text-muted-foreground py-10">No reviews yet.</p>}
-        {reviews.map((r) => (
-          <div key={r.id} className="bg-card border border-border rounded-2xl p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3 min-w-0">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-pink-400 to-fuchsia-500 grid place-items-center text-white font-bold text-sm">
-                  {r.user_name[0]}
-                </div>
-                <div className="min-w-0">
-                  <p className="font-semibold text-sm">{r.user_name}</p>
-                  <p className="text-xs text-muted-foreground">on <span className="font-medium text-foreground">{r.products?.name ?? "—"}</span> · {new Date(r.created_at).toLocaleDateString()}</p>
-                  <div className="flex items-center gap-0.5 mt-1">
-                    {[1,2,3,4,5].map(n => (
-                      <Star key={n} className={`h-3.5 w-3.5 ${n <= r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
-                    ))}
-                  </div>
-                  {r.comment && <p className="text-sm mt-3">{r.comment}</p>}
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-2 shrink-0">
-                <span className={`text-[10px] font-bold px-2 py-1 rounded-full capitalize ${r.status === "approved" ? "bg-emerald-100 text-emerald-700" : r.status === "rejected" ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"}`}>
-                  {r.status}
-                </span>
-                <div className="flex gap-1">
-                  {r.status !== "approved" && (
-                    <button onClick={() => setStatus.mutate({ id: r.id, status: "approved" })} className="h-8 w-8 grid place-items-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100"><CheckCircle2 className="h-4 w-4" /></button>
-                  )}
-                  {r.status !== "rejected" && (
-                    <button onClick={() => setStatus.mutate({ id: r.id, status: "rejected" })} className="h-8 w-8 grid place-items-center rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100"><X className="h-4 w-4" /></button>
-                  )}
-                  <button onClick={() => confirm("Delete review?") && del.mutate(r.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-4 w-4" /></button>
-                </div>
-              </div>
-            </div>
+      <AdminTopbar title="Reviews" subtitle={`${reviews.length} customer reviews`} />
+      <div className="p-4 sm:p-6">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] text-sm">
+              <thead className="text-xs text-muted-foreground bg-muted/40">
+                <tr>
+                  <th className="px-5 py-3 text-left font-semibold">Reviewer</th>
+                  <th className="px-5 py-3 text-left font-semibold">Product</th>
+                  <th className="px-5 py-3 text-left font-semibold">Rating</th>
+                  <th className="px-5 py-3 text-left font-semibold">Comment</th>
+                  <th className="px-5 py-3 text-left font-semibold">Status</th>
+                  <th className="px-5 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {q.isLoading && (
+                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
+                )}
+                {!q.isLoading && reviews.length === 0 && (
+                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">No reviews yet.</td></tr>
+                )}
+                {reviews.map((r) => (
+                  <tr key={r.id} className="border-t border-border hover:bg-muted/30">
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-pink-400 to-fuchsia-500 grid place-items-center text-white font-bold text-sm">
+                          {r.user_name[0]}
+                        </div>
+                        <div>
+                          <p className="font-medium">{r.user_name}</p>
+                          <p className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3">{r.products?.name ?? "—"}</td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-0.5">
+                        {[1,2,3,4,5].map(n => (
+                          <Star key={n} className={`h-3.5 w-3.5 ${n <= r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-5 py-3 max-w-[280px]">
+                      <p className="text-muted-foreground line-clamp-2">{r.comment || "—"}</p>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className={`text-[10px] font-bold px-2 py-1 rounded-full capitalize ${r.status === "approved" ? "bg-emerald-100 text-emerald-700" : r.status === "rejected" ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"}`}>
+                        {r.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center justify-end gap-1">
+                        {r.status !== "approved" && (
+                          <button onClick={() => setStatus.mutate({ id: r.id, status: "approved" })} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-emerald-700"><CheckCircle2 className="h-3.5 w-3.5" /></button>
+                        )}
+                        {r.status !== "rejected" && (
+                          <button onClick={() => setStatus.mutate({ id: r.id, status: "rejected" })} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-amber-700"><X className="h-3.5 w-3.5" /></button>
+                        )}
+                        <button onClick={() => confirm("Delete review?") && del.mutate(r.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-3.5 w-3.5" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
+        </div>
       </div>
     </>
   );
