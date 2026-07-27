@@ -25,6 +25,7 @@ export function SiteHeader({
   const { count } = useCart();
   const [q, setQ] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
