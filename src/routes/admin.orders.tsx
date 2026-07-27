@@ -47,13 +47,27 @@ function OrdersPage() {
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
   const [search, setSearch] = useState("");
   const [payFilter, setPayFilter] = useState("all");
+  const [detail, setDetail] = useState<any | null>(null);
 
   const q = useQuery({
     queryKey: ["admin", "orders"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("*, customers(name,phone)").order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("orders").select("*, customers(name,phone,email,address)").order("created_at", { ascending: false });
       if (error) throw error;
       return data;
+    },
+  });
+  const itemsQ = useQuery({
+    queryKey: ["admin", "order-items", detail?.id],
+    enabled: !!detail?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("order_items")
+        .select("*")
+        .eq("order_id", detail.id)
+        .order("created_at");
+      if (error) throw error;
+      return data ?? [];
     },
   });
   const custQ = useQuery({
@@ -157,7 +171,11 @@ function OrdersPage() {
                 {q.isLoading && <tr><td colSpan={7} className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></td></tr>}
                 {!q.isLoading && filtered.length === 0 && <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">No orders.</td></tr>}
                 {filtered.map((o) => (
-                  <tr key={o.id} className="border-t border-border hover:bg-muted/30">
+                  <tr
+                    key={o.id}
+                    onClick={() => setDetail(o)}
+                    className="border-t border-border hover:bg-muted/30 cursor-pointer"
+                  >
                     <td className="px-5 py-3 font-mono font-semibold">#{o.order_number}</td>
                     <td className="px-5 py-3">
                       <div className="font-medium">{o.customers?.name ?? "Guest"}</div>
@@ -171,7 +189,7 @@ function OrdersPage() {
                     <td className="px-5 py-3"><span className="text-xs px-2 py-1 rounded bg-muted uppercase">{o.payment_method}</span></td>
                     <td className="px-5 py-3"><span className={`text-[10px] font-bold px-2 py-1 rounded-full capitalize ${statusStyle[o.status as OrderStatus]}`}>{o.status}</span></td>
                     <td className="px-5 py-3 text-muted-foreground">{new Date(o.created_at).toLocaleDateString()}</td>
-                    <td className="px-5 py-3 text-right">
+                    <td className="px-5 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex justify-end gap-1">
                         <button onClick={() => { setEditing(o); setForm(o); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted"><Edit2 className="h-3.5 w-3.5"/></button>
                         <button onClick={() => confirm(`Delete order #${o.order_number}?`) && del.mutate(o.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-3.5 w-3.5"/></button>
@@ -184,6 +202,77 @@ function OrdersPage() {
           </div>
         </div>
       </div>
+
+      <AdminModal open={!!detail} onClose={() => setDetail(null)} title={detail ? `Order #${detail.order_number}` : "Order"}>
+        {detail && (
+          <div className="space-y-5 text-sm">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`text-[10px] font-bold px-2 py-1 rounded-full capitalize ${statusStyle[detail.status as OrderStatus]}`}>{detail.status}</span>
+              <span className="text-xs px-2 py-1 rounded bg-muted uppercase">{detail.payment_method}</span>
+              <span className="text-xs text-muted-foreground">{new Date(detail.created_at).toLocaleString()}</span>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="rounded-xl border border-border p-3">
+                <p className="text-xs font-bold text-muted-foreground mb-1">Customer</p>
+                <p className="font-semibold">{detail.customers?.name ?? "Guest"}</p>
+                {detail.customers?.phone && <p className="text-muted-foreground">{detail.customers.phone}</p>}
+                {detail.customers?.email && <p className="text-muted-foreground">{detail.customers.email}</p>}
+              </div>
+              <div className="rounded-xl border border-border p-3">
+                <p className="text-xs font-bold text-muted-foreground mb-1">Shipping address</p>
+                <p className="whitespace-pre-line">{detail.shipping_address || detail.customers?.address || "—"}</p>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="text-xs text-muted-foreground bg-muted/40">
+                  <tr>
+                    <th className="px-3 py-2 text-left font-semibold">Product</th>
+                    <th className="px-3 py-2 text-right font-semibold">Qty</th>
+                    <th className="px-3 py-2 text-right font-semibold">Price</th>
+                    <th className="px-3 py-2 text-right font-semibold">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {itemsQ.isLoading && <tr><td colSpan={4} className="text-center py-6"><Loader2 className="h-4 w-4 animate-spin inline text-muted-foreground" /></td></tr>}
+                  {!itemsQ.isLoading && (itemsQ.data ?? []).length === 0 && <tr><td colSpan={4} className="text-center py-6 text-muted-foreground">No items.</td></tr>}
+                  {(itemsQ.data ?? []).map((it: any) => (
+                    <tr key={it.id} className="border-t border-border">
+                      <td className="px-3 py-2">{it.product_name}</td>
+                      <td className="px-3 py-2 text-right">{it.quantity}</td>
+                      <td className="px-3 py-2 text-right">৳{Number(it.unit_price).toLocaleString()}</td>
+                      <td className="px-3 py-2 text-right font-semibold">৳{(Number(it.unit_price) * it.quantity).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>৳{Number(detail.subtotal ?? 0).toLocaleString()}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Delivery charge</span><span>৳{Number(detail.shipping ?? 0).toLocaleString()}</span></div>
+              {Number(detail.discount ?? 0) > 0 && (
+                <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span>-৳{Number(detail.discount).toLocaleString()}</span></div>
+              )}
+              <div className="flex justify-between font-black text-base pt-2 border-t border-border"><span>Total</span><span>৳{Number(detail.total).toLocaleString()}</span></div>
+            </div>
+
+            {detail.notes && (
+              <div className="rounded-xl border border-border p-3">
+                <p className="text-xs font-bold text-muted-foreground mb-1">Notes</p>
+                <p className="whitespace-pre-line">{detail.notes}</p>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2 pt-4 border-t border-border">
+              <button type="button" onClick={() => setDetail(null)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Close</button>
+              <button type="button" onClick={() => { setEditing(detail); setForm(detail); setDetail(null); setOpen(true); }} className="text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90">Edit order</button>
+            </div>
+          </div>
+        )}
+      </AdminModal>
 
       <AdminModal open={open} onClose={() => setOpen(false)} title={editing ? "Edit order" : "New order"}>
         <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="space-y-4">
