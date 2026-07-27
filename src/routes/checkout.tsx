@@ -8,6 +8,7 @@ import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { DEFAULT_SETTINGS, siteHead, type SiteSettings } from "@/lib/site-settings";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
+import { imgProps } from "@/lib/image";
 import { useCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/checkout")({
@@ -170,7 +171,7 @@ function CheckoutPage() {
               <ul className="mt-4 space-y-3">
                 {items.map((i) => (
                   <li key={i.slug} className="flex gap-3 text-sm">
-                    <img src={i.image} alt={i.name} className="h-12 w-12 rounded-lg object-cover" />
+                    <img {...imgProps(i.image, { width: 120, widths: [96, 160], sizes: "48px" })} alt={i.name} className="h-12 w-12 rounded-lg object-cover" />
                     <div className="flex-1">
                       <p className="line-clamp-2 font-medium">{i.name}</p>
                       <p className="text-xs text-muted-foreground">Qty {i.quantity}</p>

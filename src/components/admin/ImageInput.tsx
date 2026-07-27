@@ -90,7 +90,7 @@ export function ImageInput({
         }`}
       >
         {url ? (
-          <img src={url} alt="" className="h-12 w-12 rounded-lg object-cover border border-border" />
+          <img src={url} alt="" loading="lazy" decoding="async" className="h-12 w-12 rounded-lg object-cover border border-border" />
         ) : (
           <div className="h-12 w-12 rounded-lg bg-muted grid place-items-center">
             <Upload className="h-4 w-4 text-muted-foreground" />
