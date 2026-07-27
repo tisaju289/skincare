@@ -100,13 +100,27 @@ export function normalizeHomeSections(value: unknown): HomeSection[] {
   const stored = Array.isArray(value) ? (value as HomeSection[]) : [];
   const out: HomeSection[] = [];
   for (const s of stored) {
-    if (s && typeof s.id === "string" && s.id in HOME_SECTION_LABELS && !out.some((o) => o.id === s.id)) {
-      out.push({ id: s.id as HomeSectionId, enabled: s.enabled !== false });
+    if (!s || typeof s.id !== "string" || out.some((o) => o.id === s.id)) continue;
+    const isBuiltin = s.id in HOME_SECTION_LABELS;
+    if (isBuiltin) {
+      out.push({ id: s.id, kind: "builtin", enabled: s.enabled !== false });
+    } else if (s.kind === "products") {
+      out.push({
+        id: s.id,
+        kind: "products",
+        enabled: s.enabled !== false,
+        title: s.title ?? "",
+        subtitle: s.subtitle ?? "",
+        source: (s.source && s.source in PRODUCT_SOURCE_LABELS ? s.source : "latest") as ProductSource,
+        limit: Number(s.limit) > 0 ? Number(s.limit) : 10,
+        link: s.link ?? "/search",
+      });
     }
   }
   for (const d of DEFAULT_HOME_SECTIONS) if (!out.some((o) => o.id === d.id)) out.push({ ...d });
   return out;
 }
+
 
 export function normalizeHeroSlides(value: unknown): HeroSlide[] {
   const stored = Array.isArray(value) ? (value as HeroSlide[]) : [];
