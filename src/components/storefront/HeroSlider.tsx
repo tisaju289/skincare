@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { HeroSlide } from "@/lib/site-settings";
