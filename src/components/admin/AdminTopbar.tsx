@@ -1,4 +1,4 @@
-import { Bell, Search, Plus, Menu } from "lucide-react";
+import { Search, Menu } from "lucide-react";
 import { setAdminNavOpen } from "./admin-nav";
 
 export function AdminTopbar({ title, subtitle, action }: { title: string; subtitle?: string; action?: React.ReactNode }) {
