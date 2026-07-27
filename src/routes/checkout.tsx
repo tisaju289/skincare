@@ -23,16 +23,8 @@ export const Route = createFileRoute("/checkout")({
   component: CheckoutPage,
 });
 
-const PAYMENTS = [
-  { id: "cod", label: "Cash on Delivery" },
-  { id: "bkash", label: "bKash" },
-  { id: "nagad", label: "Nagad" },
-  { id: "card", label: "Card" },
-] as const;
-
 function CheckoutPage() {
   const settings = (Route.useLoaderData() as SiteSettings) ?? DEFAULT_SETTINGS;
-  const payments = PAYMENTS.filter((p) => settings[`pay_${p.id}` as const] !== false);
   const { items, subtotal, clear } = useCart();
   const navigate = useNavigate();
   const submit = useServerFn(placeOrder);
@@ -42,7 +34,7 @@ function CheckoutPage() {
     name: "",
     phone: "",
     address: "",
-    paymentMethod: (payments[0]?.id ?? "cod") as (typeof PAYMENTS)[number]["id"],
+    paymentMethod: "cod" as const,
   });
 
   const [zone, setZone] = useState<"inside" | "outside">("inside");
@@ -168,21 +160,8 @@ function CheckoutPage() {
 
               <div>
                 <p className="text-xs font-bold text-muted-foreground mb-2">Payment method</p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {payments.map((p) => (
-                    <button
-                      type="button"
-                      key={p.id}
-                      onClick={() => set("paymentMethod", p.id)}
-                      className={`rounded-xl border px-3 py-2.5 text-sm font-semibold ${
-                        form.paymentMethod === p.id
-                          ? "border-[color:var(--brand-pink)] bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)]"
-                          : "border-border"
-                      }`}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
+                <div className="rounded-xl border border-[color:var(--brand-pink)] bg-[color:var(--brand-pink)]/10 px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-pink)]">
+                  Cash on Delivery
                 </div>
               </div>
             </div>
