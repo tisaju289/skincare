@@ -155,3 +155,42 @@
     padding-bottom: calc(4rem + env(safe-area-inset-bottom));
   }
 }
+
+/* Dual-handle range slider (shop price filter) */
+.range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+  height: 100%;
+  margin: 0;
+}
+.range-thumb::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 100%;
+}
+.range-thumb::-moz-range-track {
+  background: transparent;
+  height: 100%;
+}
+.range-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  height: 1.125rem;
+  width: 1.125rem;
+  border-radius: 9999px;
+  background: var(--brand-pink, var(--color-primary));
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
+  cursor: pointer;
+}
+.range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  height: 1.125rem;
+  width: 1.125rem;
+  border-radius: 9999px;
+  background: var(--brand-pink, var(--color-primary));
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
+  cursor: pointer;
+}
