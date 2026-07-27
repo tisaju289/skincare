@@ -51,7 +51,7 @@ function OrdersPage() {
   const q = useQuery({
     queryKey: ["admin", "orders"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("*, customers(name)").order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("orders").select("*, customers(name,phone)").order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -131,7 +131,7 @@ function OrdersPage() {
               ],
             },
           ]}
-          exportRows={filtered.map(({ customers, ...r }: any) => ({ ...r, customer: customers?.name ?? "Guest" }))}
+          exportRows={filtered.map(({ customers, ...r }: any) => ({ ...r, customer: customers?.name ?? "Guest", phone: customers?.phone ?? "" }))}
           exportName="orders"
           importTable="orders"
           importColumns={["order_number", "customer_id", "status", "payment_method", "subtotal", "shipping", "discount", "total", "shipping_address", "notes"]}
@@ -159,7 +159,14 @@ function OrdersPage() {
                 {filtered.map((o) => (
                   <tr key={o.id} className="border-t border-border hover:bg-muted/30">
                     <td className="px-5 py-3 font-mono font-semibold">#{o.order_number}</td>
-                    <td className="px-5 py-3">{o.customers?.name ?? "Guest"}</td>
+                    <td className="px-5 py-3">
+                      <div className="font-medium">{o.customers?.name ?? "Guest"}</div>
+                      {o.customers?.phone && (
+                        <a href={`tel:${o.customers.phone}`} className="text-xs text-muted-foreground hover:underline">
+                          {o.customers.phone}
+                        </a>
+                      )}
+                    </td>
                     <td className="px-5 py-3 font-semibold">৳{Number(o.total).toLocaleString()}</td>
                     <td className="px-5 py-3"><span className="text-xs px-2 py-1 rounded bg-muted uppercase">{o.payment_method}</span></td>
                     <td className="px-5 py-3"><span className={`text-[10px] font-bold px-2 py-1 rounded-full capitalize ${statusStyle[o.status as OrderStatus]}`}>{o.status}</span></td>
