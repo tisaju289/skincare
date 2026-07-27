@@ -41,7 +41,7 @@ function Index() {
   const data = Route.useLoaderData() as {
     categories: Category[];
     trending: Product[];
-    brands: { slug: string; name: string }[];
+    brands: { slug: string; name: string; logo?: string | null }[];
     settings: SiteSettings;
   };
   const { categories, trending, brands, settings } = data;
