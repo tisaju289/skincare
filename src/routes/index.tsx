@@ -49,79 +49,13 @@ function Index() {
   const [showAllCats, setShowAllCats] = useState(false);
   const [showAllBrands, setShowAllBrands] = useState(false);
 
+  const order = normalizeHomeSections(settings.home_sections).filter((s) => s.enabled);
+  const slides = normalizeHeroSlides(settings.hero_slides);
 
+  const blocks: Record<HomeSectionId, React.ReactNode> = {
+    hero: <HeroSlider slides={slides} />,
 
-
-  return (
-    <div className="min-h-screen bg-background">
-      <>
-      <SiteTheme settings={settings} />
-      <SiteHeader categories={categories} settings={settings} />
-
-      {/* Hero */}
-      <section className="max-w-7xl mx-auto px-4 pt-6">
-        <div className="relative aspect-[16/9] md:aspect-auto rounded-2xl md:rounded-3xl overflow-hidden bg-[color:var(--brand-lilac)]">
-          <div
-            className="absolute inset-0 opacity-40"
-            style={{
-              backgroundImage:
-                "repeating-conic-gradient(from 0deg, oklch(0.95 0.05 300) 0deg 10deg, transparent 10deg 20deg)",
-            }}
-          />
-          {/* Mobile background image */}
-          <img
-            src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80"
-            alt=""
-            aria-hidden="true"
-            className="md:hidden absolute right-0 top-0 h-full w-1/2 object-cover opacity-90"
-          />
-          <div className="relative h-full md:h-auto grid md:grid-cols-2 gap-6 p-4 sm:p-8 md:p-14 items-center">
-            <div className="max-w-[60%] md:max-w-none">
-              <p className="text-[10px] sm:text-sm font-bold tracking-widest text-blue-700">
-                UNILEVER <span className="text-foreground/70">PRESENTS</span>
-              </p>
-              <div className="mt-1.5 sm:mt-4 inline-block bg-pink-500 text-white text-base sm:text-4xl font-black px-2 sm:px-4 py-0.5 sm:py-2 rounded">
-                JULY
-              </div>
-              <h1 className="mt-1.5 sm:mt-3 text-2xl sm:text-6xl lg:text-7xl font-black leading-none text-blue-900 -rotate-2">
-                JAW
-                <br />
-                DROPPERS
-              </h1>
-              <Link
-                to="/search"
-                search={{ q: "" }}
-                className="mt-2.5 sm:mt-8 inline-flex items-center gap-1.5 sm:gap-2 bg-pink-500 hover:bg-pink-600 text-white font-bold px-3.5 sm:px-8 py-1.5 sm:py-3 rounded-full text-[11px] sm:text-base"
-              >
-                SHOP NOW <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-              </Link>
-            </div>
-            <div className="relative hidden md:flex flex-col md:block items-center md:justify-end md:pb-0">
-              <img
-                src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80"
-                alt="Beauty products collection"
-                className="rounded-2xl shadow-2xl max-h-56 sm:max-h-72 w-full object-cover"
-              />
-              <div className="mt-3 md:mt-0 text-center md:text-right md:absolute md:-bottom-6 md:right-0">
-                <p className="text-base sm:text-xl font-bold text-blue-900">UP TO</p>
-                <p className="text-5xl sm:text-7xl lg:text-8xl font-black text-blue-900 leading-none drop-shadow">
-                  45%<span className="text-2xl sm:text-4xl"> OFF</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          {/* Mobile discount badge */}
-          <div className="md:hidden absolute bottom-2 right-2 text-right">
-            <p className="text-[10px] font-bold text-blue-900">UP TO</p>
-            <p className="text-3xl font-black text-blue-900 leading-none drop-shadow">
-              45%<span className="text-sm"> OFF</span>
-            </p>
-          </div>
-        </div>
-
-      </section>
-
-      {/* Category circles */}
+    categories: (
       <section className="max-w-7xl mx-auto px-4 mt-10">
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 sm:gap-6">
           {topCategories.map((c, i) => (
@@ -152,9 +86,9 @@ function Index() {
           </div>
         )}
       </section>
+    ),
 
-
-      {/* Deals */}
+    deals: (
       <section className="max-w-7xl mx-auto px-4 mt-12">
         <h2 className="text-center text-lg font-black tracking-widest text-foreground">DEALS YOU CANNOT MISS</h2>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -172,8 +106,9 @@ function Index() {
           ))}
         </div>
       </section>
+    ),
 
-      {/* Trending */}
+    trending: (
       <section className="max-w-7xl mx-auto px-4 mt-14">
         <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
           <div>
@@ -194,9 +129,10 @@ function Index() {
           </div>
         )}
       </section>
+    ),
 
-      {/* Brands */}
-      {brands.length > 0 && (
+    brands:
+      brands.length > 0 ? (
         <section className="max-w-7xl mx-auto px-4 mt-14">
           <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
             <h2 className="text-2xl md:text-3xl font-black">Shop by Brand</h2>
@@ -232,11 +168,10 @@ function Index() {
               </button>
             </div>
           )}
-
         </section>
-      )}
+      ) : null,
 
-      {/* Trust badges */}
+    trust: (
       <section className="max-w-7xl mx-auto px-4 mt-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted rounded-3xl p-6 md:p-8">
           {[
@@ -257,9 +192,20 @@ function Index() {
           ))}
         </div>
       </section>
+    ),
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={categories} settings={settings} />
+
+      {order.map((s) => (
+        <div key={s.id}>{blocks[s.id]}</div>
+      ))}
 
       <SiteFooter categories={categories} settings={settings} />
-      </>
     </div>
   );
 }
+
