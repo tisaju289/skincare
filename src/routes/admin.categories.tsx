@@ -48,7 +48,11 @@ function CategoriesPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const cats = q.data ?? [];
+  const raw = q.data ?? [];
+  const cats = raw
+    .filter((c) => !c.parent_id)
+    .flatMap((p) => [p, ...raw.filter((c) => c.parent_id === p.id)])
+    .concat(raw.filter((c) => c.parent_id && !raw.some((p) => p.id === c.parent_id)));
 
   return (
     <>
