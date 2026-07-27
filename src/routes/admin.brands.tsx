@@ -79,37 +79,40 @@ function BrandsPage() {
         }
       />
       <div className="p-4 sm:p-6">
-        {q.isLoading && (
-          <div className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></div>
-        )}
-        {!q.isLoading && brands.length === 0 && (
-          <p className="text-center text-muted-foreground py-10">No brands yet.</p>
-        )}
-        {brands.length > 0 && (
-          <div className="bg-card border border-border rounded-2xl overflow-x-auto">
-            <table className="w-full text-sm min-w-[520px]">
-              <thead>
-                <tr className="border-b border-border text-left text-xs text-muted-foreground">
-                  <th className="px-4 py-3 font-semibold">Brand</th>
-                  <th className="px-4 py-3 font-semibold">Slug</th>
-                  <th className="px-4 py-3 font-semibold">Logo</th>
-                  <th className="px-4 py-3 font-semibold text-right">Actions</th>
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] text-sm">
+              <thead className="text-xs text-muted-foreground bg-muted/40">
+                <tr>
+                  <th className="px-5 py-3 text-left font-semibold">Brand</th>
+                  <th className="px-5 py-3 text-left font-semibold">Slug</th>
+                  <th className="px-5 py-3 text-left font-semibold">Created</th>
+                  <th className="px-5 py-3"></th>
                 </tr>
               </thead>
               <tbody>
+                {q.isLoading && (
+                  <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
+                )}
+                {!q.isLoading && brands.length === 0 && (
+                  <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground">No brands yet. Click "New brand".</td></tr>
+                )}
                 {brands.map((b) => (
-                  <tr key={b.id} className="border-b border-border last:border-0">
-                    <td className="px-4 py-3 font-semibold">{b.name}</td>
-                    <td className="px-4 py-3 text-muted-foreground">/{b.slug}</td>
-                    <td className="px-4 py-3">
-                      {b.logo ? (
-                        <img src={b.logo} alt={b.name} className="h-8 w-8 rounded-lg object-cover" loading="lazy" />
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
+                  <tr key={b.id} className="border-t border-border hover:bg-muted/30">
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        {b.logo ? (
+                          <img src={b.logo} alt="" className="h-10 w-10 rounded-lg object-cover" loading="lazy" />
+                        ) : (
+                          <div className="h-10 w-10 rounded-lg bg-muted" />
+                        )}
+                        <p className="font-medium">{b.name}</p>
+                      </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-1">
+                    <td className="px-5 py-3 text-muted-foreground">/{b.slug}</td>
+                    <td className="px-5 py-3 text-muted-foreground">{new Date(b.created_at).toLocaleDateString()}</td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center justify-end gap-1">
                         <button onClick={() => { setEditing(b); setForm(b); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted"><Edit2 className="h-3.5 w-3.5" /></button>
                         <button onClick={() => confirm(`Delete "${b.name}"?`) && del.mutate(b.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-3.5 w-3.5" /></button>
                       </div>
@@ -119,7 +122,7 @@ function BrandsPage() {
               </tbody>
             </table>
           </div>
-        )}
+        </div>
       </div>
 
       <AdminModal open={open} onClose={() => setOpen(false)} title={editing ? "Edit brand" : "New brand"}>
