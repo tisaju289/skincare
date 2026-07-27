@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Heart, ShoppingBag, LayoutDashboard } from "lucide-react";
+import { Search, Heart, ShoppingBag, LayoutDashboard, Menu, X } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { CartDrawer } from "./CartDrawer";
