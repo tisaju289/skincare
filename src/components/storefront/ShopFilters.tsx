@@ -41,45 +41,39 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
           <h2 className="text-sm font-black">Price range</h2>
         </div>
 
-        <div className="mt-4 flex items-center gap-2">
-          <label className="flex-1 min-w-0">
-            <span className="text-[10px] uppercase text-muted-foreground">Min</span>
-            <input
-              type="number"
-              min={min}
-              max={hi}
-              value={lo}
-              onChange={(e) => onChange([Math.min(Number(e.target.value) || 0, hi), hi])}
-              className="mt-1 w-full rounded-lg border border-border px-2 py-1.5 text-sm bg-background"
-            />
-          </label>
-          <span className="text-muted-foreground pt-4">–</span>
-          <label className="flex-1 min-w-0">
-            <span className="text-[10px] uppercase text-muted-foreground">Max</span>
-            <input
-              type="number"
-              min={lo}
-              max={max}
-              value={hi}
-              onChange={(e) => onChange([lo, Math.max(Number(e.target.value) || 0, lo)])}
-              className="mt-1 w-full rounded-lg border border-border px-2 py-1.5 text-sm bg-background"
-            />
-          </label>
+        <div className="relative mt-6 h-5">
+          <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-muted" />
+          <div
+            className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-[color:var(--brand-pink)]"
+            style={{
+              left: `${((lo - min) / Math.max(1, max - min)) * 100}%`,
+              right: `${100 - ((hi - min) / Math.max(1, max - min)) * 100}%`,
+            }}
+          />
+          <input
+            type="range"
+            min={min}
+            max={max}
+            value={lo}
+            aria-label="Minimum price"
+            onChange={(e) => onChange([Math.min(Number(e.target.value), hi), hi])}
+            className="range-thumb absolute inset-0 w-full"
+          />
+          <input
+            type="range"
+            min={min}
+            max={max}
+            value={hi}
+            aria-label="Maximum price"
+            onChange={(e) => onChange([lo, Math.max(Number(e.target.value), lo)])}
+            className="range-thumb absolute inset-0 w-full"
+          />
         </div>
-
-        <input
-          type="range"
-          min={min}
-          max={max}
-          value={hi}
-          aria-label="Maximum price"
-          onChange={(e) => onChange([Math.min(lo, Number(e.target.value)), Number(e.target.value)])}
-          className="mt-4 w-full accent-[color:var(--brand-pink)]"
-        />
-        <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
+        <div className="mt-2 flex items-center justify-between text-[11px] font-bold text-muted-foreground">
           <span>৳{lo}</span>
           <span>৳{hi}</span>
         </div>
+
         <button
           onClick={() => onChange([min, max])}
           className="mt-3 text-xs font-bold text-[color:var(--brand-pink)]"
