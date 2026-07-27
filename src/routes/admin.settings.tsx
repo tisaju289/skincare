@@ -229,10 +229,8 @@ function SettingsPage() {
                     hide it from the storefront.
                   </p>
                   {homeSections.map((s, i) => (
-                    <div
-                      key={s.id}
-                      className="flex flex-wrap items-center gap-3 rounded-xl border border-border px-3 py-2.5"
-                    >
+                    <div key={s.id} className="rounded-xl border border-border px-3 py-2.5 space-y-3">
+                      <div className="flex flex-wrap items-center gap-3">
                       <span className="h-7 w-7 shrink-0 rounded-lg bg-muted grid place-items-center text-xs font-bold">
                         {i + 1}
                       </span>
@@ -289,8 +287,63 @@ function SettingsPage() {
                           }`}
                         />
                       </button>
+                      {s.kind === "products" && (
+                        <button
+                          type="button"
+                          onClick={() => removeSection(i)}
+                          aria-label="Delete section"
+                          className="h-8 w-8 grid place-items-center rounded-lg border border-border text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                      </div>
+
+                      {s.kind === "products" && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-border pt-3">
+                          <Field
+                            label="Section title"
+                            value={s.title ?? ""}
+                            onChange={(v) => setSectionAt(i, { title: v })}
+                          />
+                          <Field
+                            label="Subtitle"
+                            value={s.subtitle ?? ""}
+                            onChange={(v) => setSectionAt(i, { subtitle: v })}
+                          />
+                          <label className="block">
+                            <span className="text-xs font-semibold text-muted-foreground">Show products</span>
+                            <select
+                              value={s.source ?? "latest"}
+                              onChange={(e) => setSectionAt(i, { source: e.target.value as ProductSource })}
+                              className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
+                            >
+                              {Object.entries(PRODUCT_SOURCE_LABELS).map(([v, label]) => (
+                                <option key={v} value={v}>
+                                  {label}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                          <Field
+                            label="Max products"
+                            type="number"
+                            value={String(s.limit ?? 10)}
+                            onChange={(v) => setSectionAt(i, { limit: Math.max(1, Number(v) || 10) })}
+                          />
+                        </div>
+                      )}
                     </div>
                   ))}
+
+                  <button
+                    type="button"
+                    onClick={addProductSection}
+                    className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted"
+                  >
+                    <Plus className="h-4 w-4" /> Add product section
+                  </button>
+
                 </div>
               )}
 
