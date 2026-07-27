@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { resolveSettings, type SiteSettings } from "@/lib/site-settings";
 
 /** Publishable-key Supabase client for public (anon) reads inside server functions. */
 export function getPublicClient() {
@@ -20,4 +21,12 @@ export function getPublicClient() {
       },
     },
   });
+}
+
+/** Reads the single store_settings row, falling back to defaults. */
+export async function fetchSettings(
+  supabase: ReturnType<typeof getPublicClient>,
+): Promise<SiteSettings> {
+  const { data } = await supabase.from("store_settings").select("*").limit(1).maybeSingle();
+  return resolveSettings(data);
 }
