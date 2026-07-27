@@ -40,6 +40,13 @@ export function SiteHeader({
 
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
+          <button
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            className="lg:hidden h-9 w-9 shrink-0 grid place-items-center rounded-lg hover:bg-muted"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
           <Link to="/" className="flex items-center gap-2 shrink-0">
             {settings.logo_url ? (
               <img
