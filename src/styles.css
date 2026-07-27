@@ -149,3 +149,9 @@
     color: var(--color-foreground);
   }
 }
+
+@media (max-width: 1023px) {
+  body {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+}
