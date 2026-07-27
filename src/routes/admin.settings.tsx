@@ -5,9 +5,32 @@ import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeRow } from "@/lib/db";
-import { Store, CreditCard, Truck, Bell, Image as ImageIcon, Search, Palette, Loader2 } from "lucide-react";
+import {
+  Store,
+  CreditCard,
+  Truck,
+  Bell,
+  Image as ImageIcon,
+  Search,
+  Palette,
+  Loader2,
+  LayoutList,
+  GalleryHorizontal,
+  ArrowUp,
+  ArrowDown,
+  Trash2,
+  Plus,
+} from "lucide-react";
 import { ImageInput } from "@/components/admin/ImageInput";
-import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
+import {
+  DEFAULT_SETTINGS,
+  HOME_SECTION_LABELS,
+  normalizeHeroSlides,
+  normalizeHomeSections,
+  type HeroSlide,
+  type HomeSection,
+  type SiteSettings,
+} from "@/lib/site-settings";
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
@@ -15,6 +38,8 @@ export const Route = createFileRoute("/admin/settings")({
 
 const sections = [
   { id: "store", icon: Store, title: "Store details", desc: "Name, contact info, currency" },
+  { id: "homepage", icon: LayoutList, title: "Homepage layout", desc: "Reorder & show/hide home sections" },
+  { id: "hero", icon: GalleryHorizontal, title: "Hero slider", desc: "Slides shown at the top of the homepage" },
   { id: "branding", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
   { id: "seo", icon: Search, title: "SEO & sharing", desc: "Title, description, keywords, OG image" },
   { id: "theme", icon: Palette, title: "Theme", desc: "Brand colours used across the site" },
@@ -24,6 +49,7 @@ const sections = [
 ] as const;
 
 type Tab = (typeof sections)[number]["id"];
+
 
 function SettingsPage() {
   const qc = useQueryClient();
