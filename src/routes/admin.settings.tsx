@@ -512,10 +512,16 @@ function SettingsPage() {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Field
-                      label="Flat delivery charge (৳)"
+                      label="Inside Dhaka delivery (৳)"
                       type="number"
-                      value={String(num("shipping_flat_rate"))}
-                      onChange={(v) => set("shipping_flat_rate", Number(v))}
+                      value={String(num("shipping_inside_dhaka"))}
+                      onChange={(v) => set("shipping_inside_dhaka", Number(v))}
+                    />
+                    <Field
+                      label="Outside Dhaka delivery (৳)"
+                      type="number"
+                      value={String(num("shipping_outside_dhaka"))}
+                      onChange={(v) => set("shipping_outside_dhaka", Number(v))}
                     />
                     <Field
                       label="Free delivery above (৳)"
