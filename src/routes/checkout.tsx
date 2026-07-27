@@ -3,22 +3,23 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
-import { placeOrder } from "@/lib/storefront.functions";
+import { placeOrder, getSiteSettings } from "@/lib/storefront.functions";
+import { SiteTheme } from "@/components/storefront/SiteTheme";
+import { DEFAULT_SETTINGS, siteHead, type SiteSettings } from "@/lib/site-settings";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { useCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/checkout")({
-  head: () => ({
-    meta: [
-      { title: "Checkout — Shajgoj" },
-      { name: "description", content: "Complete your Shajgoj order with cash on delivery, bKash, Nagad or card." },
-      { property: "og:title", content: "Checkout — Shajgoj" },
-      { property: "og:description", content: "Secure checkout with cash on delivery across Bangladesh." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  loader: () => getSiteSettings(),
+  head: ({ loaderData }) => {
+    const settings = (loaderData as SiteSettings) ?? DEFAULT_SETTINGS;
+    return siteHead(settings, {
+      title: `Checkout — ${settings.store_name}`,
+      description: `Complete your ${settings.store_name} order securely.`,
+      path: "/checkout",
+    });
+  },
   component: CheckoutPage,
 });
 
@@ -30,6 +31,8 @@ const PAYMENTS = [
 ] as const;
 
 function CheckoutPage() {
+  const settings = (Route.useLoaderData() as SiteSettings) ?? DEFAULT_SETTINGS;
+  const payments = PAYMENTS.filter((p) => settings[`pay_${p.id}` as const] !== false);
   const { items, subtotal, clear } = useCart();
   const navigate = useNavigate();
   const submit = useServerFn(placeOrder);
@@ -42,10 +45,13 @@ function CheckoutPage() {
     address: "",
     notes: "",
     promoCode: "",
-    paymentMethod: "cod" as (typeof PAYMENTS)[number]["id"],
+    paymentMethod: (payments[0]?.id ?? "cod") as (typeof PAYMENTS)[number]["id"],
   });
 
-  const shipping = subtotal >= 999 || subtotal === 0 ? 0 : 60;
+  const shipping =
+    subtotal === 0 || subtotal >= Number(settings.free_shipping_threshold)
+      ? 0
+      : Number(settings.shipping_flat_rate);
   const total = subtotal + shipping;
 
   function set(key: keyof typeof form, value: string) {
@@ -76,7 +82,9 @@ function CheckoutPage() {
   if (done) {
     return (
       <div className="min-h-screen bg-background">
-        <SiteHeader categories={[]} />
+        <>
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={[]} settings={settings} />
         <div className="max-w-lg mx-auto px-4 py-24 text-center">
           <CheckCircle2 className="h-14 w-14 mx-auto text-emerald-500" />
           <h1 className="mt-4 text-2xl sm:text-3xl font-black">Order confirmed</h1>
@@ -91,14 +99,17 @@ function CheckoutPage() {
             Continue shopping
           </Link>
         </div>
-        <SiteFooter categories={[]} />
+        <SiteFooter categories={[]} settings={settings} />
+      </>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader categories={[]} />
+      <>
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={[]} settings={settings} />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="text-2xl sm:text-3xl font-black">Checkout</h1>
@@ -147,7 +158,7 @@ function CheckoutPage() {
               <div>
                 <p className="text-xs font-bold text-muted-foreground mb-2">Payment method</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {PAYMENTS.map((p) => (
+                  {payments.map((p) => (
                     <button
                       type="button"
                       key={p.id}
@@ -187,6 +198,9 @@ function CheckoutPage() {
               <div className="mt-4 space-y-1 text-sm border-t border-border pt-4">
                 <Row label="Subtotal" value={`৳${subtotal}`} />
                 <Row label="Shipping" value={shipping ? `৳${shipping}` : "Free"} />
+                {settings.delivery_partner && (
+                  <p className="text-xs text-muted-foreground">Delivered by {settings.delivery_partner}</p>
+                )}
                 <div className="flex justify-between font-black text-base pt-2">
                   <span>Total</span>
                   <span>৳{total}</span>
@@ -210,7 +224,8 @@ function CheckoutPage() {
         )}
       </div>
 
-      <SiteFooter categories={[]} />
+      <SiteFooter categories={[]} settings={settings} />
+      </>
     </div>
   );
 }

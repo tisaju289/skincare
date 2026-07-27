@@ -2,14 +2,20 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { mapProduct, PRODUCT_SELECT, type Category, type Product, type Review } from "@/lib/shop-data";
 
+export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
+  const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
+  return fetchSettings(getPublicClient());
+});
+
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const { getPublicClient } = await import("@/lib/supabase-public.server");
+  const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
   const supabase = getPublicClient();
 
-  const [cats, prods, brands] = await Promise.all([
+  const [cats, prods, brands, settings] = await Promise.all([
     supabase.from("categories").select("slug,name,color,image").order("sort_order"),
     supabase.from("products").select(PRODUCT_SELECT).order("reviews_count", { ascending: false }).limit(10),
     supabase.from("brands").select("slug,name").order("name"),
+    fetchSettings(supabase),
   ]);
 
   return {
@@ -21,18 +27,20 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
     })) as Category[],
     trending: (prods.data ?? []).map((p) => mapProduct(p as never)) as Product[],
     brands: (brands.data ?? []) as { slug: string; name: string }[],
+    settings,
   };
 });
 
 export const getCategoryPage = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ slug: z.string() }).parse(d))
   .handler(async ({ data }) => {
-    const { getPublicClient } = await import("@/lib/supabase-public.server");
+    const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
 
-    const [{ data: category }, { data: cats }] = await Promise.all([
+    const [{ data: category }, { data: cats }, settings] = await Promise.all([
       supabase.from("categories").select("slug,name,color,image").eq("slug", data.slug).maybeSingle(),
       supabase.from("categories").select("slug,name,color,image").order("sort_order"),
+      fetchSettings(supabase),
     ]);
     if (!category) return null;
 
@@ -58,18 +66,20 @@ export const getCategoryPage = createServerFn({ method: "GET" })
       products: (prods ?? [])
         .filter((p) => (p as never as { categories: { slug: string } | null }).categories?.slug === data.slug)
         .map((p) => mapProduct(p as never)) as Product[],
+      settings,
     };
   });
 
 export const getProductPage = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ slug: z.string() }).parse(d))
   .handler(async ({ data }) => {
-    const { getPublicClient } = await import("@/lib/supabase-public.server");
+    const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
 
-    const [{ data: row }, { data: cats }] = await Promise.all([
+    const [{ data: row }, { data: cats }, settings] = await Promise.all([
       supabase.from("products").select(PRODUCT_SELECT).eq("slug", data.slug).maybeSingle(),
       supabase.from("categories").select("slug,name,color,image").order("sort_order"),
+      fetchSettings(supabase),
     ]);
     if (!row) return null;
 
@@ -112,20 +122,22 @@ export const getProductPage = createServerFn({ method: "GET" })
         color: c.color ?? "",
         image: c.image ?? "",
       })) as Category[],
+      settings,
     };
   });
 
 export const searchProducts = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ q: z.string().default("") }).parse(d))
   .handler(async ({ data }) => {
-    const { getPublicClient } = await import("@/lib/supabase-public.server");
+    const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
 
-    const [{ data: cats }, res] = await Promise.all([
+    const [{ data: cats }, res, settings] = await Promise.all([
       supabase.from("categories").select("slug,name,color,image").order("sort_order"),
       data.q.trim()
         ? supabase.from("products").select(PRODUCT_SELECT).ilike("name", `%${data.q.trim()}%`).limit(40)
         : supabase.from("products").select(PRODUCT_SELECT).limit(40),
+      fetchSettings(supabase),
     ]);
 
     return {
@@ -137,6 +149,7 @@ export const searchProducts = createServerFn({ method: "GET" })
         color: c.color ?? "",
         image: c.image ?? "",
       })) as Category[],
+      settings,
     };
   });
 
@@ -156,7 +169,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { getPublicClient } = await import("@/lib/supabase-public.server");
+    const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
 
     const { data: orderNumber, error } = await supabase.rpc("place_order", {
@@ -186,7 +199,7 @@ export const submitReview = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { getPublicClient } = await import("@/lib/supabase-public.server");
+    const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
     const { error } = await supabase.rpc("submit_review", {
       p_product_slug: data.slug,
@@ -201,7 +214,7 @@ export const submitReview = createServerFn({ method: "POST" })
 export const subscribeNewsletter = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ email: z.string().email() }).parse(d))
   .handler(async ({ data }) => {
-    const { getPublicClient } = await import("@/lib/supabase-public.server");
+    const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
     const { error } = await supabase.rpc("subscribe_newsletter", { p_email: data.email });
     if (error) throw new Error(error.message);

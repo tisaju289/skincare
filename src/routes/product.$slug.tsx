@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { Heart, ShoppingBag, Star, Truck, ShieldCheck, RefreshCw, ChevronRight, Minus, Plus } from "lucide-react";
 import { getProductPage, submitReview } from "@/lib/storefront.functions";
 import type { Category, Product, Review } from "@/lib/shop-data";
+import { SiteTheme } from "@/components/storefront/SiteTheme";
+import { siteHead, DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
@@ -16,20 +18,14 @@ export const Route = createFileRoute("/product/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.product.name} — Shajgoj` },
-          { name: "description", content: loaderData.product.description || loaderData.product.name },
-          { property: "og:title", content: loaderData.product.name },
-          { property: "og:description", content: loaderData.product.description || loaderData.product.name },
-          { property: "og:type", content: "product" },
-          { property: "og:image", content: loaderData.product.image },
-          { name: "twitter:card", content: "summary_large_image" },
-          { name: "twitter:image", content: loaderData.product.image },
-        ]
-      : [],
-  }),
+  head: ({ loaderData, params }) =>
+    siteHead(loaderData?.settings ?? DEFAULT_SETTINGS, {
+      title: loaderData ? `${loaderData.product.name} — ${(loaderData.settings ?? DEFAULT_SETTINGS).store_name}` : undefined,
+      description: loaderData?.product.description || loaderData?.product.name,
+      image: loaderData?.product.image || undefined,
+      type: "product",
+      path: `/product/${params.slug}`,
+    }),
   errorComponent: ({ error }) => (
     <div className="min-h-screen grid place-items-center px-4 text-center">
       <p className="text-sm text-muted-foreground">{error.message}</p>
@@ -55,8 +51,9 @@ function ProductPage() {
     related: Product[];
     reviews: Review[];
     categories: Category[];
+    settings: SiteSettings;
   };
-  const { product, gallery, related, reviews, categories } = data;
+  const { product, gallery, related, reviews, categories, settings } = data;
   const { add } = useCart();
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(product.image);
@@ -87,7 +84,9 @@ function ProductPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader categories={categories} />
+      <>
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={categories} settings={settings} />
 
       <div className="max-w-7xl mx-auto px-4 py-4 text-xs text-muted-foreground flex items-center gap-1 flex-wrap">
         <Link to="/" className="hover:text-foreground">Home</Link>
@@ -247,7 +246,8 @@ function ProductPage() {
         </section>
       )}
 
-      <SiteFooter categories={categories} />
+      <SiteFooter categories={categories} settings={settings} />
+      </>
     </div>
   );
 }

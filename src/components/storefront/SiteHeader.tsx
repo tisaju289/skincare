@@ -4,6 +4,7 @@ import { Search, Heart, ShoppingBag, LayoutDashboard } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { CartDrawer } from "./CartDrawer";
+import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
 
 const pillNav = [
   { name: "UNDERGARMENTS", bg: "bg-[color:var(--brand-pink)]" },
@@ -13,7 +14,13 @@ const pillNav = [
   { name: "MEN", bg: "bg-[color:var(--brand-green)]" },
 ];
 
-export function SiteHeader({ categories = [] }: { categories?: Category[] }) {
+export function SiteHeader({
+  categories = [],
+  settings = DEFAULT_SETTINGS,
+}: {
+  categories?: Category[];
+  settings?: SiteSettings;
+}) {
   const navigate = useNavigate();
   const { count } = useCart();
   const [q, setQ] = useState("");
@@ -27,13 +34,23 @@ export function SiteHeader({ categories = [] }: { categories?: Category[] }) {
   return (
     <>
       <div className="bg-[color:var(--brand-pink)] text-white text-xs sm:text-sm text-center py-2 px-4">
-        Free delivery on orders over ৳999 · Cash on delivery available all over Bangladesh
+        {settings.announcement_text}
       </div>
 
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
-          <Link to="/" className="text-xl sm:text-3xl font-black tracking-tight text-foreground shrink-0">
-            SHAJGOJ
+          <Link to="/" className="flex items-center gap-2 shrink-0">
+            {settings.logo_url ? (
+              <img
+                src={settings.logo_url}
+                alt={`${settings.store_name} logo`}
+                className="h-8 sm:h-10 w-auto object-contain"
+              />
+            ) : (
+              <span className="text-xl sm:text-3xl font-black tracking-tight text-foreground uppercase">
+                {settings.store_name}
+              </span>
+            )}
           </Link>
           <form onSubmit={submit} className="hidden md:block flex-1 relative min-w-0">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />

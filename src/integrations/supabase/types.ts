@@ -451,37 +451,115 @@ export type Database = {
       }
       store_settings: {
         Row: {
+          announcement_text: string | null
           business_address: string | null
           created_at: string
           currency: string
+          delivery_partner: string | null
+          facebook_url: string | null
+          favicon_url: string | null
+          free_shipping_threshold: number
           id: string
+          instagram_url: string | null
+          logo_url: string | null
+          low_stock_threshold: number
+          notify_low_stock_email: boolean
+          notify_order_email: boolean
+          notify_order_sms: boolean
+          og_image_url: string | null
+          pay_bkash: boolean
+          pay_card: boolean
+          pay_cod: boolean
+          pay_nagad: boolean
           phone: string | null
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
+          shipping_flat_rate: number
           store_name: string
           support_email: string | null
+          theme_green: string
+          theme_magenta: string
+          theme_pink: string
+          theme_purple: string
+          theme_teal: string
           timezone: string
           updated_at: string
+          youtube_url: string | null
         }
         Insert: {
+          announcement_text?: string | null
           business_address?: string | null
           created_at?: string
           currency?: string
+          delivery_partner?: string | null
+          facebook_url?: string | null
+          favicon_url?: string | null
+          free_shipping_threshold?: number
           id?: string
+          instagram_url?: string | null
+          logo_url?: string | null
+          low_stock_threshold?: number
+          notify_low_stock_email?: boolean
+          notify_order_email?: boolean
+          notify_order_sms?: boolean
+          og_image_url?: string | null
+          pay_bkash?: boolean
+          pay_card?: boolean
+          pay_cod?: boolean
+          pay_nagad?: boolean
           phone?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+          shipping_flat_rate?: number
           store_name?: string
           support_email?: string | null
+          theme_green?: string
+          theme_magenta?: string
+          theme_pink?: string
+          theme_purple?: string
+          theme_teal?: string
           timezone?: string
           updated_at?: string
+          youtube_url?: string | null
         }
         Update: {
+          announcement_text?: string | null
           business_address?: string | null
           created_at?: string
           currency?: string
+          delivery_partner?: string | null
+          facebook_url?: string | null
+          favicon_url?: string | null
+          free_shipping_threshold?: number
           id?: string
+          instagram_url?: string | null
+          logo_url?: string | null
+          low_stock_threshold?: number
+          notify_low_stock_email?: boolean
+          notify_order_email?: boolean
+          notify_order_sms?: boolean
+          og_image_url?: string | null
+          pay_bkash?: boolean
+          pay_card?: boolean
+          pay_cod?: boolean
+          pay_nagad?: boolean
           phone?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+          shipping_flat_rate?: number
           store_name?: string
           support_email?: string | null
+          theme_green?: string
+          theme_magenta?: string
+          theme_pink?: string
+          theme_purple?: string
+          theme_teal?: string
           timezone?: string
           updated_at?: string
+          youtube_url?: string | null
         }
         Relationships: []
       }
