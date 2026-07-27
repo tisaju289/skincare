@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Heart, ShoppingBag, LayoutDashboard } from "lucide-react";
+import { Search, Heart, ShoppingBag, LayoutDashboard, Menu, X } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { CartDrawer } from "./CartDrawer";
@@ -25,6 +25,7 @@ export function SiteHeader({
   const { count } = useCart();
   const [q, setQ] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,6 +40,13 @@ export function SiteHeader({
 
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
+          <button
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            className="lg:hidden h-9 w-9 shrink-0 grid place-items-center rounded-lg hover:bg-muted"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
           <Link to="/" className="flex items-center gap-2 shrink-0">
             {settings.logo_url ? (
               <img
@@ -128,6 +136,83 @@ export function SiteHeader({
           </div>
         )}
       </header>
+
+      {/* Mobile menu drawer */}
+      <div className={`lg:hidden fixed inset-0 z-50 ${menuOpen ? "" : "pointer-events-none"}`} aria-hidden={!menuOpen}>
+        <div
+          onClick={() => setMenuOpen(false)}
+          className={`absolute inset-0 bg-black/50 transition-opacity ${menuOpen ? "opacity-100" : "opacity-0"}`}
+        />
+        <div
+          className={`absolute inset-y-0 left-0 w-[82%] max-w-80 bg-background flex flex-col transition-transform duration-200 ${
+            menuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
+            <span className="text-sm font-black uppercase truncate">{settings.store_name}</span>
+            <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="h-8 w-8 shrink-0 grid place-items-center rounded-lg hover:bg-muted">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+            <Link to="/search" search={{ q: "" }} onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
+              <Heart className="h-4 w-4" /> All products
+            </Link>
+            {categories.filter((c) => !c.parent).map((c) => {
+              const kids = categories.filter((k) => k.parent === c.slug);
+              return (
+                <div key={c.slug}>
+                  <Link
+                    to="/category/$slug"
+                    params={{ slug: c.slug }}
+                    onClick={() => setMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
+                  >
+                    {c.name}
+                  </Link>
+                  {kids.length > 0 && (
+                    <div className="ml-3 border-l border-border pl-2">
+                      {kids.map((k) => (
+                        <Link
+                          key={k.slug}
+                          to="/category/$slug"
+                          params={{ slug: k.slug }}
+                          onClick={() => setMenuOpen(false)}
+                          className="block rounded-lg px-3 py-2 text-[13px] text-foreground/70 hover:bg-muted"
+                        >
+                          {k.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            <div className="flex flex-wrap gap-2 pt-3">
+              {pillNav.map((p) => (
+                <Link
+                  key={p.name}
+                  to="/search"
+                  search={{ q: "" }}
+                  onClick={() => setMenuOpen(false)}
+                  className={`${p.bg} text-white text-[11px] font-bold px-3 py-1.5 rounded-full`}
+                >
+                  {p.name}
+                </Link>
+              ))}
+            </div>
+          </nav>
+          <div className="border-t border-border p-3">
+            <Link
+              to="/admin"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm font-semibold hover:bg-muted"
+            >
+              <LayoutDashboard className="h-4 w-4" /> Admin
+            </Link>
+          </div>
+        </div>
+      </div>
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>
