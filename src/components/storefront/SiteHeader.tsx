@@ -110,7 +110,7 @@ export function SiteHeader({
         </form>
 
         {categories.length > 0 && (
-          <div className="max-w-7xl mx-auto px-4 pb-3 flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar">
+          <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar">
             {categories.filter((c) => !c.parent).map((c) => (
               <Link
                 key={c.slug}
