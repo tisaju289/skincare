@@ -43,23 +43,24 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                 className="absolute right-0 top-0 h-full w-1/2 md:w-[45%] object-cover"
               />
             ) : null}
-            <div className="relative h-full flex flex-col justify-center p-4 sm:p-8 md:p-14 max-w-[58%] md:max-w-[52%]">
+            <div className="relative h-full flex flex-col justify-center p-4 sm:p-8 md:p-14 max-w-[52%] md:max-w-[50%]">
               {s.kicker ? (
-                <p className="text-[10px] sm:text-sm font-bold tracking-widest text-blue-700">{s.kicker}</p>
+                <p className="text-[9px] sm:text-sm font-bold tracking-widest text-blue-700 line-clamp-1">{s.kicker}</p>
               ) : null}
               {s.badge ? (
-                <div className="mt-1.5 sm:mt-3 self-start bg-[color:var(--brand-pink)] text-white text-sm sm:text-3xl font-black px-2 sm:px-4 py-0.5 sm:py-1.5 rounded">
+                <div className="mt-1 sm:mt-3 self-start bg-[color:var(--brand-pink)] text-white text-xs sm:text-3xl font-black px-2 sm:px-4 py-0.5 sm:py-1.5 rounded">
                   {s.badge}
                 </div>
               ) : null}
               {s.title ? (
-                <h1 className="mt-1.5 sm:mt-3 text-2xl sm:text-5xl lg:text-6xl font-black leading-none text-blue-900 -rotate-2">
+                <h1 className="mt-1 sm:mt-3 text-xl sm:text-5xl lg:text-6xl font-black leading-none text-blue-900 -rotate-2 break-words">
                   {s.title}
                 </h1>
               ) : null}
               {s.subtitle ? (
-                <p className="mt-1.5 sm:mt-3 text-sm sm:text-2xl font-black text-blue-900">{s.subtitle}</p>
+                <p className="mt-1 sm:mt-3 text-[11px] sm:text-2xl font-black text-blue-900">{s.subtitle}</p>
               ) : null}
+
               {s.cta_label ? (
                 <a
                   href={s.cta_link || "/search"}
