@@ -61,14 +61,14 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                 <p className="mt-1.5 sm:mt-3 text-sm sm:text-2xl font-black text-blue-900">{s.subtitle}</p>
               ) : null}
               {s.cta_label ? (
-                <Link
-                  to={s.cta_link && s.cta_link !== "/search" ? s.cta_link : "/search"}
-                  search={s.cta_link && s.cta_link !== "/search" ? undefined : { q: "" }}
+                <a
+                  href={s.cta_link || "/search"}
                   className="mt-2.5 sm:mt-6 self-start inline-flex items-center gap-1.5 bg-[color:var(--brand-pink)] hover:opacity-90 text-white font-bold px-3.5 sm:px-8 py-1.5 sm:py-3 rounded-full text-[11px] sm:text-base"
                 >
                   {s.cta_label} <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Link>
+                </a>
               ) : null}
+
             </div>
           </div>
         ))}
