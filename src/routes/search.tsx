@@ -63,10 +63,10 @@ function SearchPage() {
       <SiteTheme settings={settings} />
       <SiteHeader categories={categories} settings={settings} />
 
-      <section className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-2xl sm:text-3xl font-black">{q ? `Results for “${q}”` : "All products"}</h1>
+      <section className="max-w-7xl mx-auto px-4 pt-3 pb-8 sm:py-8">
+        <h1 className="text-xl sm:text-3xl font-black">{q ? `Results for “${q}”` : "All products"}</h1>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <div className="mt-3 sm:mt-6 grid gap-4 sm:gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
           <ShopFilters
             categories={categories}
             min={bounds[0]}
