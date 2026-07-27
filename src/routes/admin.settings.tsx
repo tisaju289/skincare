@@ -21,6 +21,7 @@ import {
   Trash2,
   Plus,
   BadgeCheck,
+  Menu as MenuIcon,
 } from "lucide-react";
 import { ImageInput } from "@/components/admin/ImageInput";
 import {
@@ -31,6 +32,10 @@ import {
   normalizeHeroSlides,
   normalizeHomeSections,
   normalizeProductBadges,
+  normalizeHeaderMenus,
+  HEADER_MENU_COLORS,
+  type HeaderMenu,
+  type HeaderMenuColor,
   PRODUCT_BADGE_ICONS,
   type ProductBadge,
   type ProductBadgeIcon,
@@ -48,6 +53,7 @@ const sections = [
   { id: "store", icon: Store, title: "Store details", desc: "Name, contact info, currency" },
   { id: "homepage", icon: LayoutList, title: "Homepage layout", desc: "Reorder & show/hide home sections" },
   { id: "hero", icon: GalleryHorizontal, title: "Hero slider", desc: "Slides shown at the top of the homepage" },
+  { id: "headermenu", icon: MenuIcon, title: "Header menu", desc: "Top navigation links & dropdowns" },
   { id: "productpage", icon: BadgeCheck, title: "Product page", desc: "Delivery / authentic / return badges" },
   { id: "branding", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
   { id: "seo", icon: Search, title: "SEO & sharing", desc: "Title, description, keywords, OG image" },
@@ -81,6 +87,15 @@ function SettingsPage() {
     },
   });
 
+  const catQ = useQuery({
+    queryKey: ["admin", "settings", "categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("categories").select("id,name,slug,parent_id").order("sort_order");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   useEffect(() => {
     if (q.data)
       setForm({
@@ -88,13 +103,14 @@ function SettingsPage() {
         home_sections: normalizeHomeSections((q.data as SiteSettings).home_sections),
         hero_slides: normalizeHeroSlides((q.data as SiteSettings).hero_slides),
         product_badges: normalizeProductBadges((q.data as SiteSettings).product_badges),
+        header_menus: normalizeHeaderMenus((q.data as SiteSettings).header_menus),
       });
   }, [q.data]);
 
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges"]);
+      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges", "header_menus"]);
       const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
@@ -114,6 +130,24 @@ function SettingsPage() {
   const homeSections = normalizeHomeSections(form.home_sections);
   const heroSlides = normalizeHeroSlides(form.hero_slides);
   const productBadges = normalizeProductBadges(form.product_badges);
+  const headerMenus = normalizeHeaderMenus(form.header_menus);
+
+  const setMenu = (index: number, patch: Partial<HeaderMenu>) =>
+    set("header_menus", headerMenus.map((m, i) => (i === index ? { ...m, ...patch } : m)));
+  const moveMenu = (index: number, dir: -1 | 1) => {
+    const next = [...headerMenus];
+    const target = index + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    set("header_menus", next);
+  };
+  const removeMenu = (index: number) =>
+    set("header_menus", headerMenus.filter((_, i) => i !== index));
+  const addMenu = () =>
+    set("header_menus", [
+      ...headerMenus,
+      { label: "New menu", type: "category", slug: "", url: "", color: "none", enabled: true } as HeaderMenu,
+    ]);
 
   const setBadge = (index: number, patch: Partial<ProductBadge>) =>
     set("product_badges", productBadges.map((b, i) => (i === index ? { ...b, ...patch } : b)));
@@ -446,6 +480,87 @@ function SettingsPage() {
                 </div>
               )}
 
+
+              {tab === "headermenu" && (
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    These links show in the storefront header. Leave the list empty to fall back to all top-level
+                    categories. Category menus automatically show their subcategories on hover.
+                  </p>
+                  {headerMenus.map((m, i) => (
+                    <div key={i} className="rounded-xl border border-border px-3 py-2.5 space-y-3">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="h-7 w-7 shrink-0 rounded-lg bg-muted grid place-items-center text-xs font-bold">
+                          {i + 1}
+                        </span>
+                        <select
+                          value={m.type}
+                          onChange={(e) => setMenu(i, { type: e.target.value as HeaderMenu["type"] })}
+                          className="px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
+                        >
+                          <option value="category">Category</option>
+                          <option value="link">Custom link</option>
+                        </select>
+                        <select
+                          value={m.color}
+                          onChange={(e) => setMenu(i, { color: e.target.value as HeaderMenuColor })}
+                          className="px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
+                        >
+                          {Object.entries(HEADER_MENU_COLORS).map(([k, label]) => (
+                            <option key={k} value={k}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="ml-auto flex items-center gap-1">
+                          <button type="button" onClick={() => moveMenu(i, -1)} className="p-1.5 rounded-lg hover:bg-muted" aria-label="Move up">
+                            <ArrowUp className="h-4 w-4" />
+                          </button>
+                          <button type="button" onClick={() => moveMenu(i, 1)} className="p-1.5 rounded-lg hover:bg-muted" aria-label="Move down">
+                            <ArrowDown className="h-4 w-4" />
+                          </button>
+                          <button type="button" onClick={() => removeMenu(i)} className="p-1.5 rounded-lg hover:bg-muted text-destructive" aria-label="Remove menu">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                          <Toggle label="" checked={m.enabled} onChange={(v) => setMenu(i, { enabled: v })} />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Field label="Label" value={m.label} onChange={(v) => setMenu(i, { label: v })} />
+                        {m.type === "category" ? (
+                          <label className="block">
+                            <span className="text-xs font-medium text-muted-foreground">Category</span>
+                            <select
+                              value={m.slug}
+                              onChange={(e) => {
+                                const cat = catQ.data?.find((c: any) => c.slug === e.target.value);
+                                setMenu(i, { slug: e.target.value, label: m.label && m.label !== "New menu" ? m.label : (cat?.name ?? m.label) });
+                              }}
+                              className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
+                            >
+                              <option value="">Select category…</option>
+                              {(catQ.data ?? []).filter((c: any) => !c.parent_id).map((c: any) => (
+                                <option key={c.id} value={c.slug}>
+                                  {c.name}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                        ) : (
+                          <Field label="Link URL" value={m.url} onChange={(v) => setMenu(i, { url: v })} />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addMenu}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-border py-2.5 text-sm font-semibold hover:bg-muted"
+                  >
+                    <Plus className="h-4 w-4" /> Add menu item
+                  </button>
+                </div>
+              )}
 
               {tab === "productpage" && (
                 <div className="space-y-2">

@@ -167,11 +167,51 @@ export function normalizeProductBadges(value: unknown): ProductBadge[] {
   return clean.length ? clean : DEFAULT_PRODUCT_BADGES.map((b) => ({ ...b }));
 }
 
+export const HEADER_MENU_COLORS = {
+  none: "Plain text",
+  pink: "Pink pill",
+  magenta: "Magenta pill",
+  purple: "Purple pill",
+  teal: "Teal pill",
+  green: "Green pill",
+} as const;
+
+export type HeaderMenuColor = keyof typeof HEADER_MENU_COLORS;
+
+export type HeaderMenu = {
+  label: string;
+  /** "category" uses slug, "link" uses url */
+  type: "category" | "link";
+  slug: string;
+  url: string;
+  color: HeaderMenuColor;
+  enabled: boolean;
+};
+
+export const DEFAULT_HEADER_MENUS: HeaderMenu[] = [
+  { label: "All products", type: "link", slug: "", url: "/search", color: "none", enabled: true },
+];
+
+export function normalizeHeaderMenus(value: unknown): HeaderMenu[] {
+  const stored = Array.isArray(value) ? value : [];
+  return stored
+    .filter((m) => m && typeof m === "object")
+    .map((m: any) => ({
+      label: String(m.label ?? ""),
+      type: m.type === "link" ? "link" : "category",
+      slug: String(m.slug ?? ""),
+      url: String(m.url ?? ""),
+      color: (m.color in HEADER_MENU_COLORS ? m.color : "none") as HeaderMenuColor,
+      enabled: m.enabled !== false,
+    }));
+}
+
 export type SiteSettings = {
   id?: string;
   home_sections: HomeSection[];
   hero_slides: HeroSlide[];
   product_badges: ProductBadge[];
+  header_menus: HeaderMenu[];
 
   store_name: string;
   support_email: string | null;
@@ -213,6 +253,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   home_sections: DEFAULT_HOME_SECTIONS,
   hero_slides: DEFAULT_HERO_SLIDES,
   product_badges: DEFAULT_PRODUCT_BADGES,
+  header_menus: [],
   store_name: "Shajgoj",
   support_email: null,
   phone: null,
@@ -263,6 +304,7 @@ export function resolveSettings(row: unknown): SiteSettings {
   out.home_sections = normalizeHomeSections(r.home_sections);
   out.hero_slides = normalizeHeroSlides(r.hero_slides);
   out.product_badges = normalizeProductBadges(r.product_badges);
+  out.header_menus = normalizeHeaderMenus(r.header_menus);
   return out as SiteSettings;
 }
 
