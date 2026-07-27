@@ -41,12 +41,14 @@ function Index() {
   const data = Route.useLoaderData() as {
     categories: Category[];
     trending: Product[];
-    brands: { slug: string; name: string }[];
+    brands: { slug: string; name: string; logo?: string | null }[];
     settings: SiteSettings;
   };
   const { categories, trending, brands, settings } = data;
   const topCategories = categories.filter((c) => !c.parent);
   const [showAllCats, setShowAllCats] = useState(false);
+  const [showAllBrands, setShowAllBrands] = useState(false);
+
 
 
 
@@ -200,17 +202,37 @@ function Index() {
             <h2 className="text-2xl md:text-3xl font-black">Shop by Brand</h2>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-            {brands.map((b, i) => (
+            {(showAllBrands ? brands : brands.slice(0, 6)).map((b, i) => (
               <Link
                 key={b.slug}
                 to="/search"
                 search={{ q: b.name }}
-                className={`${brandColors[i % brandColors.length]} aspect-video rounded-xl grid place-items-center font-bold text-foreground/80 hover:scale-[1.02] transition text-center px-2 text-sm`}
+                className={`${brandColors[i % brandColors.length]} aspect-video rounded-xl overflow-hidden flex flex-col items-center justify-center gap-1 font-bold text-foreground/80 hover:scale-[1.02] transition text-center px-2 py-2 text-xs sm:text-sm`}
               >
-                {b.name}
+                {b.logo ? (
+                  <img
+                    src={b.logo}
+                    alt={`${b.name} logo`}
+                    loading="lazy"
+                    className="h-8 sm:h-10 w-auto max-w-full object-contain"
+                  />
+                ) : null}
+                <span className="line-clamp-1">{b.name}</span>
               </Link>
             ))}
           </div>
+          {brands.length > 6 && (
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => setShowAllBrands((v) => !v)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-5 py-2 text-xs font-bold uppercase hover:bg-muted"
+              >
+                {showAllBrands ? "Show less" : "All brands"}
+                <ChevronRight className={`h-3.5 w-3.5 transition ${showAllBrands ? "-rotate-90" : "rotate-90"}`} />
+              </button>
+            </div>
+          )}
+
         </section>
       )}
 
