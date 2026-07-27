@@ -15,6 +15,10 @@ export type Product = {
   description: string;
   color: string;
   stock: number;
+  isTrending: boolean;
+  isBestSeller: boolean;
+  isFlashSale: boolean;
+  isNewArrival: boolean;
 };
 
 export type Category = {
@@ -73,6 +77,10 @@ type ProductRow = {
   description: string | null;
   color: string | null;
   stock: number | null;
+  is_trending?: boolean | null;
+  is_best_seller?: boolean | null;
+  is_flash_sale?: boolean | null;
+  is_new_arrival?: boolean | null;
   brands: { name: string } | null;
   categories: { slug: string; name: string } | null;
 };
@@ -93,8 +101,12 @@ export function mapProduct(row: ProductRow): Product {
     description: row.description ?? "",
     color: row.color ?? "bg-muted",
     stock: row.stock ?? 0,
+    isTrending: !!row.is_trending,
+    isBestSeller: !!row.is_best_seller,
+    isFlashSale: !!row.is_flash_sale,
+    isNewArrival: !!row.is_new_arrival,
   };
 }
 
 export const PRODUCT_SELECT =
-  "slug,name,price,old_price,tag,rating,reviews_count,image,description,color,stock,brands(name),categories(slug,name)";
+  "slug,name,price,old_price,tag,rating,reviews_count,image,description,color,stock,is_trending,is_best_seller,is_flash_sale,is_new_arrival,brands(name),categories(slug,name)";
