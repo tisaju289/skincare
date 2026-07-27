@@ -22,7 +22,33 @@ export type Category = {
   name: string;
   color: string;
   image: string;
+  /** Parent category slug, or null for top-level categories. */
+  parent: string | null;
 };
+
+export type CategoryRow = {
+  id: string;
+  slug: string;
+  name: string;
+  color: string | null;
+  image: string | null;
+  parent_id: string | null;
+};
+
+export const CATEGORY_SELECT = "id,slug,name,color,image,parent_id";
+
+/** Maps raw category rows to DTOs, resolving parent_id into a parent slug. */
+export function mapCategories(rows: CategoryRow[] | null | undefined): Category[] {
+  const list = rows ?? [];
+  const bySlug = new Map(list.map((c) => [c.id, c.slug]));
+  return list.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    color: c.color ?? "from-pink-400 to-rose-500",
+    image: c.image ?? "",
+    parent: c.parent_id ? (bySlug.get(c.parent_id) ?? null) : null,
+  }));
+}
 
 export type Review = {
   id: string;
