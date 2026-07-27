@@ -39,22 +39,27 @@ export const getCategoryPage = createServerFn({ method: "GET" })
     ]);
     if (!category) return null;
 
+    const all = mapCategories(cats as never);
+    const children = all.filter((c) => c.parent === category.slug);
+    const scope = new Set<string>([category.slug, ...children.map((c) => c.slug)]);
+
     const { data: prods } = await supabase
       .from("products")
       .select(PRODUCT_SELECT)
-      .eq("categories.slug", data.slug)
       .order("rating", { ascending: false });
 
     return {
-      category: {
+      category: (all.find((c) => c.slug === category.slug) ?? {
         slug: category.slug,
         name: category.name,
         color: category.color ?? "from-pink-400 to-rose-500",
         image: category.image ?? "",
-      } as Category,
-      categories: mapCategories(cats as never),
+        parent: null,
+      }) as Category,
+      subcategories: children,
+      categories: all,
       products: (prods ?? [])
-        .filter((p) => (p as never as { categories: { slug: string } | null }).categories?.slug === data.slug)
+        .filter((p) => scope.has((p as never as { categories: { slug: string } | null }).categories?.slug ?? ""))
         .map((p) => mapProduct(p as never)) as Product[],
       settings,
     };
