@@ -110,3 +110,36 @@ export function mapProduct(row: ProductRow): Product {
 
 export const PRODUCT_SELECT =
   "slug,name,price,old_price,tag,rating,reviews_count,image,description,color,stock,is_trending,is_best_seller,is_flash_sale,is_new_arrival,brands(name),categories(slug,name)";
+
+/** Picks products for a homepage section based on its configured source. */
+export function pickProducts(
+  pool: Product[],
+  source: string | undefined,
+  limit = 10,
+): Product[] {
+  const byRating = (a: Product, b: Product) => b.rating - a.rating || b.reviews - a.reviews;
+  let list: Product[];
+  switch (source) {
+    case "trending":
+      list = pool.filter((p) => p.isTrending);
+      if (!list.length) list = [...pool].sort(byRating);
+      break;
+    case "best_seller":
+      list = pool.filter((p) => p.isBestSeller);
+      if (!list.length) list = [...pool].sort((a, b) => b.reviews - a.reviews);
+      break;
+    case "flash_sale":
+      list = pool.filter((p) => p.isFlashSale);
+      break;
+    case "new_arrival":
+      list = pool.filter((p) => p.isNewArrival);
+      if (!list.length) list = pool;
+      break;
+    case "discount":
+      list = pool.filter((p) => p.old != null && p.old > p.price);
+      break;
+    default:
+      list = pool;
+  }
+  return list.slice(0, limit);
+}
