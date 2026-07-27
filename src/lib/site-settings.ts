@@ -158,6 +158,8 @@ export type SiteSettings = {
   pay_card: boolean;
   pay_cod: boolean;
   shipping_flat_rate: number;
+  shipping_inside_dhaka: number;
+  shipping_outside_dhaka: number;
   free_shipping_threshold: number;
   delivery_partner: string | null;
   notify_order_email: boolean;
@@ -197,6 +199,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   pay_card: true,
   pay_cod: true,
   shipping_flat_rate: 60,
+  shipping_inside_dhaka: 60,
+  shipping_outside_dhaka: 120,
   free_shipping_threshold: 999,
   delivery_partner: null,
   notify_order_email: true,

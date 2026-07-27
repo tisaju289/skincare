@@ -501,6 +501,8 @@ export type Database = {
           seo_keywords: string | null
           seo_title: string | null
           shipping_flat_rate: number
+          shipping_inside_dhaka: number
+          shipping_outside_dhaka: number
           store_name: string
           support_email: string | null
           theme_green: string
@@ -540,6 +542,8 @@ export type Database = {
           seo_keywords?: string | null
           seo_title?: string | null
           shipping_flat_rate?: number
+          shipping_inside_dhaka?: number
+          shipping_outside_dhaka?: number
           store_name?: string
           support_email?: string | null
           theme_green?: string
@@ -579,6 +583,8 @@ export type Database = {
           seo_keywords?: string | null
           seo_title?: string | null
           shipping_flat_rate?: number
+          shipping_inside_dhaka?: number
+          shipping_outside_dhaka?: number
           store_name?: string
           support_email?: string | null
           theme_green?: string
@@ -625,19 +631,34 @@ export type Database = {
         }
         Returns: boolean
       }
-      place_order: {
-        Args: {
-          p_address: string
-          p_email: string
-          p_items: Json
-          p_name: string
-          p_notes?: string
-          p_payment_method?: Database["public"]["Enums"]["payment_method"]
-          p_phone: string
-          p_promo_code?: string
-        }
-        Returns: string
-      }
+      place_order:
+        | {
+            Args: {
+              p_address: string
+              p_email: string
+              p_items: Json
+              p_name: string
+              p_notes?: string
+              p_payment_method?: Database["public"]["Enums"]["payment_method"]
+              p_phone: string
+              p_promo_code?: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_address: string
+              p_delivery_zone?: string
+              p_email: string
+              p_items: Json
+              p_name: string
+              p_notes?: string
+              p_payment_method?: Database["public"]["Enums"]["payment_method"]
+              p_phone: string
+              p_promo_code?: string
+            }
+            Returns: string
+          }
       submit_review: {
         Args: {
           p_comment: string

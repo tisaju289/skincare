@@ -152,6 +152,7 @@ export const placeOrder = createServerFn({ method: "POST" })
         notes: z.string().optional(),
         promoCode: z.string().optional(),
         paymentMethod: z.enum(["bkash", "nagad", "card", "cod"]),
+        deliveryZone: z.enum(["inside", "outside"]).optional(),
         items: z.array(z.object({ slug: z.string(), quantity: z.number().int().min(1).max(20) })).min(1),
       })
       .parse(d),
@@ -169,6 +170,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       p_payment_method: data.paymentMethod,
       p_promo_code: data.promoCode || undefined,
       p_notes: data.notes || undefined,
+      p_delivery_zone: data.deliveryZone ?? "inside",
     });
 
     if (error) throw new Error(error.message);

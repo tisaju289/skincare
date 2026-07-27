@@ -40,18 +40,18 @@ function CheckoutPage() {
   const [done, setDone] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
-    email: "",
     phone: "",
     address: "",
-    notes: "",
-    promoCode: "",
     paymentMethod: (payments[0]?.id ?? "cod") as (typeof PAYMENTS)[number]["id"],
   });
 
+  const [zone, setZone] = useState<"inside" | "outside">("inside");
+  const zoneRate =
+    zone === "outside"
+      ? Number(settings.shipping_outside_dhaka ?? 120)
+      : Number(settings.shipping_inside_dhaka ?? 60);
   const shipping =
-    subtotal === 0 || subtotal >= Number(settings.free_shipping_threshold)
-      ? 0
-      : Number(settings.shipping_flat_rate);
+    subtotal === 0 || subtotal >= Number(settings.free_shipping_threshold) ? 0 : zoneRate;
   const total = subtotal + shipping;
 
   function set(key: keyof typeof form, value: string) {
@@ -66,6 +66,8 @@ function CheckoutPage() {
       const res = await submit({
         data: {
           ...form,
+          email: "",
+          deliveryZone: zone,
           items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })),
         },
       });
@@ -124,14 +126,11 @@ function CheckoutPage() {
         ) : (
           <form onSubmit={onSubmit} className="mt-6 grid lg:grid-cols-[1fr_360px] gap-8">
             <div className="space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <Field label="Full name" required value={form.name} onChange={(v) => set("name", v)} />
-                <Field label="Phone" required value={form.phone} onChange={(v) => set("phone", v)} />
-              </div>
-              <Field label="Email (optional)" type="email" value={form.email} onChange={(v) => set("email", v)} />
-              <div>
+              <Field label="Full name" required value={form.name} onChange={(v) => set("name", v)} />
+              <Field label="Phone" required value={form.phone} onChange={(v) => set("phone", v)} />
+              <div className="mt-3">
                 <label className="text-xs font-bold text-muted-foreground" htmlFor="address">
-                  Delivery address
+                  Address
                 </label>
                 <textarea
                   id="address"
@@ -142,17 +141,29 @@ function CheckoutPage() {
                   className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm"
                 />
               </div>
+
               <div>
-                <label className="text-xs font-bold text-muted-foreground" htmlFor="notes">
-                  Order notes (optional)
-                </label>
-                <textarea
-                  id="notes"
-                  rows={2}
-                  value={form.notes}
-                  onChange={(e) => set("notes", e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm"
-                />
+                <p className="text-xs font-bold text-muted-foreground mb-2">Delivery area</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {([
+                    { id: "inside", label: "Inside Dhaka", rate: Number(settings.shipping_inside_dhaka ?? 60) },
+                    { id: "outside", label: "Outside Dhaka", rate: Number(settings.shipping_outside_dhaka ?? 120) },
+                  ] as const).map((z) => (
+                    <button
+                      type="button"
+                      key={z.id}
+                      onClick={() => setZone(z.id)}
+                      className={`rounded-xl border px-3 py-2.5 text-sm font-semibold ${
+                        zone === z.id
+                          ? "border-[color:var(--brand-pink)] bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)]"
+                          : "border-border"
+                      }`}
+                    >
+                      {z.label}
+                      <span className="block text-[11px] font-normal opacity-70">৳{z.rate}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div>
@@ -190,11 +201,6 @@ function CheckoutPage() {
                   </li>
                 ))}
               </ul>
-              <Field
-                label="Promo code"
-                value={form.promoCode}
-                onChange={(v) => set("promoCode", v.toUpperCase())}
-              />
               <div className="mt-4 space-y-1 text-sm border-t border-border pt-4">
                 <Row label="Subtotal" value={`৳${subtotal}`} />
                 <Row label="Shipping" value={shipping ? `৳${shipping}` : "Free"} />
