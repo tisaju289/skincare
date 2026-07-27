@@ -144,7 +144,7 @@ function Index() {
 
     brands:
       brands.length > 0 ? (
-        <section className="max-w-7xl mx-auto px-4 mt-14">
+        <section id="brands" className="max-w-7xl mx-auto px-4 mt-14 scroll-mt-24">
           <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
             <h2 className="text-2xl md:text-3xl font-black">Shop by Brand</h2>
           </div>
