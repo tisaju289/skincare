@@ -8,7 +8,15 @@ import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import type { Category, Product } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
-import { siteHead, DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
+import { HeroSlider } from "@/components/storefront/HeroSlider";
+import {
+  siteHead,
+  DEFAULT_SETTINGS,
+  normalizeHomeSections,
+  normalizeHeroSlides,
+  type HomeSectionId,
+  type SiteSettings,
+} from "@/lib/site-settings";
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
