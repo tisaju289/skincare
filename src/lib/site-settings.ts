@@ -1,6 +1,35 @@
-export type HomeSectionId = "hero" | "categories" | "deals" | "trending" | "brands" | "trust";
+export type BuiltinSectionId = "hero" | "categories" | "deals" | "trending" | "brands" | "trust";
+export type HomeSectionId = BuiltinSectionId;
 
-export type HomeSection = { id: HomeSectionId; enabled: boolean };
+/** Where a custom product section pulls its products from. */
+export type ProductSource =
+  | "trending"
+  | "best_seller"
+  | "flash_sale"
+  | "new_arrival"
+  | "discount"
+  | "latest";
+
+export const PRODUCT_SOURCE_LABELS: Record<ProductSource, string> = {
+  trending: "Trending products",
+  best_seller: "Best selling products",
+  flash_sale: "Flash sale products",
+  new_arrival: "New arrivals",
+  discount: "Discounted products",
+  latest: "Latest products",
+};
+
+export type HomeSection = {
+  id: string;
+  /** "builtin" = fixed block, "products" = custom product grid built in Settings. */
+  kind?: "builtin" | "products";
+  enabled: boolean;
+  title?: string;
+  subtitle?: string;
+  source?: ProductSource;
+  limit?: number;
+  link?: string;
+};
 
 export type HeroSlide = {
   kicker?: string | null;
@@ -12,7 +41,7 @@ export type HeroSlide = {
   cta_link?: string | null;
 };
 
-export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
+export const HOME_SECTION_LABELS: Record<BuiltinSectionId, string> = {
   hero: "Hero slider",
   categories: "Category circles",
   deals: "Deal banners",
@@ -21,14 +50,20 @@ export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
   trust: "Trust badges",
 };
 
+export function sectionLabel(s: HomeSection): string {
+  if (s.kind === "products") return s.title?.trim() || PRODUCT_SOURCE_LABELS[s.source ?? "latest"];
+  return HOME_SECTION_LABELS[s.id as BuiltinSectionId] ?? s.id;
+}
+
 export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
-  { id: "hero", enabled: true },
-  { id: "categories", enabled: true },
-  { id: "deals", enabled: true },
-  { id: "trending", enabled: true },
-  { id: "brands", enabled: true },
-  { id: "trust", enabled: true },
+  { id: "hero", kind: "builtin", enabled: true },
+  { id: "categories", kind: "builtin", enabled: true },
+  { id: "deals", kind: "builtin", enabled: true },
+  { id: "trending", kind: "builtin", enabled: true },
+  { id: "brands", kind: "builtin", enabled: true },
+  { id: "trust", kind: "builtin", enabled: true },
 ];
+
 
 export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
   {
