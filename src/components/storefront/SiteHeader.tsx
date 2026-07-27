@@ -5,15 +5,22 @@ import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { CartDrawer } from "./CartDrawer";
 import { MobileBottomNav } from "./MobileBottomNav";
-import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
+import { ChevronDown } from "lucide-react";
+import {
+  DEFAULT_SETTINGS,
+  normalizeHeaderMenus,
+  type HeaderMenu,
+  type SiteSettings,
+} from "@/lib/site-settings";
 
-const pillNav = [
-  { name: "UNDERGARMENTS", bg: "bg-[color:var(--brand-pink)]" },
-  { name: "COMBO", bg: "bg-[color:var(--brand-magenta)]" },
-  { name: "JEWELLERY", bg: "bg-[color:var(--brand-purple)]" },
-  { name: "CLEARANCE SALE", bg: "bg-[color:var(--brand-teal)]" },
-  { name: "MEN", bg: "bg-[color:var(--brand-green)]" },
-];
+const MENU_PILL: Record<string, string> = {
+  none: "",
+  pink: "bg-[color:var(--brand-pink)] text-white px-3 py-1.5 rounded-full",
+  magenta: "bg-[color:var(--brand-magenta)] text-white px-3 py-1.5 rounded-full",
+  purple: "bg-[color:var(--brand-purple)] text-white px-3 py-1.5 rounded-full",
+  teal: "bg-[color:var(--brand-teal)] text-white px-3 py-1.5 rounded-full",
+  green: "bg-[color:var(--brand-green)] text-white px-3 py-1.5 rounded-full",
+};
 
 export function SiteHeader({
   categories = [],
@@ -27,6 +34,20 @@ export function SiteHeader({
   const [q, setQ] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
+  const menus: HeaderMenu[] = configured.length
+    ? configured
+    : categories
+        .filter((c) => !c.parent)
+        .map((c) => ({
+          label: c.name,
+          type: "category" as const,
+          slug: c.slug,
+          url: "",
+          color: "none" as const,
+          enabled: true,
+        }));
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -110,30 +131,54 @@ export function SiteHeader({
           />
         </form>
 
-        {categories.length > 0 && (
-          <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar">
-            {categories.filter((c) => !c.parent).map((c) => (
-              <Link
-                key={c.slug}
-                to="/category/$slug"
-                params={{ slug: c.slug }}
-                className="text-sm font-semibold text-foreground/80 hover:text-[color:var(--brand-pink)] whitespace-nowrap py-1"
-              >
-                {c.name}
-              </Link>
-            ))}
-            <div className="flex items-center gap-2 lg:ml-auto">
-              {pillNav.map((p) => (
-                <Link
-                  key={p.name}
-                  to="/search"
-                  search={{ q: "" }}
-                  className={`${p.bg} text-white text-[11px] font-bold px-4 py-1.5 rounded-full whitespace-nowrap`}
-                >
-                  {p.name}
-                </Link>
-              ))}
-            </div>
+        {menus.length > 0 && (
+          <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex flex-wrap items-center gap-x-5 gap-y-2">
+            {menus.map((m, i) => {
+              const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
+              const pill = MENU_PILL[m.color] ?? "";
+              const base = `text-sm font-semibold whitespace-nowrap py-1 ${
+                pill ? `${pill} text-[11px] font-bold` : "text-foreground/80 hover:text-[color:var(--brand-pink)]"
+              }`;
+              const inner =
+                m.type === "category" ? (
+                  <Link to="/category/$slug" params={{ slug: m.slug }} className={base}>
+                    {m.label}
+                  </Link>
+                ) : m.url.startsWith("/") ? (
+                  <Link to={m.url} className={base}>
+                    {m.label}
+                  </Link>
+                ) : (
+                  <a href={m.url} className={base}>
+                    {m.label}
+                  </a>
+                );
+
+              if (!kids.length) return <div key={`${m.label}-${i}`}>{inner}</div>;
+
+              return (
+                <div key={`${m.label}-${i}`} className="relative group">
+                  <div className="flex items-center gap-1">
+                    {inner}
+                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                  </div>
+                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition absolute left-0 top-full z-50 pt-2">
+                    <div className="min-w-52 rounded-xl border border-border bg-background shadow-lg p-2">
+                      {kids.map((k) => (
+                        <Link
+                          key={k.slug}
+                          to="/category/$slug"
+                          params={{ slug: k.slug }}
+                          className="block rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-[color:var(--brand-pink)]"
+                        >
+                          {k.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </header>
@@ -159,18 +204,36 @@ export function SiteHeader({
             <Link to="/search" search={{ q: "" }} onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
               <Heart className="h-4 w-4" /> All products
             </Link>
-            {categories.filter((c) => !c.parent).map((c) => {
-              const kids = categories.filter((k) => k.parent === c.slug);
+            {menus.map((m, i) => {
+              const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
               return (
-                <div key={c.slug}>
-                  <Link
-                    to="/category/$slug"
-                    params={{ slug: c.slug }}
-                    onClick={() => setMenuOpen(false)}
-                    className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-                  >
-                    {c.name}
-                  </Link>
+                <div key={`${m.label}-${i}`}>
+                  {m.type === "category" ? (
+                    <Link
+                      to="/category/$slug"
+                      params={{ slug: m.slug }}
+                      onClick={() => setMenuOpen(false)}
+                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
+                    >
+                      {m.label}
+                    </Link>
+                  ) : m.url.startsWith("/") ? (
+                    <Link
+                      to={m.url}
+                      onClick={() => setMenuOpen(false)}
+                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
+                    >
+                      {m.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={m.url}
+                      onClick={() => setMenuOpen(false)}
+                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
+                    >
+                      {m.label}
+                    </a>
+                  )}
                   {kids.length > 0 && (
                     <div className="ml-3 border-l border-border pl-2">
                       {kids.map((k) => (
@@ -189,19 +252,6 @@ export function SiteHeader({
                 </div>
               );
             })}
-            <div className="flex flex-wrap gap-2 pt-3">
-              {pillNav.map((p) => (
-                <Link
-                  key={p.name}
-                  to="/search"
-                  search={{ q: "" }}
-                  onClick={() => setMenuOpen(false)}
-                  className={`${p.bg} text-white text-[11px] font-bold px-3 py-1.5 rounded-full`}
-                >
-                  {p.name}
-                </Link>
-              ))}
-            </div>
           </nav>
           <div className="border-t border-border p-3">
             <Link
