@@ -1,15 +1,29 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { mapProduct, PRODUCT_SELECT, type Category, type Product, type Review } from "@/lib/shop-data";
+import { resolveSettings, type SiteSettings } from "@/lib/site-settings";
+
+async function fetchSettings(supabase: {
+  from: (t: string) => { select: (c: string) => { limit: (n: number) => { maybeSingle: () => Promise<{ data: unknown }> } } };
+}): Promise<SiteSettings> {
+  const { data } = await supabase.from("store_settings").select("*").limit(1).maybeSingle();
+  return resolveSettings(data);
+}
+
+export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
+  const { getPublicClient } = await import("@/lib/supabase-public.server");
+  return fetchSettings(getPublicClient() as never);
+});
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
   const { getPublicClient } = await import("@/lib/supabase-public.server");
   const supabase = getPublicClient();
 
-  const [cats, prods, brands] = await Promise.all([
+  const [cats, prods, brands, settings] = await Promise.all([
     supabase.from("categories").select("slug,name,color,image").order("sort_order"),
     supabase.from("products").select(PRODUCT_SELECT).order("reviews_count", { ascending: false }).limit(10),
     supabase.from("brands").select("slug,name").order("name"),
+    fetchSettings(supabase as never),
   ]);
 
   return {
@@ -21,6 +35,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
     })) as Category[],
     trending: (prods.data ?? []).map((p) => mapProduct(p as never)) as Product[],
     brands: (brands.data ?? []) as { slug: string; name: string }[],
+    settings,
   };
 });
 
@@ -30,9 +45,10 @@ export const getCategoryPage = createServerFn({ method: "GET" })
     const { getPublicClient } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
 
-    const [{ data: category }, { data: cats }] = await Promise.all([
+    const [{ data: category }, { data: cats }, settings] = await Promise.all([
       supabase.from("categories").select("slug,name,color,image").eq("slug", data.slug).maybeSingle(),
       supabase.from("categories").select("slug,name,color,image").order("sort_order"),
+      fetchSettings(supabase as never),
     ]);
     if (!category) return null;
 
@@ -58,6 +74,7 @@ export const getCategoryPage = createServerFn({ method: "GET" })
       products: (prods ?? [])
         .filter((p) => (p as never as { categories: { slug: string } | null }).categories?.slug === data.slug)
         .map((p) => mapProduct(p as never)) as Product[],
+      settings,
     };
   });
 
@@ -67,9 +84,10 @@ export const getProductPage = createServerFn({ method: "GET" })
     const { getPublicClient } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
 
-    const [{ data: row }, { data: cats }] = await Promise.all([
+    const [{ data: row }, { data: cats }, settings] = await Promise.all([
       supabase.from("products").select(PRODUCT_SELECT).eq("slug", data.slug).maybeSingle(),
       supabase.from("categories").select("slug,name,color,image").order("sort_order"),
+      fetchSettings(supabase as never),
     ]);
     if (!row) return null;
 
@@ -112,6 +130,7 @@ export const getProductPage = createServerFn({ method: "GET" })
         color: c.color ?? "",
         image: c.image ?? "",
       })) as Category[],
+      settings,
     };
   });
 
@@ -121,11 +140,12 @@ export const searchProducts = createServerFn({ method: "GET" })
     const { getPublicClient } = await import("@/lib/supabase-public.server");
     const supabase = getPublicClient();
 
-    const [{ data: cats }, res] = await Promise.all([
+    const [{ data: cats }, res, settings] = await Promise.all([
       supabase.from("categories").select("slug,name,color,image").order("sort_order"),
       data.q.trim()
         ? supabase.from("products").select(PRODUCT_SELECT).ilike("name", `%${data.q.trim()}%`).limit(40)
         : supabase.from("products").select(PRODUCT_SELECT).limit(40),
+      fetchSettings(supabase as never),
     ]);
 
     return {
@@ -137,6 +157,7 @@ export const searchProducts = createServerFn({ method: "GET" })
         color: c.color ?? "",
         image: c.image ?? "",
       })) as Category[],
+      settings,
     };
   });
 
