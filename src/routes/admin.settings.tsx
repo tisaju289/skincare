@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { supabase } from "@/integrations/supabase/client";
 import { Store, CreditCard, Truck, Bell, Image as ImageIcon, Search, Palette, Loader2 } from "lucide-react";
+import { ImageInput } from "@/components/admin/ImageInput";
 import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
 
 export const Route = createFileRoute("/admin/settings")({
@@ -133,20 +134,19 @@ function SettingsPage() {
 
               {tab === "branding" && (
                 <>
-                  <Field
-                    label="Logo URL"
+                  <ImageInput
+                    label="Logo"
+                    folder="branding"
                     value={str("logo_url")}
                     onChange={(v) => set("logo_url", v)}
                     hint="Shown in the header and footer. Leave empty to show the store name as text."
                   />
-                  {form.logo_url && (
-                    <img src={form.logo_url} alt="Logo preview" className="h-12 w-auto object-contain" />
-                  )}
-                  <Field
-                    label="Favicon URL"
+                  <ImageInput
+                    label="Favicon"
+                    folder="branding"
                     value={str("favicon_url")}
                     onChange={(v) => set("favicon_url", v)}
-                    hint="Small icon shown in the browser tab (.png / .ico / .svg)."
+                    hint="Small icon shown in the browser tab (PNG / ICO / SVG)."
                   />
                   <Field
                     label="Announcement bar text"
@@ -185,19 +185,13 @@ function SettingsPage() {
                     onChange={(v) => set("seo_keywords", v)}
                     hint="Comma separated."
                   />
-                  <Field
-                    label="Social share image (OG image) URL"
+                  <ImageInput
+                    label="Social share image (OG image)"
+                    folder="branding"
                     value={str("og_image_url")}
                     onChange={(v) => set("og_image_url", v)}
-                    hint="Use a full https:// URL, 1200×630 recommended."
+                    hint="1200×630 recommended."
                   />
-                  {form.og_image_url && (
-                    <img
-                      src={form.og_image_url}
-                      alt="Share preview"
-                      className="h-32 w-auto rounded-lg object-cover border border-border"
-                    />
-                  )}
                 </>
               )}
 
