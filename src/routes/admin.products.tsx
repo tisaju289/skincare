@@ -64,7 +64,20 @@ function ProductsPage() {
   });
 
   const save = useMutation({
-    mutationFn: async (payload: FormState) => {
+    mutationFn: async (form: FormState) => {
+      // Only send real product columns — joined relations (brands/categories) are not columns.
+      const payload = {
+        slug: form.slug,
+        name: form.name,
+        brand_id: form.brand_id ?? null,
+        category_id: form.category_id ?? null,
+        price: Number(form.price ?? 0),
+        old_price: form.old_price ?? null,
+        image: form.image ?? null,
+        description: form.description ?? null,
+        stock: Number(form.stock ?? 0),
+        status: form.status ?? "active",
+      };
       let productId = editing?.id;
       if (editing) {
         const { error } = await supabase.from("products").update(payload).eq("id", editing.id);
