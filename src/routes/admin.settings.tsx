@@ -20,6 +20,7 @@ import {
   ArrowDown,
   Trash2,
   Plus,
+  BadgeCheck,
 } from "lucide-react";
 import { ImageInput } from "@/components/admin/ImageInput";
 import {
@@ -29,6 +30,10 @@ import {
   sectionLabel,
   normalizeHeroSlides,
   normalizeHomeSections,
+  normalizeProductBadges,
+  PRODUCT_BADGE_ICONS,
+  type ProductBadge,
+  type ProductBadgeIcon,
   type HeroSlide,
   type HomeSection,
   type ProductSource,
@@ -43,6 +48,7 @@ const sections = [
   { id: "store", icon: Store, title: "Store details", desc: "Name, contact info, currency" },
   { id: "homepage", icon: LayoutList, title: "Homepage layout", desc: "Reorder & show/hide home sections" },
   { id: "hero", icon: GalleryHorizontal, title: "Hero slider", desc: "Slides shown at the top of the homepage" },
+  { id: "productpage", icon: BadgeCheck, title: "Product page", desc: "Delivery / authentic / return badges" },
   { id: "branding", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
   { id: "seo", icon: Search, title: "SEO & sharing", desc: "Title, description, keywords, OG image" },
   { id: "theme", icon: Palette, title: "Theme", desc: "Brand colours used across the site" },
@@ -81,13 +87,14 @@ function SettingsPage() {
         ...q.data,
         home_sections: normalizeHomeSections((q.data as SiteSettings).home_sections),
         hero_slides: normalizeHeroSlides((q.data as SiteSettings).hero_slides),
+        product_badges: normalizeProductBadges((q.data as SiteSettings).product_badges),
       });
   }, [q.data]);
 
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides"]);
+      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges"]);
       const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
@@ -106,6 +113,24 @@ function SettingsPage() {
 
   const homeSections = normalizeHomeSections(form.home_sections);
   const heroSlides = normalizeHeroSlides(form.hero_slides);
+  const productBadges = normalizeProductBadges(form.product_badges);
+
+  const setBadge = (index: number, patch: Partial<ProductBadge>) =>
+    set("product_badges", productBadges.map((b, i) => (i === index ? { ...b, ...patch } : b)));
+  const moveBadge = (index: number, dir: -1 | 1) => {
+    const next = [...productBadges];
+    const target = index + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    set("product_badges", next);
+  };
+  const removeBadge = (index: number) =>
+    set("product_badges", productBadges.filter((_, i) => i !== index));
+  const addBadge = () =>
+    set("product_badges", [
+      ...productBadges,
+      { icon: "truck" as ProductBadgeIcon, title: "New badge", subtitle: "", enabled: true },
+    ]);
 
   const moveSection = (index: number, dir: -1 | 1) => {
     const next = [...homeSections];
@@ -421,6 +446,57 @@ function SettingsPage() {
                 </div>
               )}
 
+
+              {tab === "productpage" && (
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    These badges show under the Add to Bag button on every product page. Turn one off to hide it.
+                  </p>
+                  {productBadges.map((b, i) => (
+                    <div key={i} className="rounded-xl border border-border px-3 py-2.5 space-y-3">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="h-7 w-7 shrink-0 rounded-lg bg-muted grid place-items-center text-xs font-bold">
+                          {i + 1}
+                        </span>
+                        <select
+                          value={b.icon}
+                          onChange={(e) => setBadge(i, { icon: e.target.value as ProductBadgeIcon })}
+                          className="px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
+                        >
+                          {Object.entries(PRODUCT_BADGE_ICONS).map(([k, label]) => (
+                            <option key={k} value={k}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="ml-auto flex items-center gap-1">
+                          <button type="button" onClick={() => moveBadge(i, -1)} className="p-1.5 rounded-lg hover:bg-muted" aria-label="Move up">
+                            <ArrowUp className="h-4 w-4" />
+                          </button>
+                          <button type="button" onClick={() => moveBadge(i, 1)} className="p-1.5 rounded-lg hover:bg-muted" aria-label="Move down">
+                            <ArrowDown className="h-4 w-4" />
+                          </button>
+                          <button type="button" onClick={() => removeBadge(i)} className="p-1.5 rounded-lg hover:bg-muted text-destructive" aria-label="Remove badge">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                          <Toggle label="" checked={b.enabled} onChange={(v) => setBadge(i, { enabled: v })} />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Field label="Title" value={b.title} onChange={(v) => setBadge(i, { title: v })} />
+                        <Field label="Subtitle" value={b.subtitle} onChange={(v) => setBadge(i, { subtitle: v })} />
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addBadge}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-border py-2.5 text-sm font-semibold hover:bg-muted"
+                  >
+                    <Plus className="h-4 w-4" /> Add badge
+                  </button>
+                </div>
+              )}
 
               {tab === "branding" && (
                 <>
