@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { mapCategories, mapProduct, CATEGORY_SELECT, PRODUCT_SELECT, type Category, type Product, type Review } from "@/lib/shop-data";
+import { mapCategories, mapProduct, pickProducts, CATEGORY_SELECT, PRODUCT_SELECT, type Category, type Product, type Review } from "@/lib/shop-data";
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
   const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
@@ -13,14 +13,17 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
 
   const [cats, prods, brands, settings] = await Promise.all([
     supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
-    supabase.from("products").select(PRODUCT_SELECT).order("reviews_count", { ascending: false }).limit(10),
+    supabase.from("products").select(PRODUCT_SELECT).order("created_at", { ascending: false }).limit(80),
     supabase.from("brands").select("slug,name,logo").order("name"),
     fetchSettings(supabase),
   ]);
 
+  const pool = (prods.data ?? []).map((p) => mapProduct(p as never)) as Product[];
+
   return {
     categories: mapCategories(cats.data as never),
-    trending: (prods.data ?? []).map((p) => mapProduct(p as never)) as Product[],
+    products: pool,
+    trending: pickProducts(pool, "trending", 10),
     brands: (brands.data ?? []) as { slug: string; name: string; logo: string | null }[],
     settings,
   };

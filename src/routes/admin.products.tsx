@@ -26,7 +26,18 @@ type Product = {
   description: string | null;
   stock: number;
   status: "active" | "draft" | "out_of_stock" | "low_stock";
+  is_trending?: boolean;
+  is_best_seller?: boolean;
+  is_flash_sale?: boolean;
+  is_new_arrival?: boolean;
 };
+
+const FLAGS = [
+  { key: "is_trending", label: "Trending" },
+  { key: "is_best_seller", label: "Best selling" },
+  { key: "is_flash_sale", label: "Flash sale" },
+  { key: "is_new_arrival", label: "New arrival" },
+] as const;
 
 type FormState = Partial<Product>;
 
@@ -82,6 +93,10 @@ function ProductsPage() {
         description: form.description ?? null,
         stock: Number(form.stock ?? 0),
         status: form.status ?? "active",
+        is_trending: !!form.is_trending,
+        is_best_seller: !!form.is_best_seller,
+        is_flash_sale: !!form.is_flash_sale,
+        is_new_arrival: !!form.is_new_arrival,
       };
       let productId = editing?.id;
       if (editing) {
@@ -201,7 +216,7 @@ function ProductsPage() {
           exportRows={filtered.map(({ brands, categories, ...r }: any) => r)}
           exportName="products"
           importTable="products"
-          importColumns={["slug", "name", "price", "old_price", "tag", "image", "description", "color", "stock", "status", "brand_id", "category_id"]}
+          importColumns={["slug", "name", "price", "old_price", "tag", "is_trending", "is_best_seller", "is_flash_sale", "is_new_arrival", "image", "description", "color", "stock", "status", "brand_id", "category_id"]}
           onImported={() => qc.invalidateQueries({ queryKey: ["admin", "products"] })}
           resultCount={filtered.length}
         />
@@ -336,6 +351,23 @@ function ProductsPage() {
               </select>
             </Field>
           </div>
+          <div className="rounded-xl border border-border p-3">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">Highlights</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {FLAGS.map((f) => (
+                <label key={f.key} className="flex items-center gap-2 text-sm font-medium">
+                  <input
+                    type="checkbox"
+                    checked={!!form[f.key]}
+                    onChange={(e) => setForm({ ...form, [f.key]: e.target.checked })}
+                    className="h-4 w-4 accent-[color:var(--brand-pink)]"
+                  />
+                  {f.label}
+                </label>
+              ))}
+            </div>
+          </div>
+
           <ImageInput label="Product image" folder="products" value={form.image} onChange={(v) => setForm({ ...form, image: v })} />
 
           <div className="space-y-3 pt-2 border-t border-border">

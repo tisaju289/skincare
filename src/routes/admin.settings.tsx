@@ -25,10 +25,13 @@ import { ImageInput } from "@/components/admin/ImageInput";
 import {
   DEFAULT_SETTINGS,
   HOME_SECTION_LABELS,
+  PRODUCT_SOURCE_LABELS,
+  sectionLabel,
   normalizeHeroSlides,
   normalizeHomeSections,
   type HeroSlide,
   type HomeSection,
+  type ProductSource,
   type SiteSettings,
 } from "@/lib/site-settings";
 
@@ -115,6 +118,23 @@ function SettingsPage() {
     const next = homeSections.map((s, i) => (i === index ? { ...s, ...patch } : s));
     set("home_sections", next);
   };
+
+  const addProductSection = () =>
+    set("home_sections", [
+      ...homeSections,
+      {
+        id: `custom-${Date.now()}`,
+        kind: "products",
+        enabled: true,
+        title: "Best Selling",
+        subtitle: "",
+        source: "best_seller",
+        limit: 10,
+        link: "/search",
+      } satisfies HomeSection,
+    ]);
+  const removeSection = (index: number) =>
+    set("home_sections", homeSections.filter((_, i) => i !== index));
 
   const setSlide = (index: number, patch: Partial<HeroSlide>) =>
     set(
@@ -209,14 +229,12 @@ function SettingsPage() {
                     hide it from the storefront.
                   </p>
                   {homeSections.map((s, i) => (
-                    <div
-                      key={s.id}
-                      className="flex flex-wrap items-center gap-3 rounded-xl border border-border px-3 py-2.5"
-                    >
+                    <div key={s.id} className="rounded-xl border border-border px-3 py-2.5 space-y-3">
+                      <div className="flex flex-wrap items-center gap-3">
                       <span className="h-7 w-7 shrink-0 rounded-lg bg-muted grid place-items-center text-xs font-bold">
                         {i + 1}
                       </span>
-                      <span className="text-sm font-semibold flex-1 min-w-[120px]">{HOME_SECTION_LABELS[s.id]}</span>
+                      <span className="text-sm font-semibold flex-1 min-w-[120px]">{sectionLabel(s)}</span>
                       <select
                         value={i}
                         onChange={(e) => {
@@ -227,7 +245,7 @@ function SettingsPage() {
                           set("home_sections", next);
                         }}
                         className="px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
-                        aria-label={`Position of ${HOME_SECTION_LABELS[s.id]}`}
+                        aria-label={`Position of ${sectionLabel(s)}`}
                       >
                         {homeSections.map((_, pos) => (
                           <option key={pos} value={pos}>
@@ -257,7 +275,7 @@ function SettingsPage() {
                         type="button"
                         role="switch"
                         aria-checked={s.enabled}
-                        aria-label={`Show ${HOME_SECTION_LABELS[s.id]}`}
+                        aria-label={`Show ${sectionLabel(s)}`}
                         onClick={() => setSectionAt(i, { enabled: !s.enabled })}
                         className={`h-6 w-11 rounded-full transition-colors relative ${
                           s.enabled ? "bg-[color:var(--brand-pink)]" : "bg-muted-foreground/30"
@@ -269,8 +287,63 @@ function SettingsPage() {
                           }`}
                         />
                       </button>
+                      {s.kind === "products" && (
+                        <button
+                          type="button"
+                          onClick={() => removeSection(i)}
+                          aria-label="Delete section"
+                          className="h-8 w-8 grid place-items-center rounded-lg border border-border text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                      </div>
+
+                      {s.kind === "products" && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-border pt-3">
+                          <Field
+                            label="Section title"
+                            value={s.title ?? ""}
+                            onChange={(v) => setSectionAt(i, { title: v })}
+                          />
+                          <Field
+                            label="Subtitle"
+                            value={s.subtitle ?? ""}
+                            onChange={(v) => setSectionAt(i, { subtitle: v })}
+                          />
+                          <label className="block">
+                            <span className="text-xs font-semibold text-muted-foreground">Show products</span>
+                            <select
+                              value={s.source ?? "latest"}
+                              onChange={(e) => setSectionAt(i, { source: e.target.value as ProductSource })}
+                              className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
+                            >
+                              {Object.entries(PRODUCT_SOURCE_LABELS).map(([v, label]) => (
+                                <option key={v} value={v}>
+                                  {label}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                          <Field
+                            label="Max products"
+                            type="number"
+                            value={String(s.limit ?? 10)}
+                            onChange={(v) => setSectionAt(i, { limit: Math.max(1, Number(v) || 10) })}
+                          />
+                        </div>
+                      )}
                     </div>
                   ))}
+
+                  <button
+                    type="button"
+                    onClick={addProductSection}
+                    className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted"
+                  >
+                    <Plus className="h-4 w-4" /> Add product section
+                  </button>
+
                 </div>
               )}
 

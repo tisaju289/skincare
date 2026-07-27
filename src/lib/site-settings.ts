@@ -1,6 +1,35 @@
-export type HomeSectionId = "hero" | "categories" | "deals" | "trending" | "brands" | "trust";
+export type BuiltinSectionId = "hero" | "categories" | "deals" | "trending" | "brands" | "trust";
+export type HomeSectionId = BuiltinSectionId;
 
-export type HomeSection = { id: HomeSectionId; enabled: boolean };
+/** Where a custom product section pulls its products from. */
+export type ProductSource =
+  | "trending"
+  | "best_seller"
+  | "flash_sale"
+  | "new_arrival"
+  | "discount"
+  | "latest";
+
+export const PRODUCT_SOURCE_LABELS: Record<ProductSource, string> = {
+  trending: "Trending products",
+  best_seller: "Best selling products",
+  flash_sale: "Flash sale products",
+  new_arrival: "New arrivals",
+  discount: "Discounted products",
+  latest: "Latest products",
+};
+
+export type HomeSection = {
+  id: string;
+  /** "builtin" = fixed block, "products" = custom product grid built in Settings. */
+  kind?: "builtin" | "products";
+  enabled: boolean;
+  title?: string;
+  subtitle?: string;
+  source?: ProductSource;
+  limit?: number;
+  link?: string;
+};
 
 export type HeroSlide = {
   kicker?: string | null;
@@ -12,7 +41,7 @@ export type HeroSlide = {
   cta_link?: string | null;
 };
 
-export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
+export const HOME_SECTION_LABELS: Record<BuiltinSectionId, string> = {
   hero: "Hero slider",
   categories: "Category circles",
   deals: "Deal banners",
@@ -21,14 +50,20 @@ export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
   trust: "Trust badges",
 };
 
+export function sectionLabel(s: HomeSection): string {
+  if (s.kind === "products") return s.title?.trim() || PRODUCT_SOURCE_LABELS[s.source ?? "latest"];
+  return HOME_SECTION_LABELS[s.id as BuiltinSectionId] ?? s.id;
+}
+
 export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
-  { id: "hero", enabled: true },
-  { id: "categories", enabled: true },
-  { id: "deals", enabled: true },
-  { id: "trending", enabled: true },
-  { id: "brands", enabled: true },
-  { id: "trust", enabled: true },
+  { id: "hero", kind: "builtin", enabled: true },
+  { id: "categories", kind: "builtin", enabled: true },
+  { id: "deals", kind: "builtin", enabled: true },
+  { id: "trending", kind: "builtin", enabled: true },
+  { id: "brands", kind: "builtin", enabled: true },
+  { id: "trust", kind: "builtin", enabled: true },
 ];
+
 
 export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
   {
@@ -65,13 +100,27 @@ export function normalizeHomeSections(value: unknown): HomeSection[] {
   const stored = Array.isArray(value) ? (value as HomeSection[]) : [];
   const out: HomeSection[] = [];
   for (const s of stored) {
-    if (s && typeof s.id === "string" && s.id in HOME_SECTION_LABELS && !out.some((o) => o.id === s.id)) {
-      out.push({ id: s.id as HomeSectionId, enabled: s.enabled !== false });
+    if (!s || typeof s.id !== "string" || out.some((o) => o.id === s.id)) continue;
+    const isBuiltin = s.id in HOME_SECTION_LABELS;
+    if (isBuiltin) {
+      out.push({ id: s.id, kind: "builtin", enabled: s.enabled !== false });
+    } else if (s.kind === "products") {
+      out.push({
+        id: s.id,
+        kind: "products",
+        enabled: s.enabled !== false,
+        title: s.title ?? "",
+        subtitle: s.subtitle ?? "",
+        source: (s.source && s.source in PRODUCT_SOURCE_LABELS ? s.source : "latest") as ProductSource,
+        limit: Number(s.limit) > 0 ? Number(s.limit) : 10,
+        link: s.link ?? "/search",
+      });
     }
   }
   for (const d of DEFAULT_HOME_SECTIONS) if (!out.some((o) => o.id === d.id)) out.push({ ...d });
   return out;
 }
+
 
 export function normalizeHeroSlides(value: unknown): HeroSlide[] {
   const stored = Array.isArray(value) ? (value as HeroSlide[]) : [];

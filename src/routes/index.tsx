@@ -6,7 +6,7 @@ import { getHomeData } from "@/lib/storefront.functions";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
-import type { Category, Product } from "@/lib/shop-data";
+import { pickProducts, type Category, type Product } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { HeroSlider } from "@/components/storefront/HeroSlider";
 import {
@@ -14,7 +14,7 @@ import {
   DEFAULT_SETTINGS,
   normalizeHomeSections,
   normalizeHeroSlides,
-  type HomeSectionId,
+  PRODUCT_SOURCE_LABELS,
   type SiteSettings,
 } from "@/lib/site-settings";
 
@@ -49,10 +49,12 @@ function Index() {
   const data = Route.useLoaderData() as {
     categories: Category[];
     trending: Product[];
+    products: Product[];
     brands: { slug: string; name: string; logo?: string | null }[];
     settings: SiteSettings;
   };
   const { categories, trending, brands, settings } = data;
+  const pool = data.products ?? trending;
   const topCategories = categories.filter((c) => !c.parent);
   const [showAllCats, setShowAllCats] = useState(false);
   const [showAllBrands, setShowAllBrands] = useState(false);
@@ -60,8 +62,9 @@ function Index() {
   const order = normalizeHomeSections(settings.home_sections).filter((s) => s.enabled);
   const slides = normalizeHeroSlides(settings.hero_slides);
 
-  const blocks: Record<HomeSectionId, React.ReactNode> = {
+  const blocks: Record<string, React.ReactNode> = {
     hero: <HeroSlider slides={slides} />,
+
 
     categories: (
       <section className="max-w-7xl mx-auto px-4 mt-10">
@@ -208,9 +211,37 @@ function Index() {
       <SiteTheme settings={settings} />
       <SiteHeader categories={categories} settings={settings} />
 
-      {order.map((s) => (
-        <div key={s.id}>{blocks[s.id]}</div>
-      ))}
+      {order.map((s) =>
+        s.kind === "products" ? (
+          <section key={s.id} className="max-w-7xl mx-auto px-4 mt-14">
+            <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-black">
+                  {s.title?.trim() || PRODUCT_SOURCE_LABELS[s.source ?? "latest"]}
+                </h2>
+                {s.subtitle ? <p className="text-sm text-muted-foreground">{s.subtitle}</p> : null}
+              </div>
+              <Link to="/search" search={{ q: "" }} className="text-sm font-semibold text-[color:var(--brand-pink)] hover:underline">
+                View all →
+              </Link>
+            </div>
+            {(() => {
+              const items = pickProducts(pool, s.source, s.limit ?? 10);
+              return items.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No products in this section yet.</p>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {items.map((p) => (
+                    <ProductCard key={p.slug} product={p} />
+                  ))}
+                </div>
+              );
+            })()}
+          </section>
+        ) : (
+          <div key={s.id}>{blocks[s.id]}</div>
+        ),
+      )}
 
       <SiteFooter categories={categories} settings={settings} />
     </div>
