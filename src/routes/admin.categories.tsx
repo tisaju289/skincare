@@ -57,27 +57,51 @@ function CategoriesPage() {
         </button>
       }/>
       <div className="p-4 sm:p-6">
-        {q.isLoading && <div className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></div>}
-        {!q.isLoading && cats.length === 0 && <p className="text-center text-muted-foreground py-10">No categories yet.</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {cats.map((c) => (
-            <div key={c.id} className="bg-card border border-border rounded-2xl overflow-hidden group">
-              <div className={`h-28 bg-gradient-to-br ${c.color ?? "from-pink-400 to-rose-500"} relative`}>
-                <div className="absolute inset-0 flex items-end p-4">
-                  <p className="text-white text-xl font-black drop-shadow">{c.name}</p>
-                </div>
-              </div>
-              <div className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground">/{c.slug}</p>
-                </div>
-                <div className="flex gap-1">
-                  <button onClick={() => { setEditing(c); setForm(c); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted"><Edit2 className="h-3.5 w-3.5"/></button>
-                  <button onClick={() => confirm(`Delete "${c.name}"?`) && del.mutate(c.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-3.5 w-3.5"/></button>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] text-sm">
+              <thead className="text-xs text-muted-foreground bg-muted/40">
+                <tr>
+                  <th className="px-5 py-3 text-left font-semibold">Category</th>
+                  <th className="px-5 py-3 text-left font-semibold">Slug</th>
+                  <th className="px-5 py-3 text-left font-semibold">Color</th>
+                  <th className="px-5 py-3 text-left font-semibold">Sort order</th>
+                  <th className="px-5 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {q.isLoading && (
+                  <tr><td colSpan={5} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
+                )}
+                {!q.isLoading && cats.length === 0 && (
+                  <tr><td colSpan={5} className="px-5 py-10 text-center text-muted-foreground">No categories yet. Click "New category".</td></tr>
+                )}
+                {cats.map((c) => (
+                  <tr key={c.id} className="border-t border-border hover:bg-muted/30">
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        {c.image ? (
+                          <img src={c.image} alt="" className="h-10 w-10 rounded-lg object-cover" loading="lazy" />
+                        ) : (
+                          <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${c.color ?? "from-pink-400 to-rose-500"}`} />
+                        )}
+                        <p className="font-medium">{c.name}</p>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3 text-muted-foreground">/{c.slug}</td>
+                    <td className="px-5 py-3 text-xs text-muted-foreground">{c.color ?? "—"}</td>
+                    <td className="px-5 py-3">{c.sort_order}</td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center justify-end gap-1">
+                        <button onClick={() => { setEditing(c); setForm(c); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted"><Edit2 className="h-3.5 w-3.5"/></button>
+                        <button onClick={() => confirm(`Delete "${c.name}"?`) && del.mutate(c.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-3.5 w-3.5"/></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
