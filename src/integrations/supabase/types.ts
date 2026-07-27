@@ -470,6 +470,8 @@ export type Database = {
           facebook_url: string | null
           favicon_url: string | null
           free_shipping_threshold: number
+          hero_slides: Json
+          home_sections: Json
           id: string
           instagram_url: string | null
           logo_url: string | null
@@ -507,6 +509,8 @@ export type Database = {
           facebook_url?: string | null
           favicon_url?: string | null
           free_shipping_threshold?: number
+          hero_slides?: Json
+          home_sections?: Json
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
@@ -544,6 +548,8 @@ export type Database = {
           facebook_url?: string | null
           favicon_url?: string | null
           free_shipping_threshold?: number
+          hero_slides?: Json
+          home_sections?: Json
           id?: string
           instagram_url?: string | null
           logo_url?: string | null
