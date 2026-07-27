@@ -14,14 +14,14 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
   const [cats, prods, brands, settings] = await Promise.all([
     supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
     supabase.from("products").select(PRODUCT_SELECT).order("reviews_count", { ascending: false }).limit(10),
-    supabase.from("brands").select("slug,name").order("name"),
+    supabase.from("brands").select("slug,name,logo").order("name"),
     fetchSettings(supabase),
   ]);
 
   return {
     categories: mapCategories(cats.data as never),
     trending: (prods.data ?? []).map((p) => mapProduct(p as never)) as Product[],
-    brands: (brands.data ?? []) as { slug: string; name: string }[],
+    brands: (brands.data ?? []) as { slug: string; name: string; logo: string | null }[],
     settings,
   };
 });
