@@ -61,6 +61,7 @@ function ProductPage() {
   const soldOut = product.stock <= 0;
 
   const postReview = useServerFn(submitReview);
+  const [tab, setTab] = useState<"description" | "reviews">("description");
   const [rName, setRName] = useState("");
   const [rRating, setRRating] = useState(5);
   const [rComment, setRComment] = useState("");
@@ -182,57 +183,84 @@ function ProductPage() {
         </div>
       </section>
 
-      {/* Reviews */}
-      <section className="max-w-7xl mx-auto px-4 mt-14 grid lg:grid-cols-2 gap-8">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-black mb-4">Customer reviews</h2>
-          {reviews.length === 0 && <p className="text-sm text-muted-foreground">No reviews yet. Be the first!</p>}
-          <div className="space-y-4">
-            {reviews.map((r) => (
-              <div key={r.id} className="border border-border rounded-2xl p-4">
-                <div className="flex items-center gap-2">
-                  <p className="font-bold text-sm">{r.user_name}</p>
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className={`h-3 w-3 ${i <= r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
-                    ))}
-                  </div>
-                </div>
-                {r.comment && <p className="mt-2 text-sm text-foreground/80">{r.comment}</p>}
-              </div>
-            ))}
-          </div>
+      {/* Tabs: description + reviews */}
+      <section className="max-w-7xl mx-auto px-4 mt-12">
+        <div className="flex gap-2 border-b border-border">
+          {([
+            { id: "description", label: "Description" },
+            { id: "reviews", label: `Reviews (${reviews.length})` },
+          ] as const).map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`px-4 py-3 text-sm font-bold -mb-px border-b-2 ${
+                tab === t.id
+                  ? "border-[color:var(--brand-pink)] text-[color:var(--brand-pink)]"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
 
-        <form onSubmit={sendReview} className="bg-muted/50 border border-border rounded-2xl p-5 h-fit">
-          <h3 className="font-black">Write a review</h3>
-          <input
-            required
-            value={rName}
-            onChange={(e) => setRName(e.target.value)}
-            placeholder="Your name"
-            aria-label="Your name"
-            className="mt-3 w-full rounded-lg border border-border px-3 py-2 text-sm bg-background"
-          />
-          <div className="mt-3 flex items-center gap-1">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <button key={i} type="button" onClick={() => setRRating(i)} aria-label={`${i} star`}>
-                <Star className={`h-6 w-6 ${i <= rRating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"}`} />
-              </button>
-            ))}
+        {tab === "description" ? (
+          <div className="pt-6 text-sm leading-relaxed text-foreground/80 whitespace-pre-line max-w-3xl">
+            {product.longDescription || product.description || "No description available."}
           </div>
-          <textarea
-            value={rComment}
-            onChange={(e) => setRComment(e.target.value)}
-            rows={3}
-            placeholder="Share your experience…"
-            aria-label="Review comment"
-            className="mt-3 w-full rounded-lg border border-border px-3 py-2 text-sm bg-background"
-          />
-          <button disabled={rBusy} className="mt-3 rounded-full bg-[color:var(--brand-pink)] text-white font-bold px-6 py-2.5 text-sm disabled:opacity-60">
-            {rBusy ? "Submitting…" : "Submit review"}
-          </button>
-        </form>
+        ) : (
+          <div className="pt-6 grid lg:grid-cols-2 gap-8">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black mb-4">Customer reviews</h2>
+              {reviews.length === 0 && <p className="text-sm text-muted-foreground">No reviews yet. Be the first!</p>}
+              <div className="space-y-4">
+                {reviews.map((r) => (
+                  <div key={r.id} className="border border-border rounded-2xl p-4">
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-sm">{r.user_name}</p>
+                      <div className="flex">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <Star key={i} className={`h-3 w-3 ${i <= r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                        ))}
+                      </div>
+                    </div>
+                    {r.comment && <p className="mt-2 text-sm text-foreground/80">{r.comment}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <form onSubmit={sendReview} className="bg-muted/50 border border-border rounded-2xl p-5 h-fit">
+              <h3 className="font-black">Write a review</h3>
+              <input
+                required
+                value={rName}
+                onChange={(e) => setRName(e.target.value)}
+                placeholder="Your name"
+                aria-label="Your name"
+                className="mt-3 w-full rounded-lg border border-border px-3 py-2 text-sm bg-background"
+              />
+              <div className="mt-3 flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <button key={i} type="button" onClick={() => setRRating(i)} aria-label={`${i} star`}>
+                    <Star className={`h-6 w-6 ${i <= rRating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"}`} />
+                  </button>
+                ))}
+              </div>
+              <textarea
+                value={rComment}
+                onChange={(e) => setRComment(e.target.value)}
+                rows={3}
+                placeholder="Share your experience…"
+                aria-label="Review comment"
+                className="mt-3 w-full rounded-lg border border-border px-3 py-2 text-sm bg-background"
+              />
+              <button disabled={rBusy} className="mt-3 rounded-full bg-[color:var(--brand-pink)] text-white font-bold px-6 py-2.5 text-sm disabled:opacity-60">
+                {rBusy ? "Submitting…" : "Submit review"}
+              </button>
+            </form>
+          </div>
+        )}
       </section>
 
       {related.length > 0 && (
