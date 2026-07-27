@@ -13,6 +13,7 @@ export type Product = {
   reviews: number;
   image: string;
   description: string;
+  longDescription: string;
   color: string;
   stock: number;
   isTrending: boolean;
@@ -75,6 +76,7 @@ type ProductRow = {
   reviews_count: number | null;
   image: string | null;
   description: string | null;
+  long_description?: string | null;
   color: string | null;
   stock: number | null;
   is_trending?: boolean | null;
@@ -99,6 +101,7 @@ export function mapProduct(row: ProductRow): Product {
     reviews: row.reviews_count ?? 0,
     image: row.image || FALLBACK_IMAGE,
     description: row.description ?? "",
+    longDescription: row.long_description ?? "",
     color: row.color ?? "bg-muted",
     stock: row.stock ?? 0,
     isTrending: !!row.is_trending,
@@ -109,7 +112,7 @@ export function mapProduct(row: ProductRow): Product {
 }
 
 export const PRODUCT_SELECT =
-  "slug,name,price,old_price,tag,rating,reviews_count,image,description,color,stock,is_trending,is_best_seller,is_flash_sale,is_new_arrival,brands(name),categories(slug,name)";
+  "slug,name,price,old_price,tag,rating,reviews_count,image,description,long_description,color,stock,is_trending,is_best_seller,is_flash_sale,is_new_arrival,brands(name),categories(slug,name)";
 
 /** Picks products for a homepage section based on its configured source. */
 export function pickProducts(
