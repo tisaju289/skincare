@@ -47,19 +47,19 @@ export function SiteHeader({
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            {settings.logo_url ? (
+          <Link to="/" className="flex items-center gap-2 shrink-0 min-w-0">
+            {settings.logo_url && (
               <img
                 src={settings.logo_url}
                 alt={`${settings.store_name} logo`}
-                className="h-8 sm:h-10 w-auto object-contain"
+                className="h-8 sm:h-10 w-auto object-contain shrink-0"
               />
-            ) : (
-              <span className="text-xl sm:text-3xl font-black tracking-tight text-foreground uppercase">
-                {settings.store_name}
-              </span>
             )}
+            <span className="text-lg sm:text-3xl font-black tracking-tight text-foreground uppercase truncate">
+              {settings.store_name}
+            </span>
           </Link>
+
           <form onSubmit={submit} className="hidden md:block flex-1 relative min-w-0">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
             <input
