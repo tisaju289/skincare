@@ -500,6 +500,7 @@ export type Database = {
           pay_cod: boolean
           pay_nagad: boolean
           phone: string | null
+          product_badges: Json
           seo_description: string | null
           seo_keywords: string | null
           seo_title: string | null
@@ -541,6 +542,7 @@ export type Database = {
           pay_cod?: boolean
           pay_nagad?: boolean
           phone?: string | null
+          product_badges?: Json
           seo_description?: string | null
           seo_keywords?: string | null
           seo_title?: string | null
@@ -582,6 +584,7 @@ export type Database = {
           pay_cod?: boolean
           pay_nagad?: boolean
           phone?: string | null
+          product_badges?: Json
           seo_description?: string | null
           seo_keywords?: string | null
           seo_title?: string | null
