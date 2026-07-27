@@ -6,6 +6,8 @@ import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { TableToolbar } from "@/components/admin/TableToolbar";
+import { matchesQuery } from "@/lib/csv";
 import { Plus, Edit2, Trash2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/subcategories")({
@@ -24,6 +26,8 @@ function SubcategoriesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
   const [form, setForm] = useState<FormState>(empty);
+  const [search, setSearch] = useState("");
+  const [parentFilter, setParentFilter] = useState("all");
 
   const q = useQuery({
     queryKey: ["admin", "categories"],
@@ -36,7 +40,12 @@ function SubcategoriesPage() {
 
   const all = q.data ?? [];
   const parents = all.filter((c) => !c.parent_id);
-  const subs = all.filter((c) => c.parent_id);
+  const allSubs = all.filter((c) => c.parent_id);
+  const subs = allSubs.filter(
+    (c) =>
+      matchesQuery({ name: c.name, slug: c.slug }, search) &&
+      (parentFilter === "all" || c.parent_id === parentFilter),
+  );
 
   const save = useMutation({
     mutationFn: async (p: FormState) => {
@@ -63,7 +72,24 @@ function SubcategoriesPage() {
           <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New subcategory</span>
         </button>
       }/>
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6 space-y-4">
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          placeholder="Search subcategories…"
+          filters={[{
+            label: "Parent category",
+            value: parentFilter,
+            onChange: setParentFilter,
+            options: [{ label: "All categories", value: "all" }, ...parents.map((p) => ({ label: p.name, value: p.id }))],
+          }]}
+          exportRows={subs}
+          exportName="subcategories"
+          importTable="categories"
+          importColumns={["name", "slug", "image", "parent_id", "sort_order"]}
+          onImported={() => qc.invalidateQueries({ queryKey: ["admin", "categories"] })}
+          resultCount={subs.length}
+        />
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-sm">
@@ -80,7 +106,7 @@ function SubcategoriesPage() {
                   <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
                 )}
                 {!q.isLoading && subs.length === 0 && (
-                  <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground">No subcategories yet. Click "New subcategory".</td></tr>
+                  <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground">{allSubs.length ? "No subcategories match your search." : 'No subcategories yet. Click "New subcategory".'}</td></tr>
                 )}
                 {subs.map((c) => (
                   <tr key={c.id} className="border-t border-border hover:bg-muted/30">

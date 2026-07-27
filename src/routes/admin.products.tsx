@@ -6,6 +6,8 @@ import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { TableToolbar } from "@/components/admin/TableToolbar";
+import { matchesQuery } from "@/lib/csv";
 import { Plus, Edit2, Trash2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/products")({
@@ -41,6 +43,9 @@ function ProductsPage() {
   const [parentId, setParentId] = useState<string>("");
   const [gallery, setGallery] = useState<string[]>([]);
   const [slugTouched, setSlugTouched] = useState(false);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const productsQ = useQuery({
     queryKey: ["admin", "products"],
@@ -143,7 +148,13 @@ function ProductsPage() {
     setGallery((data ?? []).map((r) => r.url));
   }
 
-  const products = productsQ.data ?? [];
+  const products = (productsQ.data ?? []) as any[];
+  const filtered = products.filter(
+    (p) =>
+      matchesQuery(p, search) &&
+      (statusFilter === "all" || p.status === statusFilter) &&
+      (categoryFilter === "all" || p.category_id === categoryFilter),
+  );
   const allCats = (categoriesQ.data ?? []) as any[];
   const parentCats = allCats.filter((c) => !c.parent_id);
   const subCats = allCats.filter((c) => c.parent_id);
@@ -159,7 +170,41 @@ function ProductsPage() {
           </button>
         }
       />
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6 space-y-4">
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          placeholder="Search products by name, slug, brand…"
+          filters={[
+            {
+              label: "Status",
+              value: statusFilter,
+              onChange: setStatusFilter,
+              options: [
+                { label: "All statuses", value: "all" },
+                { label: "Active", value: "active" },
+                { label: "Draft", value: "draft" },
+                { label: "Low stock", value: "low_stock" },
+                { label: "Out of stock", value: "out_of_stock" },
+              ],
+            },
+            {
+              label: "Category",
+              value: categoryFilter,
+              onChange: setCategoryFilter,
+              options: [
+                { label: "All categories", value: "all" },
+                ...((categoriesQ.data ?? []) as any[]).map((c) => ({ label: c.name, value: c.id })),
+              ],
+            },
+          ]}
+          exportRows={filtered.map(({ brands, categories, ...r }: any) => r)}
+          exportName="products"
+          importTable="products"
+          importColumns={["slug", "name", "price", "old_price", "tag", "image", "description", "color", "stock", "status", "brand_id", "category_id"]}
+          onImported={() => qc.invalidateQueries({ queryKey: ["admin", "products"] })}
+          resultCount={filtered.length}
+        />
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-sm">
@@ -179,10 +224,10 @@ function ProductsPage() {
                     <Loader2 className="h-5 w-5 animate-spin inline" />
                   </td></tr>
                 )}
-                {!productsQ.isLoading && products.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">No products yet. Click "Add product".</td></tr>
+                {!productsQ.isLoading && filtered.length === 0 && (
+                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">{products.length ? "No products match your search." : 'No products yet. Click "Add product".'}</td></tr>
                 )}
-                {products.map((p: any) => (
+                {filtered.map((p: any) => (
                   <tr key={p.id} className="border-t border-border hover:bg-muted/30">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">

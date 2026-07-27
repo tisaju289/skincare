@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { TableToolbar } from "@/components/admin/TableToolbar";
+import { matchesQuery } from "@/lib/csv";
 import { Plus, Copy, Edit2, Trash2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/promotions")({
@@ -38,6 +40,9 @@ function PromotionsPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Promo | null>(null);
   const [form, setForm] = useState<FormState>(empty);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
 
   const q = useQuery({
     queryKey: ["admin", "promotions"],
@@ -66,7 +71,13 @@ function PromotionsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const promos = q.data ?? [];
+  const allPromos = q.data ?? [];
+  const promos = allPromos.filter(
+    (p) =>
+      matchesQuery(p, search) &&
+      (statusFilter === "all" || p.status === statusFilter) &&
+      (typeFilter === "all" || p.type === typeFilter),
+  );
 
   return (
     <>
@@ -75,7 +86,32 @@ function PromotionsPage() {
           <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Create promo</span>
         </button>
       }/>
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6 space-y-4">
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          placeholder="Search promo codes…"
+          filters={[
+            {
+              label: "Status",
+              value: statusFilter,
+              onChange: setStatusFilter,
+              options: [{ label: "All statuses", value: "all" }, ...["active", "scheduled", "expired", "disabled"].map((s) => ({ label: s, value: s }))],
+            },
+            {
+              label: "Type",
+              value: typeFilter,
+              onChange: setTypeFilter,
+              options: [{ label: "All types", value: "all" }, ...["percentage", "fixed", "shipping"].map((s) => ({ label: s, value: s }))],
+            },
+          ]}
+          exportRows={promos}
+          exportName="promotions"
+          importTable="promotions"
+          importColumns={["code", "description", "type", "value", "usage_limit", "starts_at", "ends_at", "status"]}
+          onImported={() => qc.invalidateQueries({ queryKey: ["admin", "promotions"] })}
+          resultCount={promos.length}
+        />
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-sm">
@@ -92,7 +128,7 @@ function PromotionsPage() {
             </thead>
             <tbody>
               {q.isLoading && <tr><td colSpan={7} className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></td></tr>}
-              {!q.isLoading && promos.length === 0 && <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">No promo codes yet.</td></tr>}
+              {!q.isLoading && promos.length === 0 && <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">{allPromos.length ? "No promos match your search." : "No promo codes yet."}</td></tr>}
               {promos.map((p) => (
                 <tr key={p.id} className="border-t border-border hover:bg-muted/30">
                   <td className="px-5 py-3">

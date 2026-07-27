@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { TableToolbar } from "@/components/admin/TableToolbar";
+import { matchesQuery } from "@/lib/csv";
 import { Loader2, Trash2, Edit2, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/admin/orders")({
@@ -42,6 +44,8 @@ function OrdersPage() {
   const [editing, setEditing] = useState<Order | null>(null);
   const [form, setForm] = useState<FormState>(empty);
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
+  const [search, setSearch] = useState("");
+  const [payFilter, setPayFilter] = useState("all");
 
   const q = useQuery({
     queryKey: ["admin", "orders"],
@@ -74,7 +78,12 @@ function OrdersPage() {
   });
 
   const orders = (q.data ?? []) as any[];
-  const filtered = filter === "all" ? orders : orders.filter((o) => o.status === filter);
+  const filtered = orders.filter(
+    (o) =>
+      (filter === "all" || o.status === filter) &&
+      (payFilter === "all" || o.payment_method === payFilter) &&
+      matchesQuery(o, search),
+  );
   const tabs: (OrderStatus | "all")[] = ["all", "pending", "processing", "shipped", "delivered", "cancelled"];
 
   return (
@@ -95,6 +104,38 @@ function OrdersPage() {
             );
           })}
         </div>
+
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          placeholder="Search by order number, customer, address…"
+          filters={[
+            {
+              label: "Status",
+              value: filter,
+              onChange: (v) => setFilter(v as OrderStatus | "all"),
+              options: [
+                { label: "All statuses", value: "all" },
+                ...["pending", "processing", "shipped", "delivered", "cancelled", "refunded"].map((s) => ({ label: s, value: s })),
+              ],
+            },
+            {
+              label: "Payment",
+              value: payFilter,
+              onChange: setPayFilter,
+              options: [
+                { label: "All methods", value: "all" },
+                ...["bkash", "nagad", "card", "cod"].map((s) => ({ label: s.toUpperCase(), value: s })),
+              ],
+            },
+          ]}
+          exportRows={filtered.map(({ customers, ...r }: any) => ({ ...r, customer: customers?.name ?? "Guest" }))}
+          exportName="orders"
+          importTable="orders"
+          importColumns={["order_number", "customer_id", "status", "payment_method", "subtotal", "shipping", "discount", "total", "shipping_address", "notes"]}
+          onImported={() => qc.invalidateQueries({ queryKey: ["admin", "orders"] })}
+          resultCount={filtered.length}
+        />
 
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
