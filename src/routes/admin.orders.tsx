@@ -65,7 +65,7 @@ function OrdersPage() {
     mutationFn: async (p: FormState) => {
       const payload = sanitizeRow(p);
       const { error } = editing
-        ? await supabase.from("orders").update(payload).eq("id", editing.id)
+        ? await supabase.from("orders").update(payload as never).eq("id", editing.id)
         : await supabase.from("orders").insert(payload as any);
       if (error) throw error;
     },

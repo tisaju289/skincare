@@ -42,7 +42,7 @@ function CustomersPage() {
     mutationFn: async (p: FormState) => {
       const payload = sanitizeRow(p);
       const { error } = editing
-        ? await supabase.from("customers").update(payload).eq("id", editing.id)
+        ? await supabase.from("customers").update(payload as never).eq("id", editing.id)
         : await supabase.from("customers").insert(payload as any);
       if (error) throw error;
     },

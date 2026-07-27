@@ -58,7 +58,7 @@ function PromotionsPage() {
     mutationFn: async (p: FormState) => {
       const payload = sanitizeRow({ ...p, code: p.code?.toUpperCase() });
       const { error } = editing
-        ? await supabase.from("promotions").update(payload).eq("id", editing.id)
+        ? await supabase.from("promotions").update(payload as never).eq("id", editing.id)
         : await supabase.from("promotions").insert(payload as any);
       if (error) throw error;
     },
