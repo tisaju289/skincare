@@ -85,21 +85,43 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
               All products
             </Link>
           </li>
-          {categories.map((c) => (
-            <li key={c.slug}>
-              <Link
-                to="/category/$slug"
-                params={{ slug: c.slug }}
-                className={`block rounded-lg px-3 py-2 text-sm ${
-                  activeSlug === c.slug
-                    ? "bg-[color:var(--brand-pink)] text-white font-bold"
-                    : "hover:bg-muted text-foreground/80"
-                }`}
-              >
-                {c.name}
-              </Link>
-            </li>
-          ))}
+          {categories.filter((c) => !c.parent).map((c) => {
+            const kids = categories.filter((k) => k.parent === c.slug);
+            return (
+              <li key={c.slug}>
+                <Link
+                  to="/category/$slug"
+                  params={{ slug: c.slug }}
+                  className={`block rounded-lg px-3 py-2 text-sm ${
+                    activeSlug === c.slug
+                      ? "bg-[color:var(--brand-pink)] text-white font-bold"
+                      : "hover:bg-muted text-foreground/80"
+                  }`}
+                >
+                  {c.name}
+                </Link>
+                {kids.length > 0 && (
+                  <ul className="ml-3 mt-1 space-y-0.5 border-l border-border pl-2">
+                    {kids.map((k) => (
+                      <li key={k.slug}>
+                        <Link
+                          to="/category/$slug"
+                          params={{ slug: k.slug }}
+                          className={`block rounded-lg px-3 py-1.5 text-[13px] ${
+                            activeSlug === k.slug
+                              ? "bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)] font-bold"
+                              : "hover:bg-muted text-foreground/70"
+                          }`}
+                        >
+                          {k.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </aside>

@@ -44,8 +44,9 @@ export const Route = createFileRoute("/category/$slug")({
 });
 
 function CategoryPage() {
-  const data = Route.useLoaderData() as { category: Category; products: Product[]; categories: Category[]; settings: SiteSettings };
+  const data = Route.useLoaderData() as { category: Category; subcategories: Category[]; products: Product[]; categories: Category[]; settings: SiteSettings };
   const { category, products, categories, settings } = data;
+  const subcategories = data.subcategories ?? [];
 
   const bounds = useMemo<[number, number]>(() => {
     if (!products.length) return [0, 5000];
@@ -76,10 +77,30 @@ function CategoryPage() {
         <div className={`relative rounded-3xl overflow-hidden bg-gradient-to-br ${category.color} p-6 sm:p-8 md:p-12 text-white`}>
           <div className="relative z-10 max-w-xl">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-black">{category.name}</h1>
+            {category.parent && (
+              <Link to="/category/$slug" params={{ slug: category.parent }} className="text-xs font-bold uppercase tracking-wide opacity-90 hover:underline">
+                ← {categories.find((c) => c.slug === category.parent)?.name ?? "Back"}
+              </Link>
+            )}
             <p className="mt-2 opacity-90 text-sm sm:text-base">{products.length} products · Curated for you</p>
           </div>
         </div>
       </section>
+
+      {subcategories.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 mt-6 flex gap-2 overflow-x-auto no-scrollbar">
+          {subcategories.map((s) => (
+            <Link
+              key={s.slug}
+              to="/category/$slug"
+              params={{ slug: s.slug }}
+              className="whitespace-nowrap rounded-full border border-border bg-white px-4 py-1.5 text-xs font-bold hover:border-[color:var(--brand-pink)] hover:text-[color:var(--brand-pink)]"
+            >
+              {s.name}
+            </Link>
+          ))}
+        </section>
+      )}
 
       <section className="max-w-7xl mx-auto px-4 mt-8 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         <ShopFilters

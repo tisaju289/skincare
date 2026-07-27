@@ -12,9 +12,9 @@ export const Route = createFileRoute("/admin/categories")({
   component: CategoriesPage,
 });
 
-type Category = { id: string; name: string; slug: string; color: string | null; image: string | null; sort_order: number };
+type Category = { id: string; name: string; slug: string; color: string | null; image: string | null; sort_order: number; parent_id: string | null };
 type FormState = Partial<Category>;
-const empty: FormState = { name: "", slug: "", color: "from-pink-400 to-rose-500", sort_order: 0 };
+const empty: FormState = { name: "", slug: "", color: "from-pink-400 to-rose-500", sort_order: 0, parent_id: null };
 
 function CategoriesPage() {
   const qc = useQueryClient();
@@ -48,7 +48,11 @@ function CategoriesPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const cats = q.data ?? [];
+  const raw = q.data ?? [];
+  const cats = raw
+    .filter((c) => !c.parent_id)
+    .flatMap((p) => [p, ...raw.filter((c) => c.parent_id === p.id)])
+    .concat(raw.filter((c) => c.parent_id && !raw.some((p) => p.id === c.parent_id)));
 
   return (
     <>
@@ -65,6 +69,7 @@ function CategoriesPage() {
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Category</th>
                   <th className="px-5 py-3 text-left font-semibold">Slug</th>
+                  <th className="px-5 py-3 text-left font-semibold">Parent</th>
                   <th className="px-5 py-3 text-left font-semibold">Color</th>
                   <th className="px-5 py-3 text-left font-semibold">Sort order</th>
                   <th className="px-5 py-3"></th>
@@ -72,10 +77,10 @@ function CategoriesPage() {
               </thead>
               <tbody>
                 {q.isLoading && (
-                  <tr><td colSpan={5} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
+                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
                 )}
                 {!q.isLoading && cats.length === 0 && (
-                  <tr><td colSpan={5} className="px-5 py-10 text-center text-muted-foreground">No categories yet. Click "New category".</td></tr>
+                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">No categories yet. Click "New category".</td></tr>
                 )}
                 {cats.map((c) => (
                   <tr key={c.id} className="border-t border-border hover:bg-muted/30">
@@ -86,10 +91,11 @@ function CategoriesPage() {
                         ) : (
                           <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${c.color ?? "from-pink-400 to-rose-500"}`} />
                         )}
-                        <p className="font-medium">{c.name}</p>
+                        <p className="font-medium">{c.parent_id ? <span className="text-muted-foreground">↳ </span> : null}{c.name}</p>
                       </div>
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">/{c.slug}</td>
+                    <td className="px-5 py-3 text-muted-foreground">{cats.find((p) => p.id === c.parent_id)?.name ?? "—"}</td>
                     <td className="px-5 py-3 text-xs text-muted-foreground">{c.color ?? "—"}</td>
                     <td className="px-5 py-3">{c.sort_order}</td>
                     <td className="px-5 py-3">
@@ -107,9 +113,23 @@ function CategoriesPage() {
       </div>
 
       <AdminModal open={open} onClose={() => setOpen(false)} title={editing ? "Edit category" : "New category"}>
-        <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); save.mutate({ ...form, parent_id: form.parent_id || null }); }} className="space-y-4">
           <Field label="Name"><input required className={inputCls} value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
           <Field label="Slug"><input required className={inputCls} value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></Field>
+          <Field label="Parent category (optional — leave empty for a top-level category)">
+            <select
+              className={inputCls}
+              value={form.parent_id ?? ""}
+              onChange={(e) => setForm({ ...form, parent_id: e.target.value || null })}
+            >
+              <option value="">None (top level)</option>
+              {cats
+                .filter((c) => !editing || (c.id !== editing.id && c.parent_id !== editing.id))
+                .map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+            </select>
+          </Field>
           <Field label="Color gradient (Tailwind, e.g. from-pink-400 to-rose-500)"><input className={inputCls} value={form.color ?? ""} onChange={(e) => setForm({ ...form, color: e.target.value })} /></Field>
           <ImageInput label="Category image" folder="categories" value={form.image} onChange={(v) => setForm({ ...form, image: v })} />
           <Field label="Sort order"><input type="number" className={inputCls} value={form.sort_order ?? 0} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} /></Field>
