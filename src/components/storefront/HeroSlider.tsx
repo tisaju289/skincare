@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { HeroSlide } from "@/lib/site-settings";
+import { imgProps } from "@/lib/image";
 
 export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const [index, setIndex] = useState(0);
@@ -37,9 +38,13 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           >
             {s.image ? (
               <img
-                src={s.image}
+                {...imgProps(s.image, {
+                  width: 960,
+                  widths: [480, 720, 960, 1440],
+                  sizes: "(max-width: 768px) 50vw, 45vw",
+                  eager: i === 0,
+                })}
                 alt={s.title ?? "Promotional banner"}
-                loading={i === 0 ? "eager" : "lazy"}
                 className="absolute right-0 top-0 h-full w-1/2 md:w-[45%] object-cover"
               />
             ) : null}

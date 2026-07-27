@@ -3,6 +3,7 @@ import { Star, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import type { Product } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
+import { imgProps } from "@/lib/image";
 
 export function ProductCard({ product: p }: { product: Product }) {
   const { add } = useCart();
@@ -23,9 +24,8 @@ export function ProductCard({ product: p }: { product: Product }) {
             </span>
           )}
           <img
-            src={p.image}
+            {...imgProps(p.image, { width: 480, widths: [240, 360, 480, 720], sizes: "(max-width: 640px) 45vw, 260px" })}
             alt={p.name}
-            loading="lazy"
             className="h-full w-full object-cover group-hover:scale-105 transition"
           />
         </div>
