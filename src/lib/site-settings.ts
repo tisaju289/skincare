@@ -212,6 +212,7 @@ export type SiteSettings = {
 export const DEFAULT_SETTINGS: SiteSettings = {
   home_sections: DEFAULT_HOME_SECTIONS,
   hero_slides: DEFAULT_HERO_SLIDES,
+  product_badges: DEFAULT_PRODUCT_BADGES,
   store_name: "Shajgoj",
   support_email: null,
   phone: null,
@@ -261,6 +262,7 @@ export function resolveSettings(row: unknown): SiteSettings {
   if (r.id) out.id = r.id;
   out.home_sections = normalizeHomeSections(r.home_sections);
   out.hero_slides = normalizeHeroSlides(r.hero_slides);
+  out.product_badges = normalizeProductBadges(r.product_badges);
   return out as SiteSettings;
 }
 
