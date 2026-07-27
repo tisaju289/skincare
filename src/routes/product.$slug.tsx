@@ -2,11 +2,22 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Heart, ShoppingBag, Star, Truck, ShieldCheck, RefreshCw, ChevronRight, Minus, Plus } from "lucide-react";
+import { Heart, ShoppingBag, Star, Truck, ShieldCheck, RefreshCw, ChevronRight, Minus, Plus, Headphones, Gift, Tag, Wallet, Clock } from "lucide-react";
 import { getProductPage, submitReview } from "@/lib/storefront.functions";
 import type { Category, Product, Review } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
-import { siteHead, DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
+import { siteHead, DEFAULT_SETTINGS, normalizeProductBadges, type SiteSettings } from "@/lib/site-settings";
+
+const PRODUCT_BADGE_ICON_MAP = {
+  truck: Truck,
+  shield: ShieldCheck,
+  refresh: RefreshCw,
+  headphones: Headphones,
+  gift: Gift,
+  tag: Tag,
+  wallet: Wallet,
+  clock: Clock,
+} as const;
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
