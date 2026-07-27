@@ -77,9 +77,12 @@ function SearchPage() {
 
           <div className="min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-              <ProductSearchBar value={query} onChange={setQuery} />
+              <div className="hidden md:block flex-1 min-w-0">
+                <ProductSearchBar value={query} onChange={setQuery} />
+              </div>
               <p className="text-sm text-muted-foreground shrink-0">{filtered.length} products</p>
             </div>
+
 
             {filtered.length === 0 ? (
               <p className="text-sm text-muted-foreground py-16 text-center">
