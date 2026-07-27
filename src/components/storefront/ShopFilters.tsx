@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
+import { SlidersHorizontal, ChevronDown } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 
 type Props = {
