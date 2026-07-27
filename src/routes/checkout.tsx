@@ -82,7 +82,9 @@ function CheckoutPage() {
   if (done) {
     return (
       <div className="min-h-screen bg-background">
-        <SiteHeader categories={[]} />
+        <>
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={[]} settings={settings} />
         <div className="max-w-lg mx-auto px-4 py-24 text-center">
           <CheckCircle2 className="h-14 w-14 mx-auto text-emerald-500" />
           <h1 className="mt-4 text-2xl sm:text-3xl font-black">Order confirmed</h1>
@@ -97,14 +99,17 @@ function CheckoutPage() {
             Continue shopping
           </Link>
         </div>
-        <SiteFooter categories={[]} />
+        <SiteFooter categories={[]} settings={settings} />
+      </>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader categories={[]} />
+      <>
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={[]} settings={settings} />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="text-2xl sm:text-3xl font-black">Checkout</h1>
@@ -219,7 +224,8 @@ function CheckoutPage() {
         )}
       </div>
 
-      <SiteFooter categories={[]} />
+      <SiteFooter categories={[]} settings={settings} />
+      </>
     </div>
   );
 }
