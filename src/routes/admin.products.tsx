@@ -30,11 +30,17 @@ type FormState = Partial<Product>;
 
 const empty: FormState = { name: "", slug: "", price: 0, stock: 0, status: "active" };
 
+const slugify = (s: string) =>
+  s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
 function ProductsPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [form, setForm] = useState<FormState>(empty);
+  const [parentId, setParentId] = useState<string>("");
+  const [gallery, setGallery] = useState<string[]>([]);
+  const [slugTouched, setSlugTouched] = useState(false);
 
   const productsQ = useQuery({
     queryKey: ["admin", "products"],
@@ -50,7 +56,7 @@ function ProductsPage() {
 
   const categoriesQ = useQuery({
     queryKey: ["admin", "categories-select"],
-    queryFn: async () => (await supabase.from("categories").select("id,name").order("name")).data ?? [],
+    queryFn: async () => (await supabase.from("categories").select("id,name,parent_id").order("name")).data ?? [],
   });
   const brandsQ = useQuery({
     queryKey: ["admin", "brands-select"],
@@ -59,12 +65,24 @@ function ProductsPage() {
 
   const save = useMutation({
     mutationFn: async (payload: FormState) => {
+      let productId = editing?.id;
       if (editing) {
         const { error } = await supabase.from("products").update(payload).eq("id", editing.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("products").insert(payload as any);
+        const { data, error } = await supabase.from("products").insert(payload as any).select("id").single();
         if (error) throw error;
+        productId = data.id;
+      }
+      if (productId) {
+        const urls = gallery.map((u) => u.trim()).filter(Boolean);
+        await supabase.from("product_images").delete().eq("product_id", productId);
+        if (urls.length) {
+          const { error } = await supabase
+            .from("product_images")
+            .insert(urls.map((url, i) => ({ product_id: productId!, url, sort_order: i })));
+          if (error) throw error;
+        }
       }
     },
     onSuccess: () => {
@@ -90,15 +108,32 @@ function ProductsPage() {
   function openNew() {
     setEditing(null);
     setForm(empty);
+    setParentId("");
+    setGallery([]);
+    setSlugTouched(false);
     setOpen(true);
   }
-  function openEdit(p: Product) {
+  async function openEdit(p: Product) {
     setEditing(p);
     setForm(p);
+    setSlugTouched(true);
+    const cats = (categoriesQ.data ?? []) as any[];
+    const current = cats.find((c) => c.id === p.category_id);
+    setParentId(current?.parent_id ?? current?.id ?? "");
+    setGallery([]);
     setOpen(true);
+    const { data } = await supabase
+      .from("product_images")
+      .select("url")
+      .eq("product_id", p.id)
+      .order("sort_order");
+    setGallery((data ?? []).map((r) => r.url));
   }
 
   const products = productsQ.data ?? [];
+  const allCats = (categoriesQ.data ?? []) as any[];
+  const parentCats = allCats.filter((c) => !c.parent_id);
+  const subCats = allCats.filter((c) => c.parent_id);
 
   return (
     <>
@@ -182,12 +217,47 @@ function ProductsPage() {
           className="space-y-4"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Name"><input required className={inputCls} value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field>
-            <Field label="Slug"><input required className={inputCls} value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></Field>
+            <Field label="Name">
+              <input
+                required
+                className={inputCls}
+                value={form.name ?? ""}
+                onChange={(e) => {
+                  const name = e.target.value;
+                  setForm((f) => ({ ...f, name, slug: slugTouched ? f.slug : slugify(name) }));
+                }}
+              />
+            </Field>
+            <Field label="Slug">
+              <input
+                required
+                className={inputCls}
+                value={form.slug ?? ""}
+                onChange={(e) => { setSlugTouched(true); setForm({ ...form, slug: slugify(e.target.value) }); }}
+              />
+            </Field>
             <Field label="Category">
-              <select className={inputCls} value={form.category_id ?? ""} onChange={(e) => setForm({ ...form, category_id: e.target.value || null })}>
+              <select
+                className={inputCls}
+                value={parentId}
+                onChange={(e) => {
+                  setParentId(e.target.value);
+                  setForm({ ...form, category_id: e.target.value || null });
+                }}
+              >
                 <option value="">— None —</option>
-                {(categoriesQ.data ?? []).map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                {parentCats.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </Field>
+            <Field label="Subcategory">
+              <select
+                className={inputCls}
+                disabled={!parentId}
+                value={form.category_id && form.category_id !== parentId ? form.category_id : ""}
+                onChange={(e) => setForm({ ...form, category_id: e.target.value || parentId || null })}
+              >
+                <option value="">— None —</option>
+                {subCats.filter((c: any) => c.parent_id === parentId).map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </Field>
             <Field label="Brand">
@@ -209,6 +279,31 @@ function ProductsPage() {
             </Field>
           </div>
           <ImageInput label="Product image" folder="products" value={form.image} onChange={(v) => setForm({ ...form, image: v })} />
+
+          <div className="space-y-3 pt-2 border-t border-border">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">Product gallery</span>
+              <button type="button" onClick={() => setGallery([...gallery, ""])} className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg border border-border hover:bg-muted">
+                <Plus className="h-3 w-3" /> Add image
+              </button>
+            </div>
+            {gallery.length === 0 && <p className="text-xs text-muted-foreground">No gallery images yet.</p>}
+            {gallery.map((url, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <div className="flex-1">
+                  <ImageInput
+                    label={`Image ${i + 1}`}
+                    folder="products"
+                    value={url}
+                    onChange={(v) => setGallery(gallery.map((g, gi) => (gi === i ? v : g)))}
+                  />
+                </div>
+                <button type="button" aria-label="Remove gallery image" onClick={() => setGallery(gallery.filter((_, gi) => gi !== i))} className="mt-6 h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
           <Field label="Description"><textarea rows={3} className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
             <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancel</button>
