@@ -118,6 +118,8 @@ export type SiteSettings = {
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
+  home_sections: DEFAULT_HOME_SECTIONS,
+  hero_slides: DEFAULT_HERO_SLIDES,
   store_name: "Shajgoj",
   support_email: null,
   phone: null,
