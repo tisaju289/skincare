@@ -117,12 +117,12 @@ function Index() {
       {/* Category circles */}
       <section className="max-w-7xl mx-auto px-4 mt-10">
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 sm:gap-6">
-          {categories.filter((c) => !c.parent).map((c) => (
+          {topCategories.map((c, i) => (
             <Link
               key={c.slug}
               to="/category/$slug"
               params={{ slug: c.slug }}
-              className="flex flex-col items-center gap-2 group"
+              className={`${i >= 6 && !showAllCats ? "hidden sm:flex" : "flex"} flex-col items-center gap-2 group`}
             >
               <div
                 className={`h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-gradient-to-br ${c.color} shadow-lg group-hover:scale-105 transition overflow-hidden ring-4 ring-white`}
@@ -133,7 +133,19 @@ function Index() {
             </Link>
           ))}
         </div>
+        {topCategories.length > 6 && (
+          <div className="sm:hidden mt-4 flex justify-center">
+            <button
+              onClick={() => setShowAllCats((v) => !v)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border px-5 py-2 text-xs font-bold uppercase hover:bg-muted"
+            >
+              {showAllCats ? "Show less" : "All categories"}
+              <ChevronRight className={`h-3.5 w-3.5 transition ${showAllCats ? "-rotate-90" : "rotate-90"}`} />
+            </button>
+          </div>
+        )}
       </section>
+
 
       {/* Deals */}
       <section className="max-w-7xl mx-auto px-4 mt-12">
