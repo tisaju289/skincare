@@ -53,7 +53,7 @@ function Index() {
 
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-4 pt-6">
-        <div className="relative rounded-3xl overflow-hidden bg-[color:var(--brand-lilac)]">
+        <div className="relative aspect-[16/9] md:aspect-auto rounded-2xl md:rounded-3xl overflow-hidden bg-[color:var(--brand-lilac)]">
           <div
             className="absolute inset-0 opacity-40"
             style={{
@@ -61,15 +61,22 @@ function Index() {
                 "repeating-conic-gradient(from 0deg, oklch(0.95 0.05 300) 0deg 10deg, transparent 10deg 20deg)",
             }}
           />
-          <div className="relative grid md:grid-cols-2 gap-6 p-6 sm:p-8 md:p-14 items-center">
-            <div>
-              <p className="text-xs sm:text-sm font-bold tracking-widest text-blue-700">
+          {/* Mobile background image */}
+          <img
+            src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80"
+            alt=""
+            aria-hidden="true"
+            className="md:hidden absolute right-0 top-0 h-full w-1/2 object-cover opacity-90"
+          />
+          <div className="relative h-full md:h-auto grid md:grid-cols-2 gap-6 p-4 sm:p-8 md:p-14 items-center">
+            <div className="max-w-[60%] md:max-w-none">
+              <p className="text-[10px] sm:text-sm font-bold tracking-widest text-blue-700">
                 UNILEVER <span className="text-foreground/70">PRESENTS</span>
               </p>
-              <div className="mt-3 sm:mt-4 inline-block bg-pink-500 text-white text-2xl sm:text-4xl font-black px-3 sm:px-4 py-1.5 sm:py-2 rounded">
+              <div className="mt-1.5 sm:mt-4 inline-block bg-pink-500 text-white text-base sm:text-4xl font-black px-2 sm:px-4 py-0.5 sm:py-2 rounded">
                 JULY
               </div>
-              <h1 className="mt-3 text-4xl sm:text-6xl lg:text-7xl font-black leading-none text-blue-900 -rotate-2">
+              <h1 className="mt-1.5 sm:mt-3 text-2xl sm:text-6xl lg:text-7xl font-black leading-none text-blue-900 -rotate-2">
                 JAW
                 <br />
                 DROPPERS
@@ -77,12 +84,12 @@ function Index() {
               <Link
                 to="/search"
                 search={{ q: "" }}
-                className="mt-6 sm:mt-8 inline-flex items-center gap-2 bg-pink-500 hover:bg-pink-600 text-white font-bold px-6 sm:px-8 py-3 rounded-full text-sm sm:text-base"
+                className="mt-2.5 sm:mt-8 inline-flex items-center gap-1.5 sm:gap-2 bg-pink-500 hover:bg-pink-600 text-white font-bold px-3.5 sm:px-8 py-1.5 sm:py-3 rounded-full text-[11px] sm:text-base"
               >
-                SHOP NOW <ChevronRight className="h-4 w-4" />
+                SHOP NOW <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
               </Link>
             </div>
-            <div className="relative flex flex-col md:block items-center md:justify-end md:pb-0">
+            <div className="relative hidden md:flex flex-col md:block items-center md:justify-end md:pb-0">
               <img
                 src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80"
                 alt="Beauty products collection"
@@ -96,7 +103,15 @@ function Index() {
               </div>
             </div>
           </div>
+          {/* Mobile discount badge */}
+          <div className="md:hidden absolute bottom-2 right-2 text-right">
+            <p className="text-[10px] font-bold text-blue-900">UP TO</p>
+            <p className="text-3xl font-black text-blue-900 leading-none drop-shadow">
+              45%<span className="text-sm"> OFF</span>
+            </p>
+          </div>
         </div>
+
       </section>
 
       {/* Category circles */}
