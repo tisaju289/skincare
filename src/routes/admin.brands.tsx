@@ -6,6 +6,8 @@ import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { TableToolbar } from "@/components/admin/TableToolbar";
+import { matchesQuery } from "@/lib/csv";
 import { Plus, Edit2, Trash2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/brands")({
@@ -21,6 +23,7 @@ function BrandsPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Brand | null>(null);
   const [form, setForm] = useState<FormState>(empty);
+  const [search, setSearch] = useState("");
 
   const q = useQuery({
     queryKey: ["admin", "brands"],
@@ -63,7 +66,8 @@ function BrandsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const brands = q.data ?? [];
+  const all = q.data ?? [];
+  const brands = all.filter((b) => matchesQuery(b, search));
 
   return (
     <>
@@ -79,7 +83,18 @@ function BrandsPage() {
           </button>
         }
       />
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6 space-y-4">
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          placeholder="Search brands…"
+          exportRows={brands}
+          exportName="brands"
+          importTable="brands"
+          importColumns={["name", "slug", "logo"]}
+          onImported={() => qc.invalidateQueries({ queryKey: ["admin", "brands"] })}
+          resultCount={brands.length}
+        />
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-sm">
@@ -96,7 +111,7 @@ function BrandsPage() {
                   <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
                 )}
                 {!q.isLoading && brands.length === 0 && (
-                  <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground">No brands yet. Click "New brand".</td></tr>
+                  <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground">{all.length ? "No brands match your search." : 'No brands yet. Click "New brand".'}</td></tr>
                 )}
                 {brands.map((b) => (
                   <tr key={b.id} className="border-t border-border hover:bg-muted/30">

@@ -6,6 +6,8 @@ import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { TableToolbar } from "@/components/admin/TableToolbar";
+import { matchesQuery } from "@/lib/csv";
 import { Plus, Edit2, Trash2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/categories")({
@@ -24,6 +26,7 @@ function CategoriesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
   const [form, setForm] = useState<FormState>(empty);
+  const [search, setSearch] = useState("");
 
   const q = useQuery({
     queryKey: ["admin", "categories"],
@@ -53,7 +56,8 @@ function CategoriesPage() {
   });
 
   const raw = q.data ?? [];
-  const cats = raw.filter((c) => !c.parent_id);
+  const topLevel = raw.filter((c) => !c.parent_id);
+  const cats = topLevel.filter((c) => matchesQuery({ name: c.name, slug: c.slug }, search));
 
   return (
     <>
@@ -62,7 +66,18 @@ function CategoriesPage() {
           <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New category</span>
         </button>
       }/>
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6 space-y-4">
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          placeholder="Search categories…"
+          exportRows={cats}
+          exportName="categories"
+          importTable="categories"
+          importColumns={["name", "slug", "image", "color", "sort_order"]}
+          onImported={() => qc.invalidateQueries({ queryKey: ["admin", "categories"] })}
+          resultCount={cats.length}
+        />
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-sm">
@@ -79,7 +94,7 @@ function CategoriesPage() {
                   <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
                 )}
                 {!q.isLoading && cats.length === 0 && (
-                  <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground">No categories yet. Click "New category".</td></tr>
+                  <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground">{topLevel.length ? "No categories match your search." : 'No categories yet. Click "New category".'}</td></tr>
                 )}
                 {cats.map((c) => (
                   <tr key={c.id} className="border-t border-border hover:bg-muted/30">
