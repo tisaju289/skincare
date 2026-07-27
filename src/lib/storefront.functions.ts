@@ -19,7 +19,7 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
   ]);
 
   return {
-    categories: mapCategories(cats as never),
+    categories: mapCategories(cats.data as never),
     trending: (prods.data ?? []).map((p) => mapProduct(p as never)) as Product[],
     brands: (brands.data ?? []) as { slug: string; name: string }[],
     settings,
