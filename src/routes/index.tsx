@@ -49,10 +49,12 @@ function Index() {
   const data = Route.useLoaderData() as {
     categories: Category[];
     trending: Product[];
+    products: Product[];
     brands: { slug: string; name: string; logo?: string | null }[];
     settings: SiteSettings;
   };
   const { categories, trending, brands, settings } = data;
+  const pool = data.products ?? trending;
   const topCategories = categories.filter((c) => !c.parent);
   const [showAllCats, setShowAllCats] = useState(false);
   const [showAllBrands, setShowAllBrands] = useState(false);
@@ -60,8 +62,9 @@ function Index() {
   const order = normalizeHomeSections(settings.home_sections).filter((s) => s.enabled);
   const slides = normalizeHeroSlides(settings.hero_slides);
 
-  const blocks: Record<HomeSectionId, React.ReactNode> = {
+  const blocks: Record<string, React.ReactNode> = {
     hero: <HeroSlider slides={slides} />,
+
 
     categories: (
       <section className="max-w-7xl mx-auto px-4 mt-10">
