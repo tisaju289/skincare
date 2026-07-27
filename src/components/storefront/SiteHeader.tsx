@@ -4,6 +4,7 @@ import { Search, Heart, ShoppingBag, LayoutDashboard, Menu, X } from "lucide-rea
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { CartDrawer } from "./CartDrawer";
+import { MobileBottomNav } from "./MobileBottomNav";
 import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
 
 const pillNav = [
@@ -215,6 +216,8 @@ export function SiteHeader({
       </div>
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+
+      <MobileBottomNav onOpenMenu={() => setMenuOpen(true)} onOpenCart={() => setCartOpen(true)} />
     </>
   );
 }
