@@ -14,8 +14,6 @@ export function MobileBottomNav({
 
   return (
     <>
-      {/* spacer so content isn't hidden behind the bar */}
-      <div className="h-16 lg:hidden" aria-hidden />
       <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-background border-t border-border flex items-stretch pb-[env(safe-area-inset-bottom)]">
         <button type="button" onClick={onOpenMenu} className={item}>
           <LayoutGrid className="h-5 w-5" />
