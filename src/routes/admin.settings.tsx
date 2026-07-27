@@ -25,10 +25,13 @@ import { ImageInput } from "@/components/admin/ImageInput";
 import {
   DEFAULT_SETTINGS,
   HOME_SECTION_LABELS,
+  PRODUCT_SOURCE_LABELS,
+  sectionLabel,
   normalizeHeroSlides,
   normalizeHomeSections,
   type HeroSlide,
   type HomeSection,
+  type ProductSource,
   type SiteSettings,
 } from "@/lib/site-settings";
 
@@ -115,6 +118,23 @@ function SettingsPage() {
     const next = homeSections.map((s, i) => (i === index ? { ...s, ...patch } : s));
     set("home_sections", next);
   };
+
+  const addProductSection = () =>
+    set("home_sections", [
+      ...homeSections,
+      {
+        id: `custom-${Date.now()}`,
+        kind: "products",
+        enabled: true,
+        title: "Best Selling",
+        subtitle: "",
+        source: "best_seller",
+        limit: 10,
+        link: "/search",
+      } satisfies HomeSection,
+    ]);
+  const removeSection = (index: number) =>
+    set("home_sections", homeSections.filter((_, i) => i !== index));
 
   const setSlide = (index: number, patch: Partial<HeroSlide>) =>
     set(
@@ -216,7 +236,7 @@ function SettingsPage() {
                       <span className="h-7 w-7 shrink-0 rounded-lg bg-muted grid place-items-center text-xs font-bold">
                         {i + 1}
                       </span>
-                      <span className="text-sm font-semibold flex-1 min-w-[120px]">{HOME_SECTION_LABELS[s.id]}</span>
+                      <span className="text-sm font-semibold flex-1 min-w-[120px]">{sectionLabel(s)}</span>
                       <select
                         value={i}
                         onChange={(e) => {
@@ -227,7 +247,7 @@ function SettingsPage() {
                           set("home_sections", next);
                         }}
                         className="px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
-                        aria-label={`Position of ${HOME_SECTION_LABELS[s.id]}`}
+                        aria-label={`Position of ${sectionLabel(s)}`}
                       >
                         {homeSections.map((_, pos) => (
                           <option key={pos} value={pos}>
@@ -257,7 +277,7 @@ function SettingsPage() {
                         type="button"
                         role="switch"
                         aria-checked={s.enabled}
-                        aria-label={`Show ${HOME_SECTION_LABELS[s.id]}`}
+                        aria-label={`Show ${sectionLabel(s)}`}
                         onClick={() => setSectionAt(i, { enabled: !s.enabled })}
                         className={`h-6 w-11 rounded-full transition-colors relative ${
                           s.enabled ? "bg-[color:var(--brand-pink)]" : "bg-muted-foreground/30"
