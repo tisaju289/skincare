@@ -61,7 +61,7 @@ export function SiteFooter({
         <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             {settings.logo_url ? (
-              <img src={settings.logo_url} alt={`${settings.store_name} logo`} className="h-10 w-auto object-contain" />
+              <img src={settings.logo_url} alt={`${settings.store_name} logo`} loading="lazy" decoding="async" className="h-10 w-auto object-contain" />
             ) : (
               <p className="text-2xl font-black uppercase">{settings.store_name}</p>
             )}

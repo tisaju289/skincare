@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/storefront/ProductCard";
 import { pickProducts, type Category, type Product } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { HeroSlider } from "@/components/storefront/HeroSlider";
+import { imgProps } from "@/lib/image";
 import {
   siteHead,
   DEFAULT_SETTINGS,
@@ -79,7 +80,11 @@ function Index() {
               <div
                 className={`h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-gradient-to-br ${c.color} shadow-lg group-hover:scale-105 transition overflow-hidden ring-4 ring-white`}
               >
-                <img src={c.image} alt={c.name} className="h-full w-full object-cover mix-blend-multiply opacity-90" />
+                <img
+                  {...imgProps(c.image, { width: 200, widths: [96, 160, 240], sizes: "(max-width: 640px) 64px, 96px" })}
+                  alt={c.name}
+                  className="h-full w-full object-cover mix-blend-multiply opacity-90"
+                />
               </div>
               <span className="text-xs sm:text-sm font-semibold text-center">{c.name}</span>
             </Link>
@@ -158,9 +163,8 @@ function Index() {
               >
                 {b.logo ? (
                   <img
-                    src={b.logo}
+                    {...imgProps(b.logo, { width: 240, widths: [120, 240, 360], sizes: "160px" })}
                     alt={`${b.name} logo`}
-                    loading="lazy"
                     className="h-8 sm:h-10 w-auto max-w-full object-contain"
                   />
                 ) : null}

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Minus, Plus, Trash2, X } from "lucide-react";
+import { imgProps } from "@/lib/image";
 import { useCart } from "@/lib/cart";
 
 export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -23,7 +24,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
           )}
           {items.map((i) => (
             <div key={i.slug} className="flex gap-3">
-              <img src={i.image} alt={i.name} className="h-20 w-20 rounded-xl object-cover border border-border" />
+              <img {...imgProps(i.image, { width: 160, widths: [96, 160, 240], sizes: "80px" })} alt={i.name} className="h-20 w-20 rounded-xl object-cover border border-border" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium line-clamp-2">{i.name}</p>
                 <p className="text-sm font-black text-[color:var(--brand-pink)] mt-1">৳{i.price}</p>

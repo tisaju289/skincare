@@ -249,7 +249,7 @@ function ProductsPage() {
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         {p.image ? (
-                          <img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" />
+                          <img src={p.image} alt="" loading="lazy" decoding="async" className="h-10 w-10 rounded-lg object-cover" />
                         ) : (
                           <div className="h-10 w-10 rounded-lg bg-muted" />
                         )}

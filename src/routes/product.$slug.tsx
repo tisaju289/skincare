@@ -7,6 +7,7 @@ import { getProductPage, submitReview } from "@/lib/storefront.functions";
 import type { Category, Product, Review } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { siteHead, DEFAULT_SETTINGS, normalizeProductBadges, type SiteSettings } from "@/lib/site-settings";
+import { imgProps } from "@/lib/image";
 
 const PRODUCT_BADGE_ICON_MAP = {
   truck: Truck,
@@ -113,7 +114,11 @@ function ProductPage() {
       <section className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-6 md:gap-8">
         <div className="space-y-3">
           <div className={`aspect-square rounded-3xl overflow-hidden ${product.color}`}>
-            <img src={activeImage} alt={product.name} className="h-full w-full object-cover" />
+            <img
+              {...imgProps(activeImage, { width: 960, widths: [480, 720, 960, 1200], sizes: "(max-width: 768px) 100vw, 560px", eager: true })}
+              alt={product.name}
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="grid grid-cols-4 gap-3">
             {images.slice(0, 4).map((src, i) => (
@@ -124,7 +129,11 @@ function ProductPage() {
                   activeImage === src ? "border-[color:var(--brand-pink)]" : "border-transparent"
                 }`}
               >
-                <img src={src} alt={`${product.name} view ${i + 1}`} className="h-full w-full object-cover" />
+                <img
+                  {...imgProps(src, { width: 200, widths: [120, 200, 320], sizes: "120px" })}
+                  alt={`${product.name} view ${i + 1}`}
+                  className="h-full w-full object-cover"
+                />
               </button>
             ))}
           </div>

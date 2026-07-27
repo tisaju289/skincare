@@ -74,6 +74,8 @@ export function SiteHeader({
               <img
                 src={settings.logo_url}
                 alt={`${settings.store_name} logo`}
+                decoding="async"
+                fetchPriority="high"
                 className="h-8 sm:h-10 w-auto object-contain shrink-0"
               />
             )}
