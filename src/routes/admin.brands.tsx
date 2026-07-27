@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
+import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Edit2, Trash2, Loader2 } from "lucide-react";
@@ -143,7 +144,7 @@ function BrandsPage() {
             />
           </Field>
           <Field label="Slug"><input required className={inputCls} value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></Field>
-          <Field label="Logo URL"><input className={inputCls} value={form.logo ?? ""} onChange={(e) => setForm({ ...form, logo: e.target.value })} /></Field>
+          <ImageInput label="Brand logo" folder="brands" value={form.logo} onChange={(v) => setForm({ ...form, logo: v })} />
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
             <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancel</button>
             <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90">{save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}Save</button>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
+import { ImageInput } from "@/components/admin/ImageInput";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Edit2, Trash2, Loader2 } from "lucide-react";
@@ -207,7 +208,7 @@ function ProductsPage() {
               </select>
             </Field>
           </div>
-          <Field label="Image URL"><input className={inputCls} value={form.image ?? ""} onChange={(e) => setForm({ ...form, image: e.target.value })} /></Field>
+          <ImageInput label="Product image" folder="products" value={form.image} onChange={(v) => setForm({ ...form, image: v })} />
           <Field label="Description"><textarea rows={3} className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
             <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancel</button>
