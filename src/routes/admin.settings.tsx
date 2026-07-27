@@ -73,13 +73,18 @@ function SettingsPage() {
   });
 
   useEffect(() => {
-    if (q.data) setForm(q.data);
+    if (q.data)
+      setForm({
+        ...q.data,
+        home_sections: normalizeHomeSections((q.data as SiteSettings).home_sections),
+        hero_slides: normalizeHeroSlides((q.data as SiteSettings).hero_slides),
+      });
   }, [q.data]);
 
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const payload = sanitizeRow(form as Record<string, any>);
+      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides"]);
       const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
@@ -95,6 +100,45 @@ function SettingsPage() {
   const str = (k: keyof SiteSettings) => (form[k] as string | null) ?? "";
   const num = (k: keyof SiteSettings) => Number(form[k] ?? 0);
   const bool = (k: keyof SiteSettings) => Boolean(form[k]);
+
+  const homeSections = normalizeHomeSections(form.home_sections);
+  const heroSlides = normalizeHeroSlides(form.hero_slides);
+
+  const moveSection = (index: number, dir: -1 | 1) => {
+    const next = [...homeSections];
+    const target = index + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    set("home_sections", next);
+  };
+  const setSectionAt = (index: number, patch: Partial<HomeSection>) => {
+    const next = homeSections.map((s, i) => (i === index ? { ...s, ...patch } : s));
+    set("home_sections", next);
+  };
+
+  const setSlide = (index: number, patch: Partial<HeroSlide>) =>
+    set(
+      "hero_slides",
+      heroSlides.map((s, i) => (i === index ? { ...s, ...patch } : s)),
+    );
+  const moveSlide = (index: number, dir: -1 | 1) => {
+    const next = [...heroSlides];
+    const target = index + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    set("hero_slides", next);
+  };
+  const removeSlide = (index: number) =>
+    set(
+      "hero_slides",
+      heroSlides.filter((_, i) => i !== index),
+    );
+  const addSlide = () =>
+    set("hero_slides", [
+      ...heroSlides,
+      { kicker: "", badge: "", title: "New slide", subtitle: "", image: "", cta_label: "SHOP NOW", cta_link: "/search" },
+    ]);
+
 
   const active = sections.find((s) => s.id === tab)!;
 
