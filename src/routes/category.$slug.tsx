@@ -7,6 +7,8 @@ import { ProductCard } from "@/components/storefront/ProductCard";
 import { ShopFilters } from "@/components/storefront/ShopFilters";
 import { ProductSearchBar } from "@/components/storefront/ProductSearchBar";
 import type { Category, Product } from "@/lib/shop-data";
+import { SiteTheme } from "@/components/storefront/SiteTheme";
+import { siteHead, DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
 
 export const Route = createFileRoute("/category/$slug")({
   loader: async ({ params }) => {
@@ -14,27 +16,15 @@ export const Route = createFileRoute("/category/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.category.name} — Shajgoj` },
-          {
-            name: "description",
-            content: `Shop ${loaderData.products.length}+ authentic ${loaderData.category.name} products at Shajgoj with cash on delivery.`,
-          },
-          { property: "og:title", content: `${loaderData.category.name} — Shajgoj` },
-          { property: "og:description", content: `Authentic ${loaderData.category.name} products at Shajgoj.` },
-          { property: "og:type", content: "website" },
-          ...(loaderData.category.image
-            ? [
-                { property: "og:image", content: loaderData.category.image },
-                { name: "twitter:image", content: loaderData.category.image },
-              ]
-            : []),
-          { name: "twitter:card", content: "summary_large_image" },
-        ]
-      : [],
-  }),
+  head: ({ loaderData, params }) =>
+    siteHead(loaderData?.settings ?? DEFAULT_SETTINGS, {
+      title: loaderData ? `${loaderData.category.name} — ${(loaderData.settings ?? DEFAULT_SETTINGS).store_name}` : undefined,
+      description: loaderData
+        ? `Shop ${loaderData.products.length}+ authentic ${loaderData.category.name} products with cash on delivery.`
+        : undefined,
+      image: loaderData?.category.image || undefined,
+      path: `/category/${params.slug}`,
+    }),
   errorComponent: ({ error }) => (
     <div className="min-h-screen grid place-items-center px-4 text-center">
       <p className="text-sm text-muted-foreground">{error.message}</p>
@@ -54,8 +44,8 @@ export const Route = createFileRoute("/category/$slug")({
 });
 
 function CategoryPage() {
-  const data = Route.useLoaderData() as { category: Category; products: Product[]; categories: Category[] };
-  const { category, products, categories } = data;
+  const data = Route.useLoaderData() as { category: Category; products: Product[]; categories: Category[]; settings: SiteSettings };
+  const { category, products, categories, settings } = data;
 
   const bounds = useMemo<[number, number]>(() => {
     if (!products.length) return [0, 5000];
@@ -78,7 +68,9 @@ function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader categories={categories} />
+      <>
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={categories} settings={settings} />
 
       <section className="max-w-7xl mx-auto px-4 pt-6">
         <div className={`relative rounded-3xl overflow-hidden bg-gradient-to-br ${category.color} p-6 sm:p-8 md:p-12 text-white`}>
@@ -117,7 +109,8 @@ function CategoryPage() {
         </div>
       </section>
 
-      <SiteFooter categories={categories} />
+      <SiteFooter categories={categories} settings={settings} />
+      </>
     </div>
   );
 }

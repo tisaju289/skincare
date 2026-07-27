@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { searchProducts } from "@/lib/storefront.functions";
 import type { Category, Product } from "@/lib/shop-data";
+import { SiteTheme } from "@/components/storefront/SiteTheme";
+import { siteHead, DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
@@ -13,21 +15,15 @@ export const Route = createFileRoute("/search")({
   loaderDeps: ({ search }) => ({ q: search.q }),
   loader: ({ deps }) => searchProducts({ data: { q: deps.q } }),
   head: ({ loaderData }) => {
+    const settings = loaderData?.settings ?? DEFAULT_SETTINGS;
     const q = loaderData?.q?.trim();
-    const title = q ? `Search: ${q} — Shajgoj` : "All Products — Shajgoj";
-    const desc = q
-      ? `Products matching "${q}" at Shajgoj — authentic beauty, skincare and makeup.`
-      : "Browse every authentic beauty, skincare, haircare and fragrance product at Shajgoj.";
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "website" },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-    };
+    return siteHead(settings, {
+      title: q ? `Search: ${q} — ${settings.store_name}` : `All Products — ${settings.store_name}`,
+      description: q
+        ? `Products matching "${q}" at ${settings.store_name}.`
+        : `Browse every authentic product at ${settings.store_name}.`,
+      path: "/search",
+    });
   },
   errorComponent: ({ error }) => (
     <div className="min-h-screen grid place-items-center px-4 text-center">
@@ -39,8 +35,8 @@ export const Route = createFileRoute("/search")({
 });
 
 function SearchPage() {
-  const data = Route.useLoaderData() as { q: string; products: Product[]; categories: Category[] };
-  const { q, products, categories } = data;
+  const data = Route.useLoaderData() as { q: string; products: Product[]; categories: Category[]; settings: SiteSettings };
+  const { q, products, categories, settings } = data;
 
   const bounds = useMemo<[number, number]>(() => {
     if (!products.length) return [0, 5000];
@@ -63,7 +59,9 @@ function SearchPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader categories={categories} />
+      <>
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={categories} settings={settings} />
 
       <section className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl sm:text-3xl font-black">{q ? `Results for “${q}”` : "All products"}</h1>
@@ -98,7 +96,8 @@ function SearchPage() {
         </div>
       </section>
 
-      <SiteFooter categories={categories} />
+      <SiteFooter categories={categories} settings={settings} />
+      </>
     </div>
   );
 }

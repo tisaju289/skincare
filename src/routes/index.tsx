@@ -5,26 +5,12 @@ import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import type { Category, Product } from "@/lib/shop-data";
+import { SiteTheme } from "@/components/storefront/SiteTheme";
+import { siteHead, DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
-  head: () => ({
-    meta: [
-      { title: "Shajgoj — Beauty, Skincare & Cosmetics Store in Bangladesh" },
-      {
-        name: "description",
-        content:
-          "Shop 100% authentic makeup, skincare, haircare, fragrance and personal care at Shajgoj. Cash on delivery all over Bangladesh.",
-      },
-      { property: "og:title", content: "Shajgoj — Beauty, Skincare & Cosmetics Store" },
-      {
-        property: "og:description",
-        content: "Authentic beauty products at unbeatable prices, delivered across Bangladesh.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: ({ loaderData }) => siteHead(loaderData?.settings ?? DEFAULT_SETTINGS, { path: "/" }),
   errorComponent: ({ error }) => (
     <div className="min-h-screen grid place-items-center px-4 text-center">
       <div>
@@ -54,13 +40,16 @@ function Index() {
     categories: Category[];
     trending: Product[];
     brands: { slug: string; name: string }[];
+    settings: SiteSettings;
   };
-  const { categories, trending, brands } = data;
+  const { categories, trending, brands, settings } = data;
 
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader categories={categories} />
+      <>
+      <SiteTheme settings={settings} />
+      <SiteHeader categories={categories} settings={settings} />
 
       {/* Hero */}
       <section className="max-w-7xl mx-auto px-4 pt-6">
@@ -215,7 +204,8 @@ function Index() {
         </div>
       </section>
 
-      <SiteFooter categories={categories} />
+      <SiteFooter categories={categories} settings={settings} />
+      </>
     </div>
   );
 }
