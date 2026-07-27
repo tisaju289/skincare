@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { supabase } from "@/integrations/supabase/client";
+import { TableToolbar } from "@/components/admin/TableToolbar";
+import { matchesQuery } from "@/lib/csv";
 import { Star, CheckCircle2, X, Loader2, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/reviews")({
@@ -23,6 +26,9 @@ type Review = {
 
 function ReviewsPage() {
   const qc = useQueryClient();
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [ratingFilter, setRatingFilter] = useState("all");
   const q = useQuery({
     queryKey: ["admin", "reviews"],
     queryFn: async () => {
@@ -47,12 +53,40 @@ function ReviewsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const reviews = q.data ?? [];
+  const allReviews = q.data ?? [];
+  const reviews = allReviews.filter(
+    (r) =>
+      matchesQuery(r, search) &&
+      (statusFilter === "all" || r.status === statusFilter) &&
+      (ratingFilter === "all" || r.rating === Number(ratingFilter)),
+  );
 
   return (
     <>
-      <AdminTopbar title="Reviews" subtitle={`${reviews.length} customer reviews`} />
-      <div className="p-4 sm:p-6">
+      <AdminTopbar title="Reviews" subtitle={`${allReviews.length} customer reviews`} />
+      <div className="p-4 sm:p-6 space-y-4">
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          placeholder="Search reviews by name, product, comment…"
+          filters={[
+            {
+              label: "Status",
+              value: statusFilter,
+              onChange: setStatusFilter,
+              options: [{ label: "All statuses", value: "all" }, ...["pending", "approved", "rejected"].map((s) => ({ label: s, value: s }))],
+            },
+            {
+              label: "Rating",
+              value: ratingFilter,
+              onChange: setRatingFilter,
+              options: [{ label: "All ratings", value: "all" }, ...[5, 4, 3, 2, 1].map((n) => ({ label: `${n} star`, value: String(n) }))],
+            },
+          ]}
+          exportRows={reviews.map(({ products, ...r }: any) => ({ ...r, product: products?.name ?? "" }))}
+          exportName="reviews"
+          resultCount={reviews.length}
+        />
         <div className="bg-card rounded-2xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-sm">
@@ -71,7 +105,7 @@ function ReviewsPage() {
                   <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline" /></td></tr>
                 )}
                 {!q.isLoading && reviews.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">No reviews yet.</td></tr>
+                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">{allReviews.length ? "No reviews match your search." : "No reviews yet."}</td></tr>
                 )}
                 {reviews.map((r) => (
                   <tr key={r.id} className="border-t border-border hover:bg-muted/30">
