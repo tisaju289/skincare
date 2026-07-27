@@ -165,6 +165,8 @@ export function resolveSettings(row: unknown): SiteSettings {
     if (v !== undefined && v !== null && v !== "") out[key] = v;
   }
   if (r.id) out.id = r.id;
+  out.home_sections = normalizeHomeSections(r.home_sections);
+  out.hero_slides = normalizeHeroSlides(r.hero_slides);
   return out as SiteSettings;
 }
 
