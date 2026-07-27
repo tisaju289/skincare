@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeRow } from "@/lib/db";
 import { TableToolbar } from "@/components/admin/TableToolbar";
 import { matchesQuery } from "@/lib/csv";
 import { Loader2, Trash2, Edit2, Plus } from "lucide-react";
@@ -62,9 +63,10 @@ function OrdersPage() {
 
   const save = useMutation({
     mutationFn: async (p: FormState) => {
+      const payload = sanitizeRow(p);
       const { error } = editing
-        ? await supabase.from("orders").update(p).eq("id", editing.id)
-        : await supabase.from("orders").insert(p as any);
+        ? await supabase.from("orders").update(payload).eq("id", editing.id)
+        : await supabase.from("orders").insert(payload as any);
       if (error) throw error;
     },
     onSuccess: () => { toast.success(editing ? "Updated" : "Created"); qc.invalidateQueries({ queryKey: ["admin", "orders"] }); setOpen(false); },
