@@ -5,9 +5,32 @@ import { toast } from "sonner";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeRow } from "@/lib/db";
-import { Store, CreditCard, Truck, Bell, Image as ImageIcon, Search, Palette, Loader2 } from "lucide-react";
+import {
+  Store,
+  CreditCard,
+  Truck,
+  Bell,
+  Image as ImageIcon,
+  Search,
+  Palette,
+  Loader2,
+  LayoutList,
+  GalleryHorizontal,
+  ArrowUp,
+  ArrowDown,
+  Trash2,
+  Plus,
+} from "lucide-react";
 import { ImageInput } from "@/components/admin/ImageInput";
-import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
+import {
+  DEFAULT_SETTINGS,
+  HOME_SECTION_LABELS,
+  normalizeHeroSlides,
+  normalizeHomeSections,
+  type HeroSlide,
+  type HomeSection,
+  type SiteSettings,
+} from "@/lib/site-settings";
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
@@ -15,6 +38,8 @@ export const Route = createFileRoute("/admin/settings")({
 
 const sections = [
   { id: "store", icon: Store, title: "Store details", desc: "Name, contact info, currency" },
+  { id: "homepage", icon: LayoutList, title: "Homepage layout", desc: "Reorder & show/hide home sections" },
+  { id: "hero", icon: GalleryHorizontal, title: "Hero slider", desc: "Slides shown at the top of the homepage" },
   { id: "branding", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
   { id: "seo", icon: Search, title: "SEO & sharing", desc: "Title, description, keywords, OG image" },
   { id: "theme", icon: Palette, title: "Theme", desc: "Brand colours used across the site" },
@@ -24,6 +49,7 @@ const sections = [
 ] as const;
 
 type Tab = (typeof sections)[number]["id"];
+
 
 function SettingsPage() {
   const qc = useQueryClient();
@@ -47,13 +73,18 @@ function SettingsPage() {
   });
 
   useEffect(() => {
-    if (q.data) setForm(q.data);
+    if (q.data)
+      setForm({
+        ...q.data,
+        home_sections: normalizeHomeSections((q.data as SiteSettings).home_sections),
+        hero_slides: normalizeHeroSlides((q.data as SiteSettings).hero_slides),
+      });
   }, [q.data]);
 
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const payload = sanitizeRow(form as Record<string, any>);
+      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides"]);
       const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
@@ -69,6 +100,45 @@ function SettingsPage() {
   const str = (k: keyof SiteSettings) => (form[k] as string | null) ?? "";
   const num = (k: keyof SiteSettings) => Number(form[k] ?? 0);
   const bool = (k: keyof SiteSettings) => Boolean(form[k]);
+
+  const homeSections = normalizeHomeSections(form.home_sections);
+  const heroSlides = normalizeHeroSlides(form.hero_slides);
+
+  const moveSection = (index: number, dir: -1 | 1) => {
+    const next = [...homeSections];
+    const target = index + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    set("home_sections", next);
+  };
+  const setSectionAt = (index: number, patch: Partial<HomeSection>) => {
+    const next = homeSections.map((s, i) => (i === index ? { ...s, ...patch } : s));
+    set("home_sections", next);
+  };
+
+  const setSlide = (index: number, patch: Partial<HeroSlide>) =>
+    set(
+      "hero_slides",
+      heroSlides.map((s, i) => (i === index ? { ...s, ...patch } : s)),
+    );
+  const moveSlide = (index: number, dir: -1 | 1) => {
+    const next = [...heroSlides];
+    const target = index + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    set("hero_slides", next);
+  };
+  const removeSlide = (index: number) =>
+    set(
+      "hero_slides",
+      heroSlides.filter((_, i) => i !== index),
+    );
+  const addSlide = () =>
+    set("hero_slides", [
+      ...heroSlides,
+      { kicker: "", badge: "", title: "New slide", subtitle: "", image: "", cta_label: "SHOP NOW", cta_link: "/search" },
+    ]);
+
 
   const active = sections.find((s) => s.id === tab)!;
 
@@ -131,6 +201,153 @@ function SettingsPage() {
                   </div>
                 </>
               )}
+
+              {tab === "homepage" && (
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">
+                    Use the dropdown or the arrows to change the order of the homepage sections. Turn a section off to
+                    hide it from the storefront.
+                  </p>
+                  {homeSections.map((s, i) => (
+                    <div
+                      key={s.id}
+                      className="flex flex-wrap items-center gap-3 rounded-xl border border-border px-3 py-2.5"
+                    >
+                      <span className="h-7 w-7 shrink-0 rounded-lg bg-muted grid place-items-center text-xs font-bold">
+                        {i + 1}
+                      </span>
+                      <span className="text-sm font-semibold flex-1 min-w-[120px]">{HOME_SECTION_LABELS[s.id]}</span>
+                      <select
+                        value={i}
+                        onChange={(e) => {
+                          const to = Number(e.target.value);
+                          const next = [...homeSections];
+                          const [item] = next.splice(i, 1);
+                          next.splice(to, 0, item);
+                          set("home_sections", next);
+                        }}
+                        className="px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
+                        aria-label={`Position of ${HOME_SECTION_LABELS[s.id]}`}
+                      >
+                        {homeSections.map((_, pos) => (
+                          <option key={pos} value={pos}>
+                            Position {pos + 1}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => moveSection(i, -1)}
+                        disabled={i === 0}
+                        aria-label="Move up"
+                        className="h-8 w-8 grid place-items-center rounded-lg border border-border hover:bg-muted disabled:opacity-40"
+                      >
+                        <ArrowUp className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveSection(i, 1)}
+                        disabled={i === homeSections.length - 1}
+                        aria-label="Move down"
+                        className="h-8 w-8 grid place-items-center rounded-lg border border-border hover:bg-muted disabled:opacity-40"
+                      >
+                        <ArrowDown className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={s.enabled}
+                        aria-label={`Show ${HOME_SECTION_LABELS[s.id]}`}
+                        onClick={() => setSectionAt(i, { enabled: !s.enabled })}
+                        className={`h-6 w-11 rounded-full transition-colors relative ${
+                          s.enabled ? "bg-[color:var(--brand-pink)]" : "bg-muted-foreground/30"
+                        }`}
+                      >
+                        <span
+                          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${
+                            s.enabled ? "left-5.5" : "left-0.5"
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {tab === "hero" && (
+                <div className="space-y-4">
+                  {heroSlides.map((s, i) => (
+                    <div key={i} className="rounded-xl border border-border p-4 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-bold">Slide {i + 1}</p>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => moveSlide(i, -1)}
+                            disabled={i === 0}
+                            aria-label="Move slide up"
+                            className="h-8 w-8 grid place-items-center rounded-lg border border-border hover:bg-muted disabled:opacity-40"
+                          >
+                            <ArrowUp className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveSlide(i, 1)}
+                            disabled={i === heroSlides.length - 1}
+                            aria-label="Move slide down"
+                            className="h-8 w-8 grid place-items-center rounded-lg border border-border hover:bg-muted disabled:opacity-40"
+                          >
+                            <ArrowDown className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeSlide(i)}
+                            aria-label="Delete slide"
+                            className="h-8 w-8 grid place-items-center rounded-lg border border-border text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                      <ImageInput
+                        label="Slide image"
+                        folder="hero"
+                        value={s.image ?? ""}
+                        onChange={(v) => setSlide(i, { image: v })}
+                      />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <Field label="Kicker" value={s.kicker ?? ""} onChange={(v) => setSlide(i, { kicker: v })} />
+                        <Field label="Badge" value={s.badge ?? ""} onChange={(v) => setSlide(i, { badge: v })} />
+                        <Field label="Title" value={s.title ?? ""} onChange={(v) => setSlide(i, { title: v })} />
+                        <Field
+                          label="Subtitle"
+                          value={s.subtitle ?? ""}
+                          onChange={(v) => setSlide(i, { subtitle: v })}
+                        />
+                        <Field
+                          label="Button label"
+                          value={s.cta_label ?? ""}
+                          onChange={(v) => setSlide(i, { cta_label: v })}
+                        />
+                        <Field
+                          label="Button link"
+                          value={s.cta_link ?? ""}
+                          onChange={(v) => setSlide(i, { cta_link: v })}
+                          hint="e.g. /search or /category/skincare"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addSlide}
+                    className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted"
+                  >
+                    <Plus className="h-4 w-4" /> Add slide
+                  </button>
+                </div>
+              )}
+
 
               {tab === "branding" && (
                 <>

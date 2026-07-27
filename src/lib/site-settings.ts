@@ -1,5 +1,88 @@
+export type HomeSectionId = "hero" | "categories" | "deals" | "trending" | "brands" | "trust";
+
+export type HomeSection = { id: HomeSectionId; enabled: boolean };
+
+export type HeroSlide = {
+  kicker?: string | null;
+  badge?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  image?: string | null;
+  cta_label?: string | null;
+  cta_link?: string | null;
+};
+
+export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
+  hero: "Hero slider",
+  categories: "Category circles",
+  deals: "Deal banners",
+  trending: "Trending products",
+  brands: "Shop by brand",
+  trust: "Trust badges",
+};
+
+export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
+  { id: "hero", enabled: true },
+  { id: "categories", enabled: true },
+  { id: "deals", enabled: true },
+  { id: "trending", enabled: true },
+  { id: "brands", enabled: true },
+  { id: "trust", enabled: true },
+];
+
+export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
+  {
+    kicker: "UNILEVER PRESENTS",
+    badge: "JULY",
+    title: "JAW DROPPERS",
+    subtitle: "UP TO 45% OFF",
+    image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1200&q=80",
+    cta_label: "SHOP NOW",
+    cta_link: "/search",
+  },
+  {
+    kicker: "NEW ARRIVALS",
+    badge: "FRESH",
+    title: "GLOW UP",
+    subtitle: "SKINCARE FROM ৳299",
+    image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=1200&q=80",
+    cta_label: "EXPLORE",
+    cta_link: "/search",
+  },
+  {
+    kicker: "BEAUTY WEEK",
+    badge: "MEGA",
+    title: "MAKEUP FEST",
+    subtitle: "BUY 2 GET 1 FREE",
+    image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=80",
+    cta_label: "SHOP NOW",
+    cta_link: "/search",
+  },
+];
+
+/** Merge a stored section list with the canonical list so new sections still appear. */
+export function normalizeHomeSections(value: unknown): HomeSection[] {
+  const stored = Array.isArray(value) ? (value as HomeSection[]) : [];
+  const out: HomeSection[] = [];
+  for (const s of stored) {
+    if (s && typeof s.id === "string" && s.id in HOME_SECTION_LABELS && !out.some((o) => o.id === s.id)) {
+      out.push({ id: s.id as HomeSectionId, enabled: s.enabled !== false });
+    }
+  }
+  for (const d of DEFAULT_HOME_SECTIONS) if (!out.some((o) => o.id === d.id)) out.push({ ...d });
+  return out;
+}
+
+export function normalizeHeroSlides(value: unknown): HeroSlide[] {
+  const stored = Array.isArray(value) ? (value as HeroSlide[]) : [];
+  const clean = stored.filter((s) => s && typeof s === "object");
+  return clean.length ? clean : DEFAULT_HERO_SLIDES;
+}
+
 export type SiteSettings = {
   id?: string;
+  home_sections: HomeSection[];
+  hero_slides: HeroSlide[];
   store_name: string;
   support_email: string | null;
   phone: string | null;
@@ -35,6 +118,8 @@ export type SiteSettings = {
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
+  home_sections: DEFAULT_HOME_SECTIONS,
+  hero_slides: DEFAULT_HERO_SLIDES,
   store_name: "Shajgoj",
   support_email: null,
   phone: null,
@@ -80,6 +165,8 @@ export function resolveSettings(row: unknown): SiteSettings {
     if (v !== undefined && v !== null && v !== "") out[key] = v;
   }
   if (r.id) out.id = r.id;
+  out.home_sections = normalizeHomeSections(r.home_sections);
+  out.hero_slides = normalizeHeroSlides(r.hero_slides);
   return out as SiteSettings;
 }
 
