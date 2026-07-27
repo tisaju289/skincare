@@ -102,7 +102,7 @@ function Index() {
       {/* Category circles */}
       <section className="max-w-7xl mx-auto px-4 mt-10">
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 sm:gap-6">
-          {categories.map((c) => (
+          {categories.filter((c) => !c.parent).map((c) => (
             <Link
               key={c.slug}
               to="/category/$slug"
