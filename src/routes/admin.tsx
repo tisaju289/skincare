@@ -90,7 +90,7 @@ function AdminLayout() {
             onClick={async () => {
               await supabase.auth.signOut();
             }}
-            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90"
+            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90 admin-tap"
           >
             <LogOut className="h-4 w-4" /> Sign out
           </button>
@@ -100,9 +100,9 @@ function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-muted/30">
+    <div className="admin-shell min-h-screen flex bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-muted)_45%,transparent),transparent_320px)] bg-muted/30">
       <AdminSidebar />
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0 flex flex-col">
         <Outlet />
       </main>
     </div>

@@ -30,7 +30,7 @@ type Props = {
 };
 
 const btn =
-  "inline-flex items-center gap-2 text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg border border-border hover:bg-muted whitespace-nowrap disabled:opacity-60";
+  "inline-flex items-center gap-2 text-xs sm:text-sm font-semibold px-3 py-2.5 rounded-xl border border-border bg-background hover:bg-muted whitespace-nowrap disabled:opacity-60 admin-tap";
 
 export function TableToolbar({
   search,
@@ -103,7 +103,7 @@ export function TableToolbar({
   }
 
   return (
-    <div className="bg-card rounded-2xl border border-border p-3 sm:p-4 space-y-3">
+    <div className="admin-card p-3 sm:p-4 space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[180px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -111,7 +111,7 @@ export function TableToolbar({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={placeholder}
-            className="w-full pl-9 pr-9 py-2 text-sm rounded-lg border border-border bg-muted/40 outline-none focus:bg-background focus:border-[color:var(--brand-pink)]"
+            className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-border bg-muted/40 outline-none transition focus:bg-background focus:border-[color:var(--brand-pink)] focus:ring-2 focus:ring-[color:var(--brand-pink)]/20"
           />
           {search && (
             <button
@@ -157,14 +157,14 @@ export function TableToolbar({
       </div>
 
       {showFilters && filters.length > 0 && (
-        <div className="flex flex-wrap items-end gap-3 pt-3 border-t border-border">
+        <div className="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-end gap-3 pt-3 border-t border-border animate-fade-in">
           {filters.map((f) => (
-            <label key={f.label} className="block">
+            <label key={f.label} className="block min-w-0">
               <span className="block text-[11px] font-semibold text-muted-foreground mb-1">{f.label}</span>
               <select
                 value={f.value}
                 onChange={(e) => f.onChange(e.target.value)}
-                className="text-sm rounded-lg border border-border bg-background px-3 py-2 outline-none focus:border-[color:var(--brand-pink)]"
+                className="w-full sm:w-auto text-sm rounded-xl border border-border bg-background px-3 py-2.5 outline-none transition focus:border-[color:var(--brand-pink)] focus:ring-2 focus:ring-[color:var(--brand-pink)]/20"
               >
                 {f.options.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>

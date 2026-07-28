@@ -109,7 +109,7 @@ function OrdersPage() {
           <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New order</span>
         </button>
       } />
-      <div className="p-4 sm:p-6 space-y-4">
+      <div className="p-3 sm:p-6 space-y-4">
         <div className="flex flex-wrap gap-2">
           {tabs.map((t) => {
             const count = t === "all" ? orders.length : orders.filter(o => o.status === t).length;
@@ -153,10 +153,10 @@ function OrdersPage() {
           resultCount={filtered.length}
         />
 
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="admin-card overflow-hidden">
+          <div className="overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
-              <thead className="text-xs text-muted-foreground bg-muted/40">
+              <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Order</th>
                   <th className="px-5 py-3 text-left font-semibold">Customer</th>
@@ -191,8 +191,8 @@ function OrdersPage() {
                     <td className="px-5 py-3 text-muted-foreground">{new Date(o.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex justify-end gap-1">
-                        <button onClick={() => { setEditing(o); setForm(o); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted"><Edit2 className="h-3.5 w-3.5"/></button>
-                        <button onClick={() => confirm(`Delete order #${o.order_number}?`) && del.mutate(o.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-3.5 w-3.5"/></button>
+                        <button onClick={() => { setEditing(o); setForm(o); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted admin-tap"><Edit2 className="h-3.5 w-3.5"/></button>
+                        <button onClick={() => confirm(`Delete order #${o.order_number}?`) && del.mutate(o.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted admin-tap text-rose-600"><Trash2 className="h-3.5 w-3.5"/></button>
                       </div>
                     </td>
                   </tr>
@@ -227,7 +227,7 @@ function OrdersPage() {
 
             <div className="rounded-xl border border-border overflow-hidden">
               <table className="w-full text-sm">
-                <thead className="text-xs text-muted-foreground bg-muted/40">
+                <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                   <tr>
                     <th className="px-3 py-2 text-left font-semibold">Product</th>
                     <th className="px-3 py-2 text-right font-semibold">Qty</th>
@@ -268,7 +268,7 @@ function OrdersPage() {
 
             <div className="flex justify-end gap-2 pt-4 border-t border-border">
               <button type="button" onClick={() => setDetail(null)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Close</button>
-              <button type="button" onClick={() => { setEditing(detail); setForm(detail); setDetail(null); setOpen(true); }} className="text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90">Edit order</button>
+              <button type="button" onClick={() => { setEditing(detail); setForm(detail); setDetail(null); setOpen(true); }} className="text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90 admin-tap">Edit order</button>
             </div>
           </div>
         )}
@@ -302,7 +302,7 @@ function OrdersPage() {
           <Field label="Shipping address"><textarea rows={2} className={inputCls} value={form.shipping_address ?? ""} onChange={(e) => setForm({ ...form, shipping_address: e.target.value })} /></Field>
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
             <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancel</button>
-            <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90">{save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}Save</button>
+            <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90 admin-tap">{save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}Save</button>
           </div>
         </form>
       </AdminModal>

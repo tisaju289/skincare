@@ -187,7 +187,7 @@ function ProductsPage() {
           </button>
         }
       />
-      <div className="p-4 sm:p-6 space-y-4">
+      <div className="p-3 sm:p-6 space-y-4">
         <TableToolbar
           search={search}
           onSearchChange={setSearch}
@@ -222,10 +222,10 @@ function ProductsPage() {
           onImported={() => qc.invalidateQueries({ queryKey: ["admin", "products"] })}
           resultCount={filtered.length}
         />
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="admin-card overflow-hidden">
+          <div className="overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
-              <thead className="text-xs text-muted-foreground bg-muted/40">
+              <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Product</th>
                   <th className="px-5 py-3 text-left font-semibold">Category</th>
@@ -245,7 +245,7 @@ function ProductsPage() {
                   <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">{products.length ? "No products match your search." : 'No products yet. Click "Add product".'}</td></tr>
                 )}
                 {filtered.map((p: any) => (
-                  <tr key={p.id} className="border-t border-border hover:bg-muted/30">
+                  <tr key={p.id} className="border-t border-border hover:bg-muted/30 transition-colors">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         {p.image ? (
@@ -267,12 +267,12 @@ function ProductsPage() {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => openEdit(p)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted">
+                        <button onClick={() => openEdit(p)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted admin-tap">
                           <Edit2 className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => confirm(`Delete "${p.name}"?`) && del.mutate(p.id)}
-                          className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"
+                          className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted admin-tap text-rose-600"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -390,7 +390,7 @@ function ProductsPage() {
                     onChange={(v) => setGallery(gallery.map((g, gi) => (gi === i ? v : g)))}
                   />
                 </div>
-                <button type="button" aria-label="Remove gallery image" onClick={() => setGallery(gallery.filter((_, gi) => gi !== i))} className="mt-6 h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600">
+                <button type="button" aria-label="Remove gallery image" onClick={() => setGallery(gallery.filter((_, gi) => gi !== i))} className="mt-6 h-8 w-8 grid place-items-center rounded-lg hover:bg-muted admin-tap text-rose-600">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -400,7 +400,7 @@ function ProductsPage() {
           <Field label="Long description"><textarea rows={6} className={inputCls} value={form.long_description ?? ""} onChange={(e) => setForm({ ...form, long_description: e.target.value })} /></Field>
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
             <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancel</button>
-            <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90 disabled:opacity-60">
+            <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90 admin-tap disabled:opacity-60">
               {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               Save
             </button>
