@@ -50,9 +50,41 @@ export const HOME_SECTION_LABELS: Record<BuiltinSectionId, string> = {
   trust: "Trust badges",
 };
 
+/** Which editable fields each built-in section supports, plus its default copy. */
+export const BUILTIN_SECTION_CONFIG: Record<
+  BuiltinSectionId,
+  { fields: Array<"title" | "subtitle" | "limit" | "link">; title: string; subtitle: string; limit: number; link: string }
+> = {
+  hero: { fields: [], title: "", subtitle: "", limit: 0, link: "" },
+  categories: { fields: ["title", "subtitle", "limit"], title: "", subtitle: "", limit: 12, link: "" },
+  deals: { fields: ["title", "subtitle"], title: "DEALS YOU CANNOT MISS", subtitle: "", limit: 0, link: "" },
+  trending: {
+    fields: ["title", "subtitle", "limit", "link"],
+    title: "Trending Now",
+    subtitle: "Bestsellers this week",
+    limit: 10,
+    link: "/search",
+  },
+  brands: { fields: ["title", "subtitle", "limit", "link"], title: "Shop by Brand", subtitle: "", limit: 12, link: "" },
+  trust: { fields: ["title", "subtitle"], title: "", subtitle: "", limit: 0, link: "" },
+};
+
 export function sectionLabel(s: HomeSection): string {
   if (s.kind === "products") return s.title?.trim() || PRODUCT_SOURCE_LABELS[s.source ?? "latest"];
   return HOME_SECTION_LABELS[s.id as BuiltinSectionId] ?? s.id;
+}
+
+/** Resolved copy for a built-in section: admin override or the built-in default. */
+export function builtinText(s: HomeSection, key: "title" | "subtitle"): string {
+  const cfg = BUILTIN_SECTION_CONFIG[s.id as BuiltinSectionId];
+  const v = (s[key] ?? "").toString().trim();
+  return v || (cfg ? cfg[key] : "");
+}
+
+export function builtinLimit(s: HomeSection): number {
+  const cfg = BUILTIN_SECTION_CONFIG[s.id as BuiltinSectionId];
+  const n = Number(s.limit);
+  return n > 0 ? n : (cfg?.limit ?? 12);
 }
 
 export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
@@ -63,6 +95,7 @@ export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
   { id: "brands", kind: "builtin", enabled: true },
   { id: "trust", kind: "builtin", enabled: true },
 ];
+
 
 
 export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
