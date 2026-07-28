@@ -15,9 +15,13 @@ import {
   DEFAULT_SETTINGS,
   normalizeHomeSections,
   normalizeHeroSlides,
+  builtinText,
+  builtinLimit,
   PRODUCT_SOURCE_LABELS,
+  type HomeSection,
   type SiteSettings,
 } from "@/lib/site-settings";
+
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
