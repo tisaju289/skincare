@@ -255,15 +255,6 @@ export function SiteHeader({
               );
             })}
           </nav>
-          <div className="border-t border-border p-3">
-            <Link
-              to="/admin"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-            >
-              <LayoutDashboard className="h-4 w-4" /> Admin
-            </Link>
-          </div>
         </div>
       </div>
 
