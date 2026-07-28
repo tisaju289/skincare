@@ -111,11 +111,13 @@ export function SiteFooter({
               <ul className="space-y-2 text-sm opacity-80">
                 {col.links.map((l, j) => (
                   <li key={j}>
-                    {l.url?.startsWith("http") ? (
-                      <a href={l.url} target="_blank" rel="noreferrer">{l.label}</a>
-                    ) : (
-                      <Link to={l.url || "#"}>{l.label}</Link>
-                    )}
+                    <a
+                      href={l.url || "#"}
+                      {...(l.url?.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+                      className="hover:opacity-100"
+                    >
+                      {l.label}
+                    </a>
                   </li>
                 ))}
               </ul>
