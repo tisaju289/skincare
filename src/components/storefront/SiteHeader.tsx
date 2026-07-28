@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Heart, ShoppingBag, LayoutDashboard, Menu, X } from "lucide-react";
+import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { CartDrawer } from "./CartDrawer";
@@ -102,12 +102,6 @@ export function SiteHeader({
               className="hidden lg:flex items-center gap-2 rounded-full bg-foreground text-background px-4 py-2 text-xs font-semibold"
             >
               <Heart className="h-4 w-4" /> ALL PRODUCTS
-            </Link>
-            <Link
-              to="/admin"
-              className="hidden sm:flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-semibold hover:bg-muted"
-            >
-              <LayoutDashboard className="h-4 w-4" /> ADMIN
             </Link>
             <button
               onClick={() => setCartOpen(true)}
@@ -255,15 +249,6 @@ export function SiteHeader({
               );
             })}
           </nav>
-          <div className="border-t border-border p-3">
-            <Link
-              to="/admin"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center justify-center gap-2 rounded-lg border border-border px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-            >
-              <LayoutDashboard className="h-4 w-4" /> Admin
-            </Link>
-          </div>
         </div>
       </div>
 
