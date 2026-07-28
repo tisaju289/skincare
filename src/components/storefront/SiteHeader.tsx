@@ -103,12 +103,6 @@ export function SiteHeader({
             >
               <Heart className="h-4 w-4" /> ALL PRODUCTS
             </Link>
-            <Link
-              to="/admin"
-              className="hidden sm:flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-semibold hover:bg-muted"
-            >
-              <LayoutDashboard className="h-4 w-4" /> ADMIN
-            </Link>
             <button
               onClick={() => setCartOpen(true)}
               className="flex items-center gap-2 rounded-full bg-[color:var(--brand-pink)] text-white px-3 sm:px-4 py-2 text-xs font-semibold"
