@@ -88,7 +88,7 @@ function Index() {
                 key={c.slug}
                 to="/category/$slug"
                 params={{ slug: c.slug }}
-                className={`${i >= 6 && !showAllCats ? "hidden sm:flex" : "flex"} flex-col items-center gap-2 group`}
+                className={`${i >= 6 && !showAllCats ? "hidden" : "flex"} flex-col items-center gap-2 group`}
               >
                 <div
                   className={`h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-gradient-to-br ${c.color} shadow-lg group-hover:scale-105 transition overflow-hidden ring-4 ring-white`}
@@ -104,7 +104,7 @@ function Index() {
             ))}
           </div>
           {cats.length > 6 && (
-            <div className="sm:hidden mt-4 flex justify-center">
+            <div className="mt-4 flex justify-center">
               <button
                 onClick={() => setShowAllCats((v) => !v)}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border px-5 py-2 text-xs font-bold uppercase hover:bg-muted"
@@ -114,6 +114,7 @@ function Index() {
               </button>
             </div>
           )}
+
         </section>
       );
     },
