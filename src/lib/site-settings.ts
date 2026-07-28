@@ -146,7 +146,6 @@ export function normalizeHomeSections(value: unknown): HomeSection[] {
         link: s.link ?? "",
       });
     } else if (s.kind === "products") {
-    } else if (s.kind === "products") {
       out.push({
         id: s.id,
         kind: "products",
