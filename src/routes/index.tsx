@@ -281,7 +281,7 @@ function Index() {
             })()}
           </section>
         ) : (
-          <div key={s.id}>{blocks[s.id]}</div>
+          <div key={s.id}>{blocks[s.id]?.(s)}</div>
         ),
       )}
 
