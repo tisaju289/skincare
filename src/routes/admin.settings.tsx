@@ -28,6 +28,7 @@ import { ImageInput } from "@/components/admin/ImageInput";
 import {
   DEFAULT_SETTINGS,
   HOME_SECTION_LABELS,
+  BUILTIN_SECTION_CONFIG,
   PRODUCT_SOURCE_LABELS,
   sectionLabel,
   normalizeHeroSlides,
