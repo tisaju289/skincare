@@ -247,12 +247,62 @@ export function normalizeHeaderMenus(value: unknown): HeaderMenu[] {
     }));
 }
 
+export type FooterLink = { label: string; url: string };
+export type FooterColumn = { title: string; enabled: boolean; links: FooterLink[] };
+
+export const DEFAULT_FOOTER_COLUMNS: FooterColumn[] = [
+  {
+    title: "Help",
+    enabled: true,
+    links: [
+      { label: "All products", url: "/search" },
+      { label: "Shipping", url: "#" },
+      { label: "Returns", url: "#" },
+      { label: "FAQ", url: "#" },
+    ],
+  },
+  {
+    title: "Company",
+    enabled: true,
+    links: [
+      { label: "About", url: "#" },
+      { label: "Blog", url: "#" },
+      { label: "Careers", url: "#" },
+      { label: "Privacy", url: "#" },
+    ],
+  },
+];
+
+export function normalizeFooterColumns(value: unknown): FooterColumn[] {
+  const stored = Array.isArray(value) ? value : [];
+  const clean = stored
+    .filter((c) => c && typeof c === "object")
+    .map((c: any) => ({
+      title: String(c.title ?? ""),
+      enabled: c.enabled !== false,
+      links: (Array.isArray(c.links) ? c.links : [])
+        .filter((l: any) => l && typeof l === "object")
+        .map((l: any) => ({ label: String(l.label ?? ""), url: String(l.url ?? "#") })),
+    }));
+  return clean.length ? clean : DEFAULT_FOOTER_COLUMNS.map((c) => ({ ...c, links: c.links.map((l) => ({ ...l })) }));
+}
+
 export type SiteSettings = {
   id?: string;
   home_sections: HomeSection[];
   hero_slides: HeroSlide[];
   product_badges: ProductBadge[];
   header_menus: HeaderMenu[];
+  footer_columns: FooterColumn[];
+
+  footer_about: string | null;
+  footer_copyright: string | null;
+  
+  newsletter_enabled: boolean;
+  newsletter_title: string | null;
+  newsletter_subtitle: string | null;
+  newsletter_button: string | null;
+
 
   store_name: string;
   support_email: string | null;
@@ -295,6 +345,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   hero_slides: DEFAULT_HERO_SLIDES,
   product_badges: DEFAULT_PRODUCT_BADGES,
   header_menus: [],
+  footer_columns: DEFAULT_FOOTER_COLUMNS,
+  footer_about: null,
+  footer_copyright: null,
+  newsletter_enabled: true,
+  newsletter_title: null,
+  newsletter_subtitle: "Get 10% off your first order + weekly beauty tips.",
+  newsletter_button: "Subscribe",
   store_name: "Shajgoj",
   support_email: null,
   phone: null,
@@ -346,6 +403,8 @@ export function resolveSettings(row: unknown): SiteSettings {
   out.hero_slides = normalizeHeroSlides(r.hero_slides);
   out.product_badges = normalizeProductBadges(r.product_badges);
   out.header_menus = normalizeHeaderMenus(r.header_menus);
+  out.footer_columns = normalizeFooterColumns(r.footer_columns);
+  out.newsletter_enabled = r.newsletter_enabled !== false;
   return out as SiteSettings;
 }
 

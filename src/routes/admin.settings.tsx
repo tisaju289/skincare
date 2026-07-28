@@ -23,6 +23,7 @@ import {
   BadgeCheck,
   Menu as MenuIcon,
   ChevronDown,
+  PanelBottom,
 } from "lucide-react";
 import { ImageInput } from "@/components/admin/ImageInput";
 import {
@@ -35,6 +36,8 @@ import {
   normalizeHomeSections,
   normalizeProductBadges,
   normalizeHeaderMenus,
+  normalizeFooterColumns,
+  type FooterColumn,
   HEADER_MENU_COLORS,
   type HeaderMenu,
   type HeaderMenuColor,
@@ -58,6 +61,7 @@ const sections = [
   { id: "headermenu", icon: MenuIcon, title: "Header menu", desc: "Top navigation links & dropdowns" },
   { id: "productpage", icon: BadgeCheck, title: "Product page", desc: "Delivery / authentic / return badges" },
   { id: "branding", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
+  { id: "footer", icon: PanelBottom, title: "Footer", desc: "Newsletter box, about text, link columns" },
   { id: "seo", icon: Search, title: "SEO & sharing", desc: "Title, description, keywords, OG image" },
   { id: "theme", icon: Palette, title: "Theme", desc: "Brand colours used across the site" },
   { id: "payments", icon: CreditCard, title: "Payments", desc: "bKash, Nagad, cards, cash on delivery" },
@@ -107,13 +111,14 @@ function SettingsPage() {
         hero_slides: normalizeHeroSlides((q.data as SiteSettings).hero_slides),
         product_badges: normalizeProductBadges((q.data as SiteSettings).product_badges),
         header_menus: normalizeHeaderMenus((q.data as SiteSettings).header_menus),
+        footer_columns: normalizeFooterColumns((q.data as SiteSettings).footer_columns),
       });
   }, [q.data]);
 
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges", "header_menus"]);
+      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges", "header_menus", "footer_columns"]);
       const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
@@ -134,6 +139,25 @@ function SettingsPage() {
   const heroSlides = normalizeHeroSlides(form.hero_slides);
   const productBadges = normalizeProductBadges(form.product_badges);
   const headerMenus = normalizeHeaderMenus(form.header_menus);
+  const footerColumns = normalizeFooterColumns(form.footer_columns);
+
+  const setColumn = (i: number, patch: Partial<FooterColumn>) =>
+    set("footer_columns", footerColumns.map((c, idx) => (idx === i ? { ...c, ...patch } : c)));
+  const moveColumn = (i: number, dir: -1 | 1) => {
+    const next = [...footerColumns];
+    const t = i + dir;
+    if (t < 0 || t >= next.length) return;
+    [next[i], next[t]] = [next[t], next[i]];
+    set("footer_columns", next);
+  };
+  const removeColumn = (i: number) => set("footer_columns", footerColumns.filter((_, idx) => idx !== i));
+  const addColumn = () => set("footer_columns", [...footerColumns, { title: "New column", enabled: true, links: [] }]);
+  const setLink = (ci: number, li: number, patch: Partial<{ label: string; url: string }>) =>
+    setColumn(ci, { links: footerColumns[ci].links.map((l, idx) => (idx === li ? { ...l, ...patch } : l)) });
+  const addLink = (ci: number) => setColumn(ci, { links: [...footerColumns[ci].links, { label: "", url: "#" }] });
+  const removeLink = (ci: number, li: number) =>
+    setColumn(ci, { links: footerColumns[ci].links.filter((_, idx) => idx !== li) });
+
 
   const setMenu = (index: number, patch: Partial<HeaderMenu>) =>
     set("header_menus", headerMenus.map((m, i) => (i === index ? { ...m, ...patch } : m)));
@@ -680,6 +704,110 @@ function SettingsPage() {
                     <Field label="YouTube URL" value={str("youtube_url")} onChange={(v) => set("youtube_url", v)} />
                   </div>
                 </>
+              )}
+
+              {tab === "footer" && (
+                <div className="space-y-4">
+                  <Toggle
+                    label="Show newsletter box"
+                    checked={form.newsletter_enabled !== false}
+                    onChange={(v) => set("newsletter_enabled", v)}
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Field
+                      label="Newsletter title"
+                      value={str("newsletter_title")}
+                      onChange={(v) => set("newsletter_title", v)}
+                      placeholder="Join the beauty club"
+                    />
+                    <Field
+                      label="Newsletter button text"
+                      value={str("newsletter_button")}
+                      onChange={(v) => set("newsletter_button", v)}
+                      placeholder="Subscribe"
+                    />
+                  </div>
+                  <Field
+                    label="Newsletter subtitle"
+                    value={str("newsletter_subtitle")}
+                    onChange={(v) => set("newsletter_subtitle", v)}
+                  />
+                  <Field
+                    label="Footer about text"
+                    value={str("footer_about")}
+                    onChange={(v) => set("footer_about", v)}
+                    hint="Short paragraph shown under the logo."
+                  />
+                  <Field
+                    label="Copyright line"
+                    value={str("footer_copyright")}
+                    onChange={(v) => set("footer_copyright", v)}
+                    placeholder={`© ${new Date().getFullYear()} ${str("store_name") || "Store"}. All rights reserved.`}
+                  />
+
+                  <div className="pt-2 space-y-3">
+                    <p className="text-xs text-muted-foreground">
+                      Footer link columns. The first column always shows your categories automatically.
+                    </p>
+                    {footerColumns.map((col, i) => (
+                      <div key={i} className="rounded-xl border border-border p-3 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <input
+                            value={col.title}
+                            onChange={(e) => setColumn(i, { title: e.target.value })}
+                            placeholder="Column title"
+                            className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-border bg-background text-sm font-semibold outline-none focus:border-[color:var(--brand-pink)]"
+                          />
+                          <button type="button" onClick={() => moveColumn(i, -1)} className="p-2 rounded-lg hover:bg-muted" aria-label="Move up">
+                            <ArrowUp className="h-4 w-4" />
+                          </button>
+                          <button type="button" onClick={() => moveColumn(i, 1)} className="p-2 rounded-lg hover:bg-muted" aria-label="Move down">
+                            <ArrowDown className="h-4 w-4" />
+                          </button>
+                          <button type="button" onClick={() => removeColumn(i)} className="p-2 rounded-lg hover:bg-muted text-red-500" aria-label="Remove column">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <Toggle label="Show this column" checked={col.enabled} onChange={(v) => setColumn(i, { enabled: v })} />
+                        <div className="space-y-2">
+                          {col.links.map((l, j) => (
+                            <div key={j} className="flex items-center gap-2">
+                              <input
+                                value={l.label}
+                                onChange={(e) => setLink(i, j, { label: e.target.value })}
+                                placeholder="Label"
+                                className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-border bg-background text-sm outline-none focus:border-[color:var(--brand-pink)]"
+                              />
+                              <input
+                                value={l.url}
+                                onChange={(e) => setLink(i, j, { url: e.target.value })}
+                                placeholder="/search or https://…"
+                                className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-border bg-background text-sm outline-none focus:border-[color:var(--brand-pink)]"
+                              />
+                              <button type="button" onClick={() => removeLink(i, j)} className="p-2 rounded-lg hover:bg-muted text-red-500" aria-label="Remove link">
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => addLink(i)}
+                            className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-border py-2 text-xs font-semibold hover:bg-muted"
+                          >
+                            <Plus className="h-3.5 w-3.5" /> Add link
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={addColumn}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-border py-2.5 text-sm font-semibold hover:bg-muted"
+                    >
+                      <Plus className="h-4 w-4" /> Add column
+                    </button>
+                  </div>
+                </div>
               )}
 
               {tab === "seo" && (

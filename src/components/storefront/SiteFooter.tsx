@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import type { Category } from "@/lib/shop-data";
 import { subscribeNewsletter } from "@/lib/storefront.functions";
-import { DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
+import { DEFAULT_SETTINGS, normalizeFooterColumns, type SiteSettings } from "@/lib/site-settings";
 
 export function SiteFooter({
   categories = [],
@@ -31,12 +31,21 @@ export function SiteFooter({
     }
   }
 
+  const columns = normalizeFooterColumns(settings.footer_columns).filter((c) => c.enabled);
+
   return (
     <>
+      {settings.newsletter_enabled !== false && (
       <section className="max-w-7xl mx-auto px-4 mt-14">
         <div className="rounded-3xl bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white p-6 sm:p-8 md:p-12 text-center">
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-black">Join the {settings.store_name} beauty club</h3>
-          <p className="mt-2 opacity-90 text-sm">Get 10% off your first order + weekly beauty tips.</p>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-black">
+            {settings.newsletter_title || `Join the ${settings.store_name} beauty club`}
+          </h3>
+          {settings.newsletter_subtitle !== "" && (
+            <p className="mt-2 opacity-90 text-sm">
+              {settings.newsletter_subtitle || "Get 10% off your first order + weekly beauty tips."}
+            </p>
+          )}
           <form onSubmit={onSubscribe} className="mt-6 max-w-md mx-auto flex flex-col sm:flex-row gap-2">
             <input
               type="email"
@@ -51,11 +60,12 @@ export function SiteFooter({
               disabled={busy}
               className="rounded-full bg-foreground text-background font-bold px-6 py-3 text-sm whitespace-nowrap disabled:opacity-60"
             >
-              {busy ? "Subscribing…" : "Subscribe"}
+              {busy ? "Subscribing…" : settings.newsletter_button || "Subscribe"}
             </button>
           </form>
         </div>
       </section>
+      )}
 
       <footer className="mt-16 bg-foreground text-background">
         <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -66,7 +76,8 @@ export function SiteFooter({
               <p className="text-2xl font-black uppercase">{settings.store_name}</p>
             )}
             <p className="mt-3 text-sm opacity-70">
-              {settings.seo_description ??
+              {settings.footer_about ||
+                settings.seo_description ||
                 "Bangladesh's beauty destination for authentic makeup, skincare & fragrance."}
             </p>
             {(settings.support_email || settings.phone || settings.business_address) && (
@@ -94,29 +105,28 @@ export function SiteFooter({
               ))}
             </ul>
           </div>
-          <div>
-            <p className="font-bold mb-3">Help</p>
-            <ul className="space-y-2 text-sm opacity-80">
-              <li>
-                <Link to="/search" search={{ q: "" }}>All products</Link>
-              </li>
-              <li>Shipping</li>
-              <li>Returns</li>
-              <li>FAQ</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-bold mb-3">Company</p>
-            <ul className="space-y-2 text-sm opacity-80">
-              <li>About</li>
-              <li>Blog</li>
-              <li>Careers</li>
-              <li>Privacy</li>
-            </ul>
-          </div>
+          {columns.map((col, i) => (
+            <div key={i}>
+              <p className="font-bold mb-3">{col.title}</p>
+              <ul className="space-y-2 text-sm opacity-80">
+                {col.links.map((l, j) => (
+                  <li key={j}>
+                    <a
+                      href={l.url || "#"}
+                      {...(l.url?.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+                      className="hover:opacity-100"
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
         <div className="border-t border-white/10 text-center text-xs opacity-60 py-4">
-          © {new Date().getFullYear()} {settings.store_name}. All rights reserved.
+          {settings.footer_copyright ||
+            `© ${new Date().getFullYear()} ${settings.store_name}. All rights reserved.`}
         </div>
       </footer>
     </>
