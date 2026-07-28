@@ -69,7 +69,7 @@ function CustomersPage() {
           <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Add customer</span>
         </button>
       } />
-      <div className="p-4 sm:p-6 space-y-4">
+      <div className="p-3 sm:p-6 space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Total customers", value: total.toLocaleString() },
@@ -84,10 +84,10 @@ function CustomersPage() {
           ))}
         </div>
 
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="admin-card overflow-hidden">
+          <div className="overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
-              <thead className="text-xs text-muted-foreground bg-muted/40">
+              <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Customer</th>
                   <th className="px-5 py-3 text-left font-semibold">Contact</th>

@@ -83,7 +83,7 @@ function BrandsPage() {
           </button>
         }
       />
-      <div className="p-4 sm:p-6 space-y-4">
+      <div className="p-3 sm:p-6 space-y-4">
         <TableToolbar
           search={search}
           onSearchChange={setSearch}
@@ -95,10 +95,10 @@ function BrandsPage() {
           onImported={() => qc.invalidateQueries({ queryKey: ["admin", "brands"] })}
           resultCount={brands.length}
         />
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="admin-card overflow-hidden">
+          <div className="overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
-              <thead className="text-xs text-muted-foreground bg-muted/40">
+              <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Brand</th>
                   <th className="px-5 py-3 text-left font-semibold">Slug</th>

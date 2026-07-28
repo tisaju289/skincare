@@ -47,12 +47,12 @@ function Dashboard() {
   return (
     <>
       <AdminTopbar title="Dashboard" subtitle="Welcome back, here's what's happening today." />
-      <div className="p-4 sm:p-6 space-y-6">
+      <div className="p-3 sm:p-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {stats.map((st) => {
             const Icon = st.icon;
             return (
-              <div key={st.label} className="bg-card rounded-2xl border border-border p-5">
+              <div key={st.label} className="admin-card p-5">
                 <div className={`h-10 w-10 rounded-xl grid place-items-center ${st.tint}`}>
                   <Icon className="h-5 w-5" />
                 </div>
@@ -63,7 +63,7 @@ function Dashboard() {
           })}
         </div>
 
-        <div className="bg-card rounded-2xl border border-border">
+        <div className="admin-card">
           <div className="flex items-center justify-between p-5 border-b border-border">
             <div>
               <h3 className="font-bold">Recent Orders</h3>
@@ -73,9 +73,9 @@ function Dashboard() {
               View all <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
-              <thead className="text-xs text-muted-foreground bg-muted/40">
+              <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
                   <th className="text-left font-semibold px-5 py-3">Order</th>
                   <th className="text-left font-semibold px-5 py-3">Customer</th>

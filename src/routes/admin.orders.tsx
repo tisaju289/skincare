@@ -109,7 +109,7 @@ function OrdersPage() {
           <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New order</span>
         </button>
       } />
-      <div className="p-4 sm:p-6 space-y-4">
+      <div className="p-3 sm:p-6 space-y-4">
         <div className="flex flex-wrap gap-2">
           {tabs.map((t) => {
             const count = t === "all" ? orders.length : orders.filter(o => o.status === t).length;
@@ -153,10 +153,10 @@ function OrdersPage() {
           resultCount={filtered.length}
         />
 
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="admin-card overflow-hidden">
+          <div className="overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
-              <thead className="text-xs text-muted-foreground bg-muted/40">
+              <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Order</th>
                   <th className="px-5 py-3 text-left font-semibold">Customer</th>
@@ -227,7 +227,7 @@ function OrdersPage() {
 
             <div className="rounded-xl border border-border overflow-hidden">
               <table className="w-full text-sm">
-                <thead className="text-xs text-muted-foreground bg-muted/40">
+                <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                   <tr>
                     <th className="px-3 py-2 text-left font-semibold">Product</th>
                     <th className="px-3 py-2 text-right font-semibold">Qty</th>
