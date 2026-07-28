@@ -224,33 +224,31 @@ function SettingsPage() {
   return (
     <>
       <AdminTopbar title="Settings" subtitle="Configure your store" />
-      <div className="p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        <aside className="flex lg:block gap-2 lg:space-y-1 overflow-x-auto admin-scroll -mx-3 px-3 lg:mx-0 lg:px-0 lg:overflow-visible snap-x">
+      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
+        <nav className="flex gap-2 overflow-x-auto admin-scroll -mx-3 px-3 sm:mx-0 sm:px-0 snap-x">
           {sections.map((s) => {
             const Icon = s.icon;
             return (
               <button
                 key={s.id}
                 onClick={() => setTab(s.id)}
-                className={`shrink-0 lg:w-full snap-start text-left flex items-center lg:items-start gap-2 lg:gap-3 p-2.5 lg:p-3 rounded-xl admin-tap ${
+                className={`shrink-0 snap-start text-left flex items-center gap-2 px-3 py-2.5 rounded-xl admin-tap ${
                   tab === s.id
-                    ? "bg-card border border-border shadow-sm lg:shadow-none"
+                    ? "bg-card border border-border shadow-sm"
                     : "border border-transparent hover:bg-muted"
                 }`}
               >
-                <div className="h-8 w-8 lg:h-9 lg:w-9 rounded-lg bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)] grid place-items-center shrink-0">
+                <div className="h-8 w-8 rounded-lg bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)] grid place-items-center shrink-0">
                   <Icon className="h-4 w-4" />
                 </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold whitespace-nowrap lg:whitespace-normal">{s.title}</p>
-                  <p className="hidden lg:block text-xs text-muted-foreground">{s.desc}</p>
-                </div>
+                <p className="text-sm font-semibold whitespace-nowrap">{s.title}</p>
               </button>
             );
           })}
-        </aside>
+        </nav>
 
-        <section className="lg:col-span-2 admin-card p-4 sm:p-6">
+        <section className="admin-card p-4 sm:p-6">
+
           <h3 className="font-bold">{active.title}</h3>
           <p className="text-xs text-muted-foreground">{active.desc}</p>
 
