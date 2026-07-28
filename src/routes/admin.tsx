@@ -90,7 +90,7 @@ function AdminLayout() {
             onClick={async () => {
               await supabase.auth.signOut();
             }}
-            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90"
+            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90 admin-tap"
           >
             <LogOut className="h-4 w-4" /> Sign out
           </button>

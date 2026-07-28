@@ -97,7 +97,7 @@ function CategoriesPage() {
                   <tr><td colSpan={4} className="px-5 py-10 text-center text-muted-foreground">{topLevel.length ? "No categories match your search." : 'No categories yet. Click "New category".'}</td></tr>
                 )}
                 {cats.map((c) => (
-                  <tr key={c.id} className="border-t border-border hover:bg-muted/30">
+                  <tr key={c.id} className="border-t border-border hover:bg-muted/30 transition-colors">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         {c.image ? (
@@ -112,8 +112,8 @@ function CategoriesPage() {
                     <td className="px-5 py-3 text-muted-foreground">{raw.filter((s) => s.parent_id === c.id).length}</td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => { setEditing(c); setForm(c); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted"><Edit2 className="h-3.5 w-3.5"/></button>
-                        <button onClick={() => confirm(`Delete "${c.name}"?`) && del.mutate(c.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted text-rose-600"><Trash2 className="h-3.5 w-3.5"/></button>
+                        <button onClick={() => { setEditing(c); setForm(c); setOpen(true); }} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted admin-tap"><Edit2 className="h-3.5 w-3.5"/></button>
+                        <button onClick={() => confirm(`Delete "${c.name}"?`) && del.mutate(c.id)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-muted admin-tap text-rose-600"><Trash2 className="h-3.5 w-3.5"/></button>
                       </div>
                     </td>
                   </tr>
@@ -131,7 +131,7 @@ function CategoriesPage() {
           <ImageInput label="Category image" folder="categories" value={form.image} onChange={(v) => setForm({ ...form, image: v })} />
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
             <button type="button" onClick={() => setOpen(false)} className="text-sm font-semibold px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancel</button>
-            <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90">{save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}Save</button>
+            <button disabled={save.isPending} type="submit" className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-[color:var(--brand-pink)] text-white hover:opacity-90 admin-tap">{save.isPending && <Loader2 className="h-4 w-4 animate-spin" />}Save</button>
           </div>
         </form>
       </AdminModal>
