@@ -63,50 +63,63 @@ function Index() {
   const order = normalizeHomeSections(settings.home_sections).filter((s) => s.enabled);
   const slides = normalizeHeroSlides(settings.hero_slides);
 
-  const blocks: Record<string, React.ReactNode> = {
-    hero: <HeroSlider slides={slides} />,
+  const blocks: Record<string, (s: HomeSection) => React.ReactNode> = {
+    hero: () => <HeroSlider slides={slides} />,
 
-
-    categories: (
-      <section className="max-w-7xl mx-auto px-4 mt-10">
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 sm:gap-6">
-          {topCategories.map((c, i) => (
-            <Link
-              key={c.slug}
-              to="/category/$slug"
-              params={{ slug: c.slug }}
-              className={`${i >= 6 && !showAllCats ? "hidden sm:flex" : "flex"} flex-col items-center gap-2 group`}
-            >
-              <div
-                className={`h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-gradient-to-br ${c.color} shadow-lg group-hover:scale-105 transition overflow-hidden ring-4 ring-white`}
+    categories: (s) => {
+      const heading = builtinText(s, "title");
+      const sub = builtinText(s, "subtitle");
+      const cats = topCategories.slice(0, builtinLimit(s));
+      return (
+        <section className="max-w-7xl mx-auto px-4 mt-10">
+          {(heading || sub) && (
+            <div className="mb-6 text-center">
+              {heading && <h2 className="text-2xl md:text-3xl font-black">{heading}</h2>}
+              {sub && <p className="text-sm text-muted-foreground">{sub}</p>}
+            </div>
+          )}
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 sm:gap-6">
+            {cats.map((c, i) => (
+              <Link
+                key={c.slug}
+                to="/category/$slug"
+                params={{ slug: c.slug }}
+                className={`${i >= 6 && !showAllCats ? "hidden sm:flex" : "flex"} flex-col items-center gap-2 group`}
               >
-                <img
-                  {...imgProps(c.image, { width: 200, widths: [96, 160, 240], sizes: "(max-width: 640px) 64px, 96px" })}
-                  alt={c.name}
-                  className="h-full w-full object-cover mix-blend-multiply opacity-90"
-                />
-              </div>
-              <span className="text-xs sm:text-sm font-semibold text-center">{c.name}</span>
-            </Link>
-          ))}
-        </div>
-        {topCategories.length > 6 && (
-          <div className="sm:hidden mt-4 flex justify-center">
-            <button
-              onClick={() => setShowAllCats((v) => !v)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border px-5 py-2 text-xs font-bold uppercase hover:bg-muted"
-            >
-              {showAllCats ? "Show less" : "All categories"}
-              <ChevronRight className={`h-3.5 w-3.5 transition ${showAllCats ? "-rotate-90" : "rotate-90"}`} />
-            </button>
+                <div
+                  className={`h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-gradient-to-br ${c.color} shadow-lg group-hover:scale-105 transition overflow-hidden ring-4 ring-white`}
+                >
+                  <img
+                    {...imgProps(c.image, { width: 200, widths: [96, 160, 240], sizes: "(max-width: 640px) 64px, 96px" })}
+                    alt={c.name}
+                    className="h-full w-full object-cover mix-blend-multiply opacity-90"
+                  />
+                </div>
+                <span className="text-xs sm:text-sm font-semibold text-center">{c.name}</span>
+              </Link>
+            ))}
           </div>
-        )}
-      </section>
-    ),
+          {cats.length > 6 && (
+            <div className="sm:hidden mt-4 flex justify-center">
+              <button
+                onClick={() => setShowAllCats((v) => !v)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-5 py-2 text-xs font-bold uppercase hover:bg-muted"
+              >
+                {showAllCats ? "Show less" : "All categories"}
+                <ChevronRight className={`h-3.5 w-3.5 transition ${showAllCats ? "-rotate-90" : "rotate-90"}`} />
+              </button>
+            </div>
+          )}
+        </section>
+      );
+    },
 
-    deals: (
+    deals: (s) => (
       <section className="max-w-7xl mx-auto px-4 mt-12">
-        <h2 className="text-center text-lg font-black tracking-widest text-foreground">DEALS YOU CANNOT MISS</h2>
+        <h2 className="text-center text-lg font-black tracking-widest text-foreground">{builtinText(s, "title")}</h2>
+        {builtinText(s, "subtitle") && (
+          <p className="text-center text-sm text-muted-foreground mt-1">{builtinText(s, "subtitle")}</p>
+        )}
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
           {dealBanners.map((d) => (
             <div
@@ -124,37 +137,48 @@ function Index() {
       </section>
     ),
 
-    trending: (
-      <section className="max-w-7xl mx-auto px-4 mt-14">
-        <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-black">Trending Now</h2>
-            <p className="text-sm text-muted-foreground">Bestsellers this week</p>
+    trending: (s) => {
+      const items = trending.slice(0, builtinLimit(s));
+      return (
+        <section className="max-w-7xl mx-auto px-4 mt-14">
+          <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-black">{builtinText(s, "title")}</h2>
+              {builtinText(s, "subtitle") && (
+                <p className="text-sm text-muted-foreground">{builtinText(s, "subtitle")}</p>
+              )}
+            </div>
+            <Link to="/search" search={{ q: "" }} className="text-sm font-semibold text-[color:var(--brand-pink)] hover:underline">
+              View all →
+            </Link>
           </div>
-          <Link to="/search" search={{ q: "" }} className="text-sm font-semibold text-[color:var(--brand-pink)] hover:underline">
-            View all →
-          </Link>
-        </div>
-        {trending.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No products yet. Add some from the admin panel.</p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {trending.map((p) => (
-              <ProductCard key={p.slug} product={p} />
-            ))}
-          </div>
-        )}
-      </section>
-    ),
+          {items.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No products yet. Add some from the admin panel.</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {items.map((p) => (
+                <ProductCard key={p.slug} product={p} />
+              ))}
+            </div>
+          )}
+        </section>
+      );
+    },
 
-    brands:
-      brands.length > 0 ? (
+    brands: (s) => {
+      const list = brands.slice(0, builtinLimit(s));
+      return list.length > 0 ? (
         <section id="brands" className="max-w-7xl mx-auto px-4 mt-14 scroll-mt-24">
           <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
-            <h2 className="text-2xl md:text-3xl font-black">Shop by Brand</h2>
+            <div>
+              <h2 className="text-2xl md:text-3xl font-black">{builtinText(s, "title")}</h2>
+              {builtinText(s, "subtitle") && (
+                <p className="text-sm text-muted-foreground">{builtinText(s, "subtitle")}</p>
+              )}
+            </div>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-            {(showAllBrands ? brands : brands.slice(0, 6)).map((b, i) => (
+            {(showAllBrands ? list : list.slice(0, 6)).map((b, i) => (
               <Link
                 key={b.slug}
                 to="/search"
@@ -172,7 +196,7 @@ function Index() {
               </Link>
             ))}
           </div>
-          {brands.length > 6 && (
+          {list.length > 6 && (
             <div className="mt-4 flex justify-center">
               <button
                 onClick={() => setShowAllBrands((v) => !v)}
@@ -184,10 +208,19 @@ function Index() {
             </div>
           )}
         </section>
-      ) : null,
+      ) : null;
+    },
 
-    trust: (
+    trust: (s) => (
       <section className="max-w-7xl mx-auto px-4 mt-16">
+        {(builtinText(s, "title") || builtinText(s, "subtitle")) && (
+          <div className="mb-6 text-center">
+            {builtinText(s, "title") && <h2 className="text-2xl md:text-3xl font-black">{builtinText(s, "title")}</h2>}
+            {builtinText(s, "subtitle") && (
+              <p className="text-sm text-muted-foreground">{builtinText(s, "subtitle")}</p>
+            )}
+          </div>
+        )}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-muted rounded-3xl p-6 md:p-8">
           {[
             { icon: Truck, title: "Free Delivery", sub: "On orders over ৳999" },
@@ -209,6 +242,7 @@ function Index() {
       </section>
     ),
   };
+
 
   return (
     <div className="min-h-screen bg-background">
