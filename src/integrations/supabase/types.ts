@@ -484,6 +484,9 @@ export type Database = {
           delivery_partner: string | null
           facebook_url: string | null
           favicon_url: string | null
+          footer_about: string | null
+          footer_columns: Json | null
+          footer_copyright: string | null
           free_shipping_threshold: number
           header_menus: Json
           hero_slides: Json
@@ -492,6 +495,10 @@ export type Database = {
           instagram_url: string | null
           logo_url: string | null
           low_stock_threshold: number
+          newsletter_button: string | null
+          newsletter_enabled: boolean
+          newsletter_subtitle: string | null
+          newsletter_title: string | null
           notify_low_stock_email: boolean
           notify_order_email: boolean
           notify_order_sms: boolean
@@ -527,6 +534,9 @@ export type Database = {
           delivery_partner?: string | null
           facebook_url?: string | null
           favicon_url?: string | null
+          footer_about?: string | null
+          footer_columns?: Json | null
+          footer_copyright?: string | null
           free_shipping_threshold?: number
           header_menus?: Json
           hero_slides?: Json
@@ -535,6 +545,10 @@ export type Database = {
           instagram_url?: string | null
           logo_url?: string | null
           low_stock_threshold?: number
+          newsletter_button?: string | null
+          newsletter_enabled?: boolean
+          newsletter_subtitle?: string | null
+          newsletter_title?: string | null
           notify_low_stock_email?: boolean
           notify_order_email?: boolean
           notify_order_sms?: boolean
@@ -570,6 +584,9 @@ export type Database = {
           delivery_partner?: string | null
           facebook_url?: string | null
           favicon_url?: string | null
+          footer_about?: string | null
+          footer_columns?: Json | null
+          footer_copyright?: string | null
           free_shipping_threshold?: number
           header_menus?: Json
           hero_slides?: Json
@@ -578,6 +595,10 @@ export type Database = {
           instagram_url?: string | null
           logo_url?: string | null
           low_stock_threshold?: number
+          newsletter_button?: string | null
+          newsletter_enabled?: boolean
+          newsletter_subtitle?: string | null
+          newsletter_title?: string | null
           notify_low_stock_email?: boolean
           notify_order_email?: boolean
           notify_order_sms?: boolean
