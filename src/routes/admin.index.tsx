@@ -47,33 +47,53 @@ function Dashboard() {
   return (
     <>
       <AdminTopbar title="Dashboard" subtitle="Welcome back, here's what's happening today." />
-      <div className="p-3 sm:p-6 space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="p-3 sm:p-6 space-y-5 sm:space-y-6">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
           {stats.map((st) => {
             const Icon = st.icon;
             return (
-              <div key={st.label} className="admin-card p-5">
-                <div className={`h-10 w-10 rounded-xl grid place-items-center ${st.tint}`}>
-                  <Icon className="h-5 w-5" />
+              <div key={st.label} className="admin-card p-4 sm:p-5 transition hover:-translate-y-0.5">
+                <div className={`h-9 w-9 sm:h-10 sm:w-10 rounded-xl grid place-items-center ${st.tint}`}>
+                  <Icon className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                 </div>
-                <p className="mt-4 text-2xl font-black">{st.value}</p>
-                <p className="text-xs text-muted-foreground">{st.label}</p>
+                <p className="mt-3 sm:mt-4 text-xl sm:text-2xl font-black truncate">{st.value}</p>
+                <p className="text-[11px] sm:text-xs text-muted-foreground">{st.label}</p>
               </div>
             );
           })}
         </div>
 
-        <div className="admin-card">
-          <div className="flex items-center justify-between p-5 border-b border-border">
-            <div>
+        <div className="admin-card overflow-hidden">
+          <div className="flex items-center justify-between gap-3 p-4 sm:p-5 border-b border-border">
+            <div className="min-w-0">
               <h3 className="font-bold">Recent Orders</h3>
-              <p className="text-xs text-muted-foreground">Latest transactions from your store</p>
+              <p className="text-xs text-muted-foreground truncate">Latest transactions from your store</p>
             </div>
-            <Link to="/admin/orders" className="text-xs font-semibold text-[color:var(--brand-pink)] inline-flex items-center gap-1">
+            <Link to="/admin/orders" className="shrink-0 text-xs font-semibold text-[color:var(--brand-pink)] inline-flex items-center gap-1">
               View all <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
-          <div className="overflow-x-auto admin-scroll">
+
+          {/* Mobile list */}
+          <div className="sm:hidden divide-y divide-border">
+            {q.isLoading && <div className="py-10 text-center"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></div>}
+            {!q.isLoading && (s?.recent.length ?? 0) === 0 && <div className="py-10 text-center text-muted-foreground text-sm">No orders yet.</div>}
+            {(s?.recent ?? []).map((o: any) => (
+              <div key={o.id} className="p-4 flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-mono text-xs font-semibold truncate">#{o.order_number}</p>
+                  <p className="text-sm font-medium truncate">{o.customers?.name ?? "Guest"}</p>
+                  <p className="text-[11px] text-muted-foreground">{new Date(o.created_at).toLocaleDateString()}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="font-bold text-sm">৳{Number(o.total).toLocaleString()}</p>
+                  <span className={`mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded-full capitalize ${statusStyle[o.status]}`}>{o.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="hidden sm:block overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
               <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
@@ -88,7 +108,7 @@ function Dashboard() {
                 {q.isLoading && <tr><td colSpan={5} className="text-center py-10"><Loader2 className="h-5 w-5 animate-spin inline text-muted-foreground" /></td></tr>}
                 {!q.isLoading && (s?.recent.length ?? 0) === 0 && <tr><td colSpan={5} className="text-center py-10 text-muted-foreground">No orders yet.</td></tr>}
                 {(s?.recent ?? []).map((o: any) => (
-                  <tr key={o.id} className="border-t border-border hover:bg-muted/30">
+                  <tr key={o.id} className="border-t border-border hover:bg-muted/30 transition">
                     <td className="px-5 py-3 font-mono font-semibold">#{o.order_number}</td>
                     <td className="px-5 py-3">{o.customers?.name ?? "Guest"}</td>
                     <td className="px-5 py-3 font-semibold">৳{Number(o.total).toLocaleString()}</td>
@@ -103,6 +123,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
     </>
   );
 }
