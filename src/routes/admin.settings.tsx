@@ -71,6 +71,7 @@ type Tab = (typeof sections)[number]["id"];
 function SettingsPage() {
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("store");
+  const [openSection, setOpenSection] = useState<string | null>(null);
   const [form, setForm] = useState<Partial<SiteSettings>>({});
 
   const q = useQuery({
