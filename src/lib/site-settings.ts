@@ -136,7 +136,16 @@ export function normalizeHomeSections(value: unknown): HomeSection[] {
     if (!s || typeof s.id !== "string" || out.some((o) => o.id === s.id)) continue;
     const isBuiltin = s.id in HOME_SECTION_LABELS;
     if (isBuiltin) {
-      out.push({ id: s.id, kind: "builtin", enabled: s.enabled !== false });
+      out.push({
+        id: s.id,
+        kind: "builtin",
+        enabled: s.enabled !== false,
+        title: s.title ?? "",
+        subtitle: s.subtitle ?? "",
+        limit: Number(s.limit) > 0 ? Number(s.limit) : undefined,
+        link: s.link ?? "",
+      });
+    } else if (s.kind === "products") {
     } else if (s.kind === "products") {
       out.push({
         id: s.id,
