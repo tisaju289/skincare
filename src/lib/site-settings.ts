@@ -297,7 +297,7 @@ export type SiteSettings = {
 
   footer_about: string | null;
   footer_copyright: string | null;
-  footer_shop_title: string | null;
+  
   newsletter_enabled: boolean;
   newsletter_title: string | null;
   newsletter_subtitle: string | null;
