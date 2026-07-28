@@ -403,6 +403,8 @@ export function resolveSettings(row: unknown): SiteSettings {
   out.hero_slides = normalizeHeroSlides(r.hero_slides);
   out.product_badges = normalizeProductBadges(r.product_badges);
   out.header_menus = normalizeHeaderMenus(r.header_menus);
+  out.footer_columns = normalizeFooterColumns(r.footer_columns);
+  out.newsletter_enabled = r.newsletter_enabled !== false;
   return out as SiteSettings;
 }
 
