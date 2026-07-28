@@ -22,11 +22,13 @@ import {
   Plus,
   BadgeCheck,
   Menu as MenuIcon,
+  ChevronDown,
 } from "lucide-react";
 import { ImageInput } from "@/components/admin/ImageInput";
 import {
   DEFAULT_SETTINGS,
   HOME_SECTION_LABELS,
+  BUILTIN_SECTION_CONFIG,
   PRODUCT_SOURCE_LABELS,
   sectionLabel,
   normalizeHeroSlides,
@@ -69,6 +71,7 @@ type Tab = (typeof sections)[number]["id"];
 function SettingsPage() {
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("store");
+  const [openSection, setOpenSection] = useState<string | null>(null);
   const [form, setForm] = useState<Partial<SiteSettings>>({});
 
   const q = useQuery({
@@ -285,9 +288,17 @@ function SettingsPage() {
                 <div className="space-y-2">
                   <p className="text-xs text-muted-foreground">
                     Use the dropdown or the arrows to change the order of the homepage sections. Turn a section off to
-                    hide it from the storefront.
+                    hide it, or press Edit to change its title, subtitle and how many items it shows.
                   </p>
-                  {homeSections.map((s, i) => (
+                  {homeSections.map((s, i) => {
+                    const builtinCfg = BUILTIN_SECTION_CONFIG[s.id as keyof typeof BUILTIN_SECTION_CONFIG];
+                    const fields =
+                      s.kind === "products"
+                        ? (["title", "subtitle", "limit"] as const)
+                        : ((builtinCfg?.fields ?? []) as readonly ("title" | "subtitle" | "limit" | "link")[]);
+                    const editable = fields.length > 0 || s.kind === "products";
+                    const open = openSection === s.id;
+                    return (
                     <div key={s.id} className="rounded-xl border border-border px-3 py-2.5 space-y-3">
                       <div className="flex flex-wrap items-center gap-3">
                       <span className="h-7 w-7 shrink-0 rounded-lg bg-muted grid place-items-center text-xs font-bold">
@@ -330,6 +341,17 @@ function SettingsPage() {
                       >
                         <ArrowDown className="h-4 w-4" />
                       </button>
+                      {editable && (
+                        <button
+                          type="button"
+                          onClick={() => setOpenSection(open ? null : s.id)}
+                          aria-expanded={open}
+                          className="inline-flex items-center gap-1 h-8 px-2.5 rounded-lg border border-border text-xs font-semibold hover:bg-muted admin-tap"
+                        >
+                          {open ? "Hide" : "Edit"}
+                          <ChevronDown className={`h-3.5 w-3.5 transition ${open ? "rotate-180" : ""}`} />
+                        </button>
+                      )}
                       <button
                         type="button"
                         role="switch"
@@ -358,42 +380,55 @@ function SettingsPage() {
                       )}
                       </div>
 
-                      {s.kind === "products" && (
+                      {editable && open && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-border pt-3">
-                          <Field
-                            label="Section title"
-                            value={s.title ?? ""}
-                            onChange={(v) => setSectionAt(i, { title: v })}
-                          />
-                          <Field
-                            label="Subtitle"
-                            value={s.subtitle ?? ""}
-                            onChange={(v) => setSectionAt(i, { subtitle: v })}
-                          />
-                          <label className="block">
-                            <span className="text-xs font-semibold text-muted-foreground">Show products</span>
-                            <select
-                              value={s.source ?? "latest"}
-                              onChange={(e) => setSectionAt(i, { source: e.target.value as ProductSource })}
-                              className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
-                            >
-                              {Object.entries(PRODUCT_SOURCE_LABELS).map(([v, label]) => (
-                                <option key={v} value={v}>
-                                  {label}
-                                </option>
-                              ))}
-                            </select>
-                          </label>
-                          <Field
-                            label="Max products"
-                            type="number"
-                            value={String(s.limit ?? 10)}
-                            onChange={(v) => setSectionAt(i, { limit: Math.max(1, Number(v) || 10) })}
-                          />
+                          {fields.includes("title") && (
+                            <Field
+                              label="Section title"
+                              value={s.title ?? ""}
+                              placeholder={s.kind === "products" ? "" : builtinCfg?.title}
+                              onChange={(v) => setSectionAt(i, { title: v })}
+                            />
+                          )}
+                          {fields.includes("subtitle") && (
+                            <Field
+                              label="Subtitle"
+                              value={s.subtitle ?? ""}
+                              placeholder={s.kind === "products" ? "" : builtinCfg?.subtitle}
+                              onChange={(v) => setSectionAt(i, { subtitle: v })}
+                            />
+                          )}
+                          {s.kind === "products" && (
+                            <label className="block">
+                              <span className="text-xs font-semibold text-muted-foreground">Show products</span>
+                              <select
+                                value={s.source ?? "latest"}
+                                onChange={(e) => setSectionAt(i, { source: e.target.value as ProductSource })}
+                                className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
+                              >
+                                {Object.entries(PRODUCT_SOURCE_LABELS).map(([v, label]) => (
+                                  <option key={v} value={v}>
+                                    {label}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          )}
+                          {fields.includes("limit") && (
+                            <Field
+                              label={s.kind === "products" ? "Max products" : "Max items"}
+                              type="number"
+                              value={String(s.limit ?? (s.kind === "products" ? 10 : (builtinCfg?.limit ?? 12)))}
+                              onChange={(v) =>
+                                setSectionAt(i, { limit: Math.max(1, Number(v) || (builtinCfg?.limit ?? 10)) })
+                              }
+                            />
+                          )}
                         </div>
                       )}
                     </div>
-                  ))}
+                    );
+                  })}
 
                   <button
                     type="button"
@@ -405,6 +440,7 @@ function SettingsPage() {
 
                 </div>
               )}
+
 
               {tab === "hero" && (
                 <div className="space-y-4">
@@ -778,12 +814,14 @@ function Field({
   value,
   onChange,
   hint,
+  placeholder,
   type = "text",
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   hint?: string;
+  placeholder?: string;
   type?: string;
 }) {
   return (
@@ -792,6 +830,7 @@ function Field({
       <input
         type={type}
         value={value}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm outline-none focus:border-[color:var(--brand-pink)]"
       />
