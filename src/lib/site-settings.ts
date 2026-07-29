@@ -367,6 +367,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   og_image_url: null,
   announcement_text:
     "Free delivery on orders over ৳999 · Cash on delivery available all over Bangladesh",
+  announcement_enabled: true,
+  announcement_link: null,
+  announcement_bg: "#e6007e",
+  announcement_text_color: "#ffffff",
   facebook_url: null,
   instagram_url: null,
   youtube_url: null,
