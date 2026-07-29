@@ -88,6 +88,39 @@ function CategoriesPage() {
           search={search}
           onSearchChange={setSearch}
           placeholder="Search categories…"
+          filters={[
+            {
+              label: "Subcategories",
+              value: subFilter,
+              onChange: setSubFilter,
+              options: [
+                { label: "All", value: "all" },
+                { label: "Has subcategories", value: "with" },
+                { label: "No subcategories", value: "without" },
+              ],
+            },
+            {
+              label: "Image",
+              value: imageFilter,
+              onChange: setImageFilter,
+              options: [
+                { label: "All", value: "all" },
+                { label: "With image", value: "with" },
+                { label: "Without image", value: "without" },
+              ],
+            },
+            {
+              label: "Sort by",
+              value: sort,
+              onChange: setSort,
+              options: [
+                { label: "Default order", value: "all" },
+                { label: "Name (A–Z)", value: "name" },
+                { label: "Name (Z–A)", value: "name-desc" },
+                { label: "Most subcategories", value: "subs" },
+              ],
+            },
+          ]}
           exportRows={cats}
           exportName="categories"
           importTable="categories"
