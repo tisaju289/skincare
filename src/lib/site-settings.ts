@@ -314,6 +314,10 @@ export type SiteSettings = {
   favicon_url: string | null;
   og_image_url: string | null;
   announcement_text: string | null;
+  announcement_enabled: boolean;
+  announcement_link: string | null;
+  announcement_bg: string;
+  announcement_text_color: string;
   facebook_url: string | null;
   instagram_url: string | null;
   youtube_url: string | null;
