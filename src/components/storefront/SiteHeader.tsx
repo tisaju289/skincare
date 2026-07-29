@@ -56,9 +56,23 @@ export function SiteHeader({
 
   return (
     <>
-      <div className="bg-[color:var(--brand-pink)] text-white text-xs sm:text-sm text-center py-2 px-4">
-        {settings.announcement_text}
-      </div>
+      {settings.announcement_enabled !== false && settings.announcement_text && (
+        <div
+          className="text-xs sm:text-sm text-center py-2 px-4"
+          style={{
+            backgroundColor: settings.announcement_bg || "var(--brand-pink)",
+            color: settings.announcement_text_color || "#ffffff",
+          }}
+        >
+          {settings.announcement_link ? (
+            <a href={settings.announcement_link} className="underline-offset-2 hover:underline">
+              {settings.announcement_text}
+            </a>
+          ) : (
+            settings.announcement_text
+          )}
+        </div>
+      )}
 
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
