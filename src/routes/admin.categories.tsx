@@ -27,6 +27,9 @@ function CategoriesPage() {
   const [editing, setEditing] = useState<Category | null>(null);
   const [form, setForm] = useState<FormState>(empty);
   const [search, setSearch] = useState("");
+  const [subFilter, setSubFilter] = useState("all");
+  const [imageFilter, setImageFilter] = useState("all");
+  const [sort, setSort] = useState("all");
 
   const q = useQuery({
     queryKey: ["admin", "categories"],
