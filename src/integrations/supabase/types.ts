@@ -477,7 +477,11 @@ export type Database = {
       }
       store_settings: {
         Row: {
+          announcement_bg: string
+          announcement_enabled: boolean
+          announcement_link: string | null
           announcement_text: string | null
+          announcement_text_color: string
           business_address: string | null
           created_at: string
           currency: string
@@ -527,7 +531,11 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          announcement_bg?: string
+          announcement_enabled?: boolean
+          announcement_link?: string | null
           announcement_text?: string | null
+          announcement_text_color?: string
           business_address?: string | null
           created_at?: string
           currency?: string
@@ -577,7 +585,11 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          announcement_bg?: string
+          announcement_enabled?: boolean
+          announcement_link?: string | null
           announcement_text?: string | null
+          announcement_text_color?: string
           business_address?: string | null
           created_at?: string
           currency?: string
