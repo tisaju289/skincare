@@ -60,7 +60,21 @@ function CategoriesPage() {
 
   const raw = q.data ?? [];
   const topLevel = raw.filter((c) => !c.parent_id);
-  const cats = topLevel.filter((c) => matchesQuery({ name: c.name, slug: c.slug }, search));
+  const subCount = (id: string) => raw.filter((s) => s.parent_id === id).length;
+
+  const cats = topLevel
+    .filter((c) => matchesQuery({ name: c.name, slug: c.slug }, search))
+    .filter((c) =>
+      subFilter === "with" ? subCount(c.id) > 0 : subFilter === "without" ? subCount(c.id) === 0 : true,
+    )
+    .filter((c) => (imageFilter === "with" ? !!c.image : imageFilter === "without" ? !c.image : true))
+    .sort((a, b) => {
+      if (sort === "name") return a.name.localeCompare(b.name);
+      if (sort === "name-desc") return b.name.localeCompare(a.name);
+      if (sort === "subs") return subCount(b.id) - subCount(a.id);
+      return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+    });
+
 
   return (
     <>
