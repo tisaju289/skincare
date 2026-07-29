@@ -27,6 +27,9 @@ function CategoriesPage() {
   const [editing, setEditing] = useState<Category | null>(null);
   const [form, setForm] = useState<FormState>(empty);
   const [search, setSearch] = useState("");
+  const [subFilter, setSubFilter] = useState("all");
+  const [imageFilter, setImageFilter] = useState("all");
+  const [sort, setSort] = useState("all");
 
   const q = useQuery({
     queryKey: ["admin", "categories"],
@@ -57,7 +60,21 @@ function CategoriesPage() {
 
   const raw = q.data ?? [];
   const topLevel = raw.filter((c) => !c.parent_id);
-  const cats = topLevel.filter((c) => matchesQuery({ name: c.name, slug: c.slug }, search));
+  const subCount = (id: string) => raw.filter((s) => s.parent_id === id).length;
+
+  const cats = topLevel
+    .filter((c) => matchesQuery({ name: c.name, slug: c.slug }, search))
+    .filter((c) =>
+      subFilter === "with" ? subCount(c.id) > 0 : subFilter === "without" ? subCount(c.id) === 0 : true,
+    )
+    .filter((c) => (imageFilter === "with" ? !!c.image : imageFilter === "without" ? !c.image : true))
+    .sort((a, b) => {
+      if (sort === "name") return a.name.localeCompare(b.name);
+      if (sort === "name-desc") return b.name.localeCompare(a.name);
+      if (sort === "subs") return subCount(b.id) - subCount(a.id);
+      return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+    });
+
 
   return (
     <>
@@ -71,6 +88,39 @@ function CategoriesPage() {
           search={search}
           onSearchChange={setSearch}
           placeholder="Search categories…"
+          filters={[
+            {
+              label: "Subcategories",
+              value: subFilter,
+              onChange: setSubFilter,
+              options: [
+                { label: "All", value: "all" },
+                { label: "Has subcategories", value: "with" },
+                { label: "No subcategories", value: "without" },
+              ],
+            },
+            {
+              label: "Image",
+              value: imageFilter,
+              onChange: setImageFilter,
+              options: [
+                { label: "All", value: "all" },
+                { label: "With image", value: "with" },
+                { label: "Without image", value: "without" },
+              ],
+            },
+            {
+              label: "Sort by",
+              value: sort,
+              onChange: setSort,
+              options: [
+                { label: "Default order", value: "all" },
+                { label: "Name (A–Z)", value: "name" },
+                { label: "Name (Z–A)", value: "name-desc" },
+                { label: "Most subcategories", value: "subs" },
+              ],
+            },
+          ]}
           exportRows={cats}
           exportName="categories"
           importTable="categories"
