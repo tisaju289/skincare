@@ -689,11 +689,36 @@ function SettingsPage() {
                     onChange={(v) => set("favicon_url", v)}
                     hint="Small icon shown in the browser tab (PNG / ICO / SVG)."
                   />
-                  <Field
-                    label="Announcement bar text"
-                    value={str("announcement_text")}
-                    onChange={(v) => set("announcement_text", v)}
-                  />
+                  <div className="rounded-2xl border border-border p-3 sm:p-4 space-y-3">
+                    <Toggle
+                      label="Show announcement bar"
+                      checked={form.announcement_enabled !== false}
+                      onChange={(v) => set("announcement_enabled", v)}
+                    />
+                    <Field
+                      label="Announcement bar text"
+                      value={str("announcement_text")}
+                      onChange={(v) => set("announcement_text", v)}
+                    />
+                    <Field
+                      label="Announcement link (optional)"
+                      value={str("announcement_link")}
+                      onChange={(v) => set("announcement_link", v)}
+                      placeholder="/category/skincare"
+                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <ColorField
+                        label="Bar background"
+                        value={str("announcement_bg") || "#e6007e"}
+                        onChange={(v) => set("announcement_bg", v)}
+                      />
+                      <ColorField
+                        label="Bar text color"
+                        value={str("announcement_text_color") || "#ffffff"}
+                        onChange={(v) => set("announcement_text_color", v)}
+                      />
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <Field label="Facebook URL" value={str("facebook_url")} onChange={(v) => set("facebook_url", v)} />
                     <Field

@@ -314,6 +314,10 @@ export type SiteSettings = {
   favicon_url: string | null;
   og_image_url: string | null;
   announcement_text: string | null;
+  announcement_enabled: boolean;
+  announcement_link: string | null;
+  announcement_bg: string;
+  announcement_text_color: string;
   facebook_url: string | null;
   instagram_url: string | null;
   youtube_url: string | null;
@@ -363,6 +367,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   og_image_url: null,
   announcement_text:
     "Free delivery on orders over ৳999 · Cash on delivery available all over Bangladesh",
+  announcement_enabled: true,
+  announcement_link: null,
+  announcement_bg: "#e6007e",
+  announcement_text_color: "#ffffff",
   facebook_url: null,
   instagram_url: null,
   youtube_url: null,
