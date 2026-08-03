@@ -33,11 +33,11 @@ export function SiteHeader({
   categories?: Category[];
   settings?: SiteSettings;
 }) {
-  const navigate = useNavigate();
   const { count } = useCart();
-  const [q, setQ] = useState("");
+  const { count: wishCount } = useWishlist();
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
 
   const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
   const menus: HeaderMenu[] = configured.length
