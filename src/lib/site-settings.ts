@@ -401,7 +401,12 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   notify_order_sms: false,
   notify_low_stock_email: true,
   low_stock_threshold: 10,
+  whatsapp_enabled: false,
+  whatsapp_number: null,
+  whatsapp_message: "Hello! I want to order from Shajgoj.",
+  whatsapp_label: "WhatsApp",
 };
+
 
 export function resolveSettings(row: unknown): SiteSettings {
   if (!row || typeof row !== "object") return DEFAULT_SETTINGS;
