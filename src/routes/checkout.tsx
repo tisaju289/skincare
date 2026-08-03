@@ -60,7 +60,7 @@ function CheckoutPage() {
           ...form,
           email: "",
           deliveryZone: zone,
-          items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })),
+          items: items.map((i) => ({ slug: i.slug, quantity: i.quantity, variantId: i.variantId ?? null })),
         },
       });
       clear();
