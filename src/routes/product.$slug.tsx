@@ -1,13 +1,17 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Heart, ShoppingBag, Star, Truck, ShieldCheck, RefreshCw, ChevronRight, Minus, Plus, Headphones, Gift, Tag, Wallet, Clock } from "lucide-react";
+import { Heart, ShoppingBag, Star, Truck, ShieldCheck, RefreshCw, ChevronRight, Minus, Plus, Headphones, Gift, Tag, Wallet, Clock, MessageCircle } from "lucide-react";
 import { getProductPage, submitReview } from "@/lib/storefront.functions";
 import type { Category, Product, Review } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { siteHead, DEFAULT_SETTINGS, normalizeProductBadges, type SiteSettings } from "@/lib/site-settings";
 import { imgProps } from "@/lib/image";
+import { useWishlist } from "@/lib/wishlist";
+import { RecentlyViewed } from "@/components/storefront/RecentlyViewed";
+import { whatsappEnabled, whatsappLink } from "@/lib/whatsapp";
+
 
 const PRODUCT_BADGE_ICON_MAP = {
   truck: Truck,
@@ -56,21 +60,42 @@ export const Route = createFileRoute("/product/$slug")({
   component: ProductPage,
 });
 
+type Variant = {
+  id: string;
+  name: string;
+  value: string;
+  price: number | null;
+  stock: number;
+  image: string | null;
+};
+
 function ProductPage() {
   const data = Route.useLoaderData() as {
     product: Product;
     gallery: string[];
+    variants: Variant[];
     related: Product[];
     reviews: Review[];
     categories: Category[];
     settings: SiteSettings;
   };
-  const { product, gallery, related, reviews, categories, settings } = data;
+  const { product, gallery, variants, related, reviews, categories, settings } = data;
   const { add } = useCart();
+  const wishlist = useWishlist();
+  const saved = wishlist.has(product.slug);
   const [qty, setQty] = useState(1);
+  const [variantId, setVariantId] = useState<string | null>(variants.length ? (variants.find((v) => v.stock > 0)?.id ?? variants[0]!.id) : null);
+  const variant = variants.find((v) => v.id === variantId) ?? null;
   const [activeImage, setActiveImage] = useState(product.image);
   const images = gallery.length ? gallery : [product.image];
-  const soldOut = product.stock <= 0;
+  const price = variant?.price ?? product.price;
+  const stock = variant ? variant.stock : product.stock;
+  const soldOut = stock <= 0;
+
+  const mini = useMemo(
+    () => ({ slug: product.slug, name: product.name, price: product.price, image: product.image, brand: product.brand }),
+    [product.slug, product.name, product.price, product.image, product.brand],
+  );
 
   const postReview = useServerFn(submitReview);
   const [tab, setTab] = useState<"description" | "reviews">("description");
@@ -78,6 +103,7 @@ function ProductPage() {
   const [rRating, setRRating] = useState(5);
   const [rComment, setRComment] = useState("");
   const [rBusy, setRBusy] = useState(false);
+
 
   async function sendReview(e: React.FormEvent) {
     e.preventDefault();
