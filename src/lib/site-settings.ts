@@ -342,7 +342,12 @@ export type SiteSettings = {
   notify_order_sms: boolean;
   notify_low_stock_email: boolean;
   low_stock_threshold: number;
+  whatsapp_enabled: boolean;
+  whatsapp_number: string | null;
+  whatsapp_message: string | null;
+  whatsapp_label: string | null;
 };
+
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   home_sections: DEFAULT_HOME_SECTIONS,
@@ -396,7 +401,12 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   notify_order_sms: false,
   notify_low_stock_email: true,
   low_stock_threshold: 10,
+  whatsapp_enabled: false,
+  whatsapp_number: null,
+  whatsapp_message: "Hello! I want to order from Shajgoj.",
+  whatsapp_label: "WhatsApp",
 };
+
 
 export function resolveSettings(row: unknown): SiteSettings {
   if (!row || typeof row !== "object") return DEFAULT_SETTINGS;

@@ -60,7 +60,7 @@ function CheckoutPage() {
           ...form,
           email: "",
           deliveryZone: zone,
-          items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })),
+          items: items.map((i) => ({ slug: i.slug, quantity: i.quantity, variantId: i.variantId ?? null })),
         },
       });
       clear();
@@ -170,15 +170,17 @@ function CheckoutPage() {
               <h2 className="font-black">Order summary</h2>
               <ul className="mt-4 space-y-3">
                 {items.map((i) => (
-                  <li key={i.slug} className="flex gap-3 text-sm">
+                  <li key={i.key ?? i.slug} className="flex gap-3 text-sm">
                     <img {...imgProps(i.image, { width: 120, widths: [96, 160], sizes: "48px" })} alt={i.name} className="h-12 w-12 rounded-lg object-cover" />
                     <div className="flex-1">
                       <p className="line-clamp-2 font-medium">{i.name}</p>
+                      {i.variantLabel && <p className="text-xs text-muted-foreground">{i.variantLabel}</p>}
                       <p className="text-xs text-muted-foreground">Qty {i.quantity}</p>
                     </div>
                     <p className="font-bold">৳{i.price * i.quantity}</p>
                   </li>
                 ))}
+
               </ul>
               <div className="mt-4 space-y-1 text-sm border-t border-border pt-4">
                 <Row label="Subtotal" value={`৳${subtotal}`} />

@@ -1,10 +1,13 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Heart, ShoppingBag, Menu, X } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
 import { CartDrawer } from "./CartDrawer";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { SearchAutocomplete } from "./SearchAutocomplete";
+import { WhatsAppButton } from "./WhatsAppButton";
 import { ChevronDown } from "lucide-react";
 import {
   DEFAULT_SETTINGS,
@@ -12,6 +15,7 @@ import {
   type HeaderMenu,
   type SiteSettings,
 } from "@/lib/site-settings";
+
 
 const MENU_PILL: Record<string, string> = {
   none: "",
@@ -29,11 +33,11 @@ export function SiteHeader({
   categories?: Category[];
   settings?: SiteSettings;
 }) {
-  const navigate = useNavigate();
   const { count } = useCart();
-  const [q, setQ] = useState("");
+  const { count: wishCount } = useWishlist();
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
 
   const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
   const menus: HeaderMenu[] = configured.length
@@ -49,10 +53,8 @@ export function SiteHeader({
           enabled: true,
         }));
 
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    navigate({ to: "/search", search: { q } });
-  }
+
+
 
   return (
     <>
@@ -98,24 +100,26 @@ export function SiteHeader({
             </span>
           </Link>
 
-          <form onSubmit={submit} className="hidden md:block flex-1 relative min-w-0">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              type="search"
-              placeholder="Search for products, brands and more…"
-              aria-label="Search products"
-              className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-4 py-2.5 text-sm bg-white"
-            />
-          </form>
+          <SearchAutocomplete className="hidden md:block flex-1 min-w-0" />
           <div className="ml-auto flex items-center gap-2 shrink-0">
+            <Link
+              to="/wishlist"
+              aria-label="Wishlist"
+              className="relative h-9 w-9 grid place-items-center rounded-full border border-border hover:bg-muted"
+            >
+              <Heart className="h-4 w-4" />
+              {wishCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[color:var(--brand-pink)] text-white rounded-full h-4 min-w-4 px-1 grid place-items-center text-[10px] font-bold">
+                  {wishCount}
+                </span>
+              )}
+            </Link>
             <Link
               to="/search"
               search={{ q: "" }}
               className="hidden lg:flex items-center gap-2 rounded-full bg-foreground text-background px-4 py-2 text-xs font-semibold"
             >
-              <Heart className="h-4 w-4" /> ALL PRODUCTS
+              ALL PRODUCTS
             </Link>
             <button
               onClick={() => setCartOpen(true)}
@@ -129,17 +133,10 @@ export function SiteHeader({
           </div>
         </div>
 
-        <form onSubmit={submit} className="md:hidden px-4 pb-3 relative">
-          <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            type="search"
-            placeholder="Search products…"
-            aria-label="Search products"
-            className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-4 py-2.5 text-sm bg-white"
-          />
-        </form>
+        <div className="md:hidden px-4 pb-3">
+          <SearchAutocomplete placeholder="Search products…" />
+        </div>
+
 
         {menus.length > 0 && (
           <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -211,9 +208,13 @@ export function SiteHeader({
             </button>
           </div>
           <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-            <Link to="/search" search={{ q: "" }} onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
-              <Heart className="h-4 w-4" /> All products
+            <Link to="/search" search={{ q: "" }} onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
+              All products
             </Link>
+            <Link to="/wishlist" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
+              <Heart className="h-4 w-4" /> Wishlist {wishCount > 0 && `(${wishCount})`}
+            </Link>
+
             {menus.map((m, i) => {
               const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
               return (
@@ -269,6 +270,9 @@ export function SiteHeader({
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
 
       <MobileBottomNav onOpenMenu={() => setMenuOpen(true)} onOpenCart={() => setCartOpen(true)} />
+
+      <WhatsAppButton settings={settings} />
     </>
   );
 }
+

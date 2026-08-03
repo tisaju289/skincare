@@ -42,7 +42,12 @@ const FLAGS = [
 
 type FormState = Partial<Product>;
 
+type VariantRow = { name: string; value: string; price: string; stock: string; image: string };
+
+const emptyVariant: VariantRow = { name: "Shade", value: "", price: "", stock: "0", image: "" };
+
 const empty: FormState = { name: "", slug: "", price: 0, stock: 0, status: "active" };
+
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -54,6 +59,8 @@ function ProductsPage() {
   const [form, setForm] = useState<FormState>(empty);
   const [parentId, setParentId] = useState<string>("");
   const [gallery, setGallery] = useState<string[]>([]);
+  const [variants, setVariants] = useState<VariantRow[]>([]);
+
   const [slugTouched, setSlugTouched] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -118,7 +125,24 @@ function ProductsPage() {
             .insert(urls.map((url, i) => ({ product_id: productId!, url, sort_order: i })));
           if (error) throw error;
         }
+        const rows = variants
+          .map((v, i) => ({
+            product_id: productId!,
+            name: v.name.trim() || "Variant",
+            value: v.value.trim(),
+            price: v.price.trim() === "" ? null : Number(v.price),
+            stock: Number(v.stock || 0),
+            image: v.image.trim() || null,
+            sort_order: i,
+          }))
+          .filter((v) => v.value);
+        await supabase.from("product_variants" as any).delete().eq("product_id", productId);
+        if (rows.length) {
+          const { error } = await supabase.from("product_variants" as any).insert(rows as any);
+          if (error) throw error;
+        }
       }
+
     },
     onSuccess: () => {
       toast.success(editing ? "Product updated" : "Product created");
@@ -145,6 +169,7 @@ function ProductsPage() {
     setForm(empty);
     setParentId("");
     setGallery([]);
+    setVariants([]);
     setSlugTouched(false);
     setOpen(true);
   }
@@ -156,6 +181,7 @@ function ProductsPage() {
     const current = cats.find((c) => c.id === p.category_id);
     setParentId(current?.parent_id ?? current?.id ?? "");
     setGallery([]);
+    setVariants([]);
     setOpen(true);
     const { data } = await supabase
       .from("product_images")
@@ -163,7 +189,22 @@ function ProductsPage() {
       .eq("product_id", p.id)
       .order("sort_order");
     setGallery((data ?? []).map((r) => r.url));
+    const { data: vs } = await supabase
+      .from("product_variants" as any)
+      .select("name,value,price,stock,image")
+      .eq("product_id", p.id)
+      .order("sort_order");
+    setVariants(
+      ((vs ?? []) as any[]).map((v) => ({
+        name: v.name ?? "",
+        value: v.value ?? "",
+        price: v.price == null ? "" : String(v.price),
+        stock: String(v.stock ?? 0),
+        image: v.image ?? "",
+      })),
+    );
   }
+
 
   const products = (productsQ.data ?? []) as any[];
   const filtered = products.filter(
@@ -396,6 +437,31 @@ function ProductsPage() {
               </div>
             ))}
           </div>
+
+          <div className="space-y-3 pt-2 border-t border-border">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">Variants (shade / size)</span>
+              <button type="button" onClick={() => setVariants([...variants, { ...emptyVariant }])} className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg border border-border hover:bg-muted">
+                <Plus className="h-3 w-3" /> Add variant
+              </button>
+            </div>
+            {variants.length === 0 && <p className="text-xs text-muted-foreground">No variants. Product will be sold as a single option.</p>}
+            {variants.map((v, i) => (
+              <div key={i} className="rounded-xl border border-border p-3 space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <Field label="Option name"><input className={inputCls} value={v.name} placeholder="Shade" onChange={(e) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, name: e.target.value } : x)))} /></Field>
+                  <Field label="Option value"><input className={inputCls} value={v.value} placeholder="Ruby Red" onChange={(e) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, value: e.target.value } : x)))} /></Field>
+                  <Field label="Price (blank = base)"><input type="number" className={inputCls} value={v.price} onChange={(e) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, price: e.target.value } : x)))} /></Field>
+                  <Field label="Stock"><input type="number" className={inputCls} value={v.stock} onChange={(e) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, stock: e.target.value } : x)))} /></Field>
+                </div>
+                <ImageInput label="Variant image" folder="products" value={v.image} onChange={(val) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, image: val ?? "" } : x)))} />
+                <button type="button" onClick={() => setVariants(variants.filter((_, xi) => xi !== i))} className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 hover:underline">
+                  <Trash2 className="h-3.5 w-3.5" /> Remove variant
+                </button>
+              </div>
+            ))}
+          </div>
+
           <Field label="Short description"><textarea rows={2} className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
           <Field label="Long description"><textarea rows={6} className={inputCls} value={form.long_description ?? ""} onChange={(e) => setForm({ ...form, long_description: e.target.value })} /></Field>
           <div className="flex justify-end gap-2 pt-4 border-t border-border">

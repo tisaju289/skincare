@@ -728,6 +728,23 @@ function SettingsPage() {
                     />
                     <Field label="YouTube URL" value={str("youtube_url")} onChange={(v) => set("youtube_url", v)} />
                   </div>
+                  <div className="rounded-xl border border-border p-4 space-y-3">
+                    <label className="flex items-center gap-2 text-sm font-semibold">
+                      <input
+                        type="checkbox"
+                        checked={!!(form as any).whatsapp_enabled}
+                        onChange={(e) => set("whatsapp_enabled" as any, e.target.checked as any)}
+                        className="h-4 w-4 accent-[color:var(--brand-pink)]"
+                      />
+                      Enable WhatsApp order / support button
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <Field label="WhatsApp number (with country code)" value={str("whatsapp_number" as any)} onChange={(v) => set("whatsapp_number" as any, v)} />
+                      <Field label="Button label" value={str("whatsapp_label" as any)} onChange={(v) => set("whatsapp_label" as any, v)} />
+                      <Field label="Default message" value={str("whatsapp_message" as any)} onChange={(v) => set("whatsapp_message" as any, v)} />
+                    </div>
+                  </div>
+
                 </>
               )}
 
