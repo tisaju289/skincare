@@ -125,7 +125,24 @@ function ProductsPage() {
             .insert(urls.map((url, i) => ({ product_id: productId!, url, sort_order: i })));
           if (error) throw error;
         }
+        const rows = variants
+          .map((v, i) => ({
+            product_id: productId!,
+            name: v.name.trim() || "Variant",
+            value: v.value.trim(),
+            price: v.price.trim() === "" ? null : Number(v.price),
+            stock: Number(v.stock || 0),
+            image: v.image.trim() || null,
+            sort_order: i,
+          }))
+          .filter((v) => v.value);
+        await supabase.from("product_variants" as any).delete().eq("product_id", productId);
+        if (rows.length) {
+          const { error } = await supabase.from("product_variants" as any).insert(rows as any);
+          if (error) throw error;
+        }
       }
+
     },
     onSuccess: () => {
       toast.success(editing ? "Product updated" : "Product created");
