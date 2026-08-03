@@ -42,7 +42,12 @@ const FLAGS = [
 
 type FormState = Partial<Product>;
 
+type VariantRow = { name: string; value: string; price: string; stock: string; image: string };
+
+const emptyVariant: VariantRow = { name: "Shade", value: "", price: "", stock: "0", image: "" };
+
 const empty: FormState = { name: "", slug: "", price: 0, stock: 0, status: "active" };
+
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -54,6 +59,8 @@ function ProductsPage() {
   const [form, setForm] = useState<FormState>(empty);
   const [parentId, setParentId] = useState<string>("");
   const [gallery, setGallery] = useState<string[]>([]);
+  const [variants, setVariants] = useState<VariantRow[]>([]);
+
   const [slugTouched, setSlugTouched] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
