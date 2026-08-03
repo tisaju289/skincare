@@ -275,6 +275,56 @@ export type Database = {
           },
         ]
       }
+      product_variants: {
+        Row: {
+          created_at: string
+          id: string
+          image: string | null
+          name: string
+          price: number | null
+          product_id: string
+          sku: string | null
+          sort_order: number
+          stock: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          name?: string
+          price?: number | null
+          product_id: string
+          sku?: string | null
+          sort_order?: number
+          stock?: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          name?: string
+          price?: number | null
+          product_id?: string
+          sku?: string | null
+          sort_order?: number
+          stock?: number
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           brand_id: string | null
@@ -528,6 +578,10 @@ export type Database = {
           theme_teal: string
           timezone: string
           updated_at: string
+          whatsapp_enabled: boolean
+          whatsapp_label: string | null
+          whatsapp_message: string | null
+          whatsapp_number: string | null
           youtube_url: string | null
         }
         Insert: {
@@ -582,6 +636,10 @@ export type Database = {
           theme_teal?: string
           timezone?: string
           updated_at?: string
+          whatsapp_enabled?: boolean
+          whatsapp_label?: string | null
+          whatsapp_message?: string | null
+          whatsapp_number?: string | null
           youtube_url?: string | null
         }
         Update: {
@@ -636,6 +694,10 @@ export type Database = {
           theme_teal?: string
           timezone?: string
           updated_at?: string
+          whatsapp_enabled?: boolean
+          whatsapp_label?: string | null
+          whatsapp_message?: string | null
+          whatsapp_number?: string | null
           youtube_url?: string | null
         }
         Relationships: []
