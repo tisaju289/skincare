@@ -395,6 +395,9 @@ function ProductPage() {
         </section>
       )}
 
+      <RecentlyViewed current={mini} />
+
+
       <SiteFooter categories={categories} settings={settings} />
       </>
     </div>
