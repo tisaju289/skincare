@@ -342,7 +342,12 @@ export type SiteSettings = {
   notify_order_sms: boolean;
   notify_low_stock_email: boolean;
   low_stock_threshold: number;
+  whatsapp_enabled: boolean;
+  whatsapp_number: string | null;
+  whatsapp_message: string | null;
+  whatsapp_label: string | null;
 };
+
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   home_sections: DEFAULT_HOME_SECTIONS,
