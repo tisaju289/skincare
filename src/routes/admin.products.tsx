@@ -169,6 +169,7 @@ function ProductsPage() {
     setForm(empty);
     setParentId("");
     setGallery([]);
+    setVariants([]);
     setSlugTouched(false);
     setOpen(true);
   }
@@ -180,6 +181,7 @@ function ProductsPage() {
     const current = cats.find((c) => c.id === p.category_id);
     setParentId(current?.parent_id ?? current?.id ?? "");
     setGallery([]);
+    setVariants([]);
     setOpen(true);
     const { data } = await supabase
       .from("product_images")
@@ -187,7 +189,22 @@ function ProductsPage() {
       .eq("product_id", p.id)
       .order("sort_order");
     setGallery((data ?? []).map((r) => r.url));
+    const { data: vs } = await supabase
+      .from("product_variants" as any)
+      .select("name,value,price,stock,image")
+      .eq("product_id", p.id)
+      .order("sort_order");
+    setVariants(
+      ((vs ?? []) as any[]).map((v) => ({
+        name: v.name ?? "",
+        value: v.value ?? "",
+        price: v.price == null ? "" : String(v.price),
+        stock: String(v.stock ?? 0),
+        image: v.image ?? "",
+      })),
+    );
   }
+
 
   const products = (productsQ.data ?? []) as any[];
   const filtered = products.filter(
