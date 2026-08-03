@@ -98,24 +98,26 @@ export function SiteHeader({
             </span>
           </Link>
 
-          <form onSubmit={submit} className="hidden md:block flex-1 relative min-w-0">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              type="search"
-              placeholder="Search for products, brands and more…"
-              aria-label="Search products"
-              className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-4 py-2.5 text-sm bg-white"
-            />
-          </form>
+          <SearchAutocomplete className="hidden md:block flex-1 min-w-0" />
           <div className="ml-auto flex items-center gap-2 shrink-0">
+            <Link
+              to="/wishlist"
+              aria-label="Wishlist"
+              className="relative h-9 w-9 grid place-items-center rounded-full border border-border hover:bg-muted"
+            >
+              <Heart className="h-4 w-4" />
+              {wishCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[color:var(--brand-pink)] text-white rounded-full h-4 min-w-4 px-1 grid place-items-center text-[10px] font-bold">
+                  {wishCount}
+                </span>
+              )}
+            </Link>
             <Link
               to="/search"
               search={{ q: "" }}
               className="hidden lg:flex items-center gap-2 rounded-full bg-foreground text-background px-4 py-2 text-xs font-semibold"
             >
-              <Heart className="h-4 w-4" /> ALL PRODUCTS
+              ALL PRODUCTS
             </Link>
             <button
               onClick={() => setCartOpen(true)}
@@ -129,17 +131,10 @@ export function SiteHeader({
           </div>
         </div>
 
-        <form onSubmit={submit} className="md:hidden px-4 pb-3 relative">
-          <Search className="absolute left-8 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            type="search"
-            placeholder="Search products…"
-            aria-label="Search products"
-            className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-4 py-2.5 text-sm bg-white"
-          />
-        </form>
+        <div className="md:hidden px-4 pb-3">
+          <SearchAutocomplete placeholder="Search products…" />
+        </div>
+
 
         {menus.length > 0 && (
           <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex flex-wrap items-center gap-x-5 gap-y-2">
