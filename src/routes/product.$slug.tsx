@@ -177,13 +177,48 @@ function ProductPage() {
             </span>
           </div>
           <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-            <span className="text-3xl sm:text-4xl font-black text-[color:var(--brand-pink)]">৳{product.price}</span>
+            <span className="text-3xl sm:text-4xl font-black text-[color:var(--brand-pink)]">৳{price}</span>
             {product.old != null && <span className="text-base sm:text-lg text-muted-foreground line-through">৳{product.old}</span>}
             {product.tag && <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded">{product.tag}</span>}
           </div>
           <p className={`mt-2 text-xs font-semibold ${soldOut ? "text-destructive" : "text-emerald-600"}`}>
-            {soldOut ? "Out of stock" : `In stock · ${product.stock} available`}
+            {soldOut ? "Out of stock" : `In stock · ${stock} available`}
           </p>
+
+          {variants.length > 0 && (
+            <div className="mt-6">
+              <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                {variants[0]!.name}
+                {variant && <span className="ml-2 normal-case text-foreground">{variant.value}</span>}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {variants.map((v) => {
+                  const out = v.stock <= 0;
+                  const active = v.id === variantId;
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      disabled={out}
+                      onClick={() => {
+                        setVariantId(v.id);
+                        if (v.image) setActiveImage(v.image);
+                      }}
+                      className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${
+                        active
+                          ? "border-[color:var(--brand-pink)] bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)]"
+                          : "border-border hover:border-foreground/40"
+                      } ${out ? "opacity-40 line-through cursor-not-allowed" : ""}`}
+                    >
+                      {v.value}
+                      {v.price != null && v.price !== product.price && <span className="ml-1.5 opacity-70">৳{v.price}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <p className="mt-6 text-sm text-foreground/80 leading-relaxed">{product.description}</p>
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -199,17 +234,51 @@ function ProductPage() {
             <button
               disabled={soldOut}
               onClick={() => {
-                add({ slug: product.slug, name: product.name, price: product.price, image: product.image }, qty);
+                add(
+                  {
+                    slug: product.slug,
+                    name: product.name,
+                    price,
+                    image: variant?.image || product.image,
+                    variantId: variant?.id ?? null,
+                    variantLabel: variant ? `${variant.name}: ${variant.value}` : null,
+                  },
+                  qty,
+                );
                 toast.success(`${qty} × ${product.name} added to bag`);
               }}
               className="flex-1 min-w-[10rem] rounded-full bg-[color:var(--brand-pink)] text-white font-bold py-3 flex items-center justify-center gap-2 hover:opacity-90 disabled:bg-muted disabled:text-muted-foreground"
             >
               <ShoppingBag className="h-4 w-4" /> {soldOut ? "Sold out" : "Add to Bag"}
             </button>
-            <button aria-label="Save to wishlist" className="h-12 w-12 shrink-0 rounded-full border border-border grid place-items-center hover:bg-muted">
-              <Heart className="h-5 w-5" />
+            <button
+              type="button"
+              aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
+              aria-pressed={saved}
+              onClick={() => {
+                const added = wishlist.toggle(mini);
+                toast.success(added ? "Saved to wishlist" : "Removed from wishlist");
+              }}
+              className="h-12 w-12 shrink-0 rounded-full border border-border grid place-items-center hover:bg-muted"
+            >
+              <Heart className={`h-5 w-5 ${saved ? "fill-[color:var(--brand-pink)] text-[color:var(--brand-pink)]" : ""}`} />
             </button>
           </div>
+
+          {whatsappEnabled(settings) && (
+            <a
+              href={whatsappLink(
+                settings,
+                `Hi! I want to order:\n${product.name}${variant ? ` (${variant.value})` : ""}\nQty: ${qty}\nPrice: ৳${price}`,
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 w-full rounded-full bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 hover:brightness-105"
+            >
+              <MessageCircle className="h-4 w-4" /> Order on WhatsApp
+            </a>
+          )}
+
 
           {(() => {
             const badges = normalizeProductBadges(settings.product_badges).filter((b) => b.enabled);
