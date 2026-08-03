@@ -53,10 +53,8 @@ export function SiteHeader({
           enabled: true,
         }));
 
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    navigate({ to: "/search", search: { q } });
-  }
+
+
 
   return (
     <>
