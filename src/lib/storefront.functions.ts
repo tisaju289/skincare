@@ -203,7 +203,16 @@ export const placeOrder = createServerFn({ method: "POST" })
         promoCode: z.string().optional(),
         paymentMethod: z.enum(["bkash", "nagad", "card", "cod"]),
         deliveryZone: z.enum(["inside", "outside"]).optional(),
-        items: z.array(z.object({ slug: z.string(), quantity: z.number().int().min(1).max(20) })).min(1),
+        items: z
+          .array(
+            z.object({
+              slug: z.string(),
+              quantity: z.number().int().min(1).max(20),
+              variantId: z.string().nullable().optional(),
+            }),
+          )
+          .min(1),
+
       })
       .parse(d),
   )
