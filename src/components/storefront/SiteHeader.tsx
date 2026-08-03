@@ -1,10 +1,13 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Heart, ShoppingBag, Menu, X } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
 import { CartDrawer } from "./CartDrawer";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { SearchAutocomplete } from "./SearchAutocomplete";
+import { WhatsAppButton } from "./WhatsAppButton";
 import { ChevronDown } from "lucide-react";
 import {
   DEFAULT_SETTINGS,
@@ -12,6 +15,7 @@ import {
   type HeaderMenu,
   type SiteSettings,
 } from "@/lib/site-settings";
+
 
 const MENU_PILL: Record<string, string> = {
   none: "",
