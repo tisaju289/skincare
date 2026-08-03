@@ -437,6 +437,31 @@ function ProductsPage() {
               </div>
             ))}
           </div>
+
+          <div className="space-y-3 pt-2 border-t border-border">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">Variants (shade / size)</span>
+              <button type="button" onClick={() => setVariants([...variants, { ...emptyVariant }])} className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg border border-border hover:bg-muted">
+                <Plus className="h-3 w-3" /> Add variant
+              </button>
+            </div>
+            {variants.length === 0 && <p className="text-xs text-muted-foreground">No variants. Product will be sold as a single option.</p>}
+            {variants.map((v, i) => (
+              <div key={i} className="rounded-xl border border-border p-3 space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <Field label="Option name"><input className={inputCls} value={v.name} placeholder="Shade" onChange={(e) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, name: e.target.value } : x)))} /></Field>
+                  <Field label="Option value"><input className={inputCls} value={v.value} placeholder="Ruby Red" onChange={(e) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, value: e.target.value } : x)))} /></Field>
+                  <Field label="Price (blank = base)"><input type="number" className={inputCls} value={v.price} onChange={(e) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, price: e.target.value } : x)))} /></Field>
+                  <Field label="Stock"><input type="number" className={inputCls} value={v.stock} onChange={(e) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, stock: e.target.value } : x)))} /></Field>
+                </div>
+                <ImageInput label="Variant image" folder="products" value={v.image} onChange={(val) => setVariants(variants.map((x, xi) => (xi === i ? { ...x, image: val ?? "" } : x)))} />
+                <button type="button" onClick={() => setVariants(variants.filter((_, xi) => xi !== i))} className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 hover:underline">
+                  <Trash2 className="h-3.5 w-3.5" /> Remove variant
+                </button>
+              </div>
+            ))}
+          </div>
+
           <Field label="Short description"><textarea rows={2} className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
           <Field label="Long description"><textarea rows={6} className={inputCls} value={form.long_description ?? ""} onChange={(e) => setForm({ ...form, long_description: e.target.value })} /></Field>
           <div className="flex justify-end gap-2 pt-4 border-t border-border">
