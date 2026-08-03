@@ -208,9 +208,13 @@ export function SiteHeader({
             </button>
           </div>
           <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-            <Link to="/search" search={{ q: "" }} onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
-              <Heart className="h-4 w-4" /> All products
+            <Link to="/search" search={{ q: "" }} onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
+              All products
             </Link>
+            <Link to="/wishlist" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
+              <Heart className="h-4 w-4" /> Wishlist {wishCount > 0 && `(${wishCount})`}
+            </Link>
+
             {menus.map((m, i) => {
               const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
               return (
