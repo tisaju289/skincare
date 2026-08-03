@@ -270,6 +270,8 @@ export function SiteHeader({
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
 
       <MobileBottomNav onOpenMenu={() => setMenuOpen(true)} onOpenCart={() => setCartOpen(true)} />
+
+      <WhatsAppButton settings={settings} />
     </>
-  );
+
 }
