@@ -273,5 +273,6 @@ export function SiteHeader({
 
       <WhatsAppButton settings={settings} />
     </>
-
+  );
 }
+
