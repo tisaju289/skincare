@@ -83,8 +83,8 @@ export const getProductPage = createServerFn({ method: "GET" })
 
     const product = mapProduct(row as never);
 
-    const [{ data: related }, { data: images }, { data: reviews }] = await Promise.all([
-      supabase.from("products").select(PRODUCT_SELECT).neq("slug", product.slug).limit(20),
+    const [{ data: related }, { data: images }, { data: reviews }, { data: variants }] = await Promise.all([
+      supabase.from("products").select(PRODUCT_SELECT).neq("slug", product.slug).limit(40),
       supabase
         .from("products")
         .select("product_images(url,sort_order)")
@@ -96,17 +96,34 @@ export const getProductPage = createServerFn({ method: "GET" })
         .eq("products.slug", data.slug)
         .order("created_at", { ascending: false })
         .limit(10),
+      supabase
+        .from("product_variants")
+        .select("id,name,value,price,stock,image,sort_order,products!inner(slug)")
+        .eq("products.slug", data.slug)
+        .order("sort_order"),
     ]);
+
+    const relatedPool = (related ?? []).map((p) => mapProduct(p as never)) as Product[];
+    const sameCategory = relatedPool.filter((p) => p.category === product.category);
+    const sameBrand = relatedPool.filter((p) => p.category !== product.category && p.brand === product.brand);
+    const relatedList = [...sameCategory, ...sameBrand, ...relatedPool]
+      .filter((p, i, arr) => arr.findIndex((x) => x.slug === p.slug) === i)
+      .slice(0, 5);
 
     return {
       product,
       gallery: ((images?.product_images ?? []) as { url: string; sort_order: number }[])
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((i) => i.url),
-      related: (related ?? [])
-        .map((p) => mapProduct(p as never))
-        .filter((p) => p.category === product.category)
-        .slice(0, 5) as Product[],
+      variants: (variants ?? []).map((v) => ({
+        id: v.id as string,
+        name: (v.name as string) ?? "Option",
+        value: v.value as string,
+        price: v.price == null ? null : Number(v.price),
+        stock: Number(v.stock ?? 0),
+        image: (v.image as string | null) ?? null,
+      })),
+      related: relatedList,
       reviews: (reviews ?? []).map((r) => ({
         id: r.id,
         user_name: r.user_name,
@@ -118,6 +135,39 @@ export const getProductPage = createServerFn({ method: "GET" })
       settings,
     };
   });
+
+export const searchSuggestions = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ q: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    const term = data.q.trim();
+    if (term.length < 2) return { products: [], categories: [], brands: [] };
+
+    const { getPublicClient } = await import("@/lib/supabase-public.server");
+    const supabase = getPublicClient();
+
+    const [prods, cats, brands] = await Promise.all([
+      supabase
+        .from("products")
+        .select("slug,name,image,price,brands(name)")
+        .ilike("name", `%${term}%`)
+        .limit(6),
+      supabase.from("categories").select("slug,name").ilike("name", `%${term}%`).limit(4),
+      supabase.from("brands").select("slug,name").ilike("name", `%${term}%`).limit(4),
+    ]);
+
+    return {
+      products: (prods.data ?? []).map((p) => ({
+        slug: p.slug as string,
+        name: p.name as string,
+        image: (p.image as string | null) ?? "",
+        price: Number(p.price ?? 0),
+        brand: ((p as unknown as { brands: { name: string } | null }).brands?.name) ?? "",
+      })),
+      categories: (cats.data ?? []).map((c) => ({ slug: c.slug as string, name: c.name as string })),
+      brands: (brands.data ?? []).map((b) => ({ slug: b.slug as string, name: b.name as string })),
+    };
+  });
+
 
 export const searchProducts = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ q: z.string().default("") }).parse(d))
