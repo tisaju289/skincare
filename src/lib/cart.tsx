@@ -1,20 +1,30 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 export type CartItem = {
+  /** Unique line key: slug, or `slug::variantId` when a variant is chosen. */
+  key: string;
   slug: string;
   name: string;
   price: number;
   image: string;
   quantity: number;
+  variantId?: string | null;
+  variantLabel?: string | null;
 };
+
+export type CartInput = Omit<CartItem, "quantity" | "key">;
+
+export function lineKey(slug: string, variantId?: string | null) {
+  return variantId ? `${slug}::${variantId}` : slug;
+}
 
 type CartCtx = {
   items: CartItem[];
   count: number;
   subtotal: number;
-  add: (item: Omit<CartItem, "quantity">, qty?: number) => void;
-  remove: (slug: string) => void;
-  setQty: (slug: string, qty: number) => void;
+  add: (item: CartInput, qty?: number) => void;
+  remove: (key: string) => void;
+  setQty: (key: string, qty: number) => void;
   clear: () => void;
   ready: boolean;
 };
@@ -29,7 +39,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) setItems(JSON.parse(raw));
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setItems(
+            (parsed as CartItem[]).map((i) => ({
+              ...i,
+              key: i.key ?? lineKey(i.slug, i.variantId),
+            })),
+          );
+        }
+      }
     } catch {
       /* ignore */
     }
@@ -53,20 +73,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
       subtotal: items.reduce((n, i) => n + i.quantity * i.price, 0),
       add: (item, qty = 1) =>
         setItems((prev) => {
-          const found = prev.find((p) => p.slug === item.slug);
+          const key = lineKey(item.slug, item.variantId);
+          const found = prev.find((p) => p.key === key);
           if (found) {
-            return prev.map((p) =>
-              p.slug === item.slug ? { ...p, quantity: Math.min(20, p.quantity + qty) } : p,
-            );
+            return prev.map((p) => (p.key === key ? { ...p, quantity: Math.min(20, p.quantity + qty) } : p));
           }
-          return [...prev, { ...item, quantity: qty }];
+          return [...prev, { ...item, key, quantity: qty }];
         }),
-      remove: (slug) => setItems((prev) => prev.filter((p) => p.slug !== slug)),
-      setQty: (slug, qty) =>
+      remove: (key) => setItems((prev) => prev.filter((p) => p.key !== key)),
+      setQty: (key, qty) =>
         setItems((prev) =>
           qty <= 0
-            ? prev.filter((p) => p.slug !== slug)
-            : prev.map((p) => (p.slug === slug ? { ...p, quantity: Math.min(20, qty) } : p)),
+            ? prev.filter((p) => p.key !== key)
+            : prev.map((p) => (p.key === key ? { ...p, quantity: Math.min(20, qty) } : p)),
         ),
       clear: () => setItems([]),
     }),
