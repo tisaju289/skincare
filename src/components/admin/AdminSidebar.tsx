@@ -8,6 +8,8 @@ import {
   Percent, MessageSquare, LogOut, ExternalLink, X, Sparkles, Layers,
 } from "lucide-react";
 import { setAdminNavOpen, useAdminNavOpen } from "./admin-nav";
+import { useAdminBranding } from "@/lib/admin-branding";
+
 
 const groups = [
   {
