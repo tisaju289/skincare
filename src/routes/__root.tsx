@@ -130,7 +130,7 @@ function RootComponent() {
         </WishlistProvider>
       </CartProvider>
 
-      <Toaster position="top-right" richColors />
+      <Toaster position="bottom-center" richColors offset="24px" mobileOffset="84px" />
     </QueryClientProvider>
   );
 }
