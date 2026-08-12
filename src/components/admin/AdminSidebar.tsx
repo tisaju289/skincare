@@ -46,6 +46,7 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const branding = useAdminBranding();
   const [email, setEmail] = useState("");
   const [signingOut, setSigningOut] = useState(false);
 
@@ -76,11 +77,19 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
     <>
       <div className="px-4 sm:px-5 py-4 border-b border-border/70 flex items-center justify-between gap-2">
         <Link to="/admin" onClick={onNavigate} className="flex min-w-0 items-center gap-2.5 group">
-          <div className="h-9 w-9 shrink-0 rounded-xl bg-[color:var(--brand-pink)] grid place-items-center text-white font-black shadow-sm transition group-hover:scale-105">
-            S
-          </div>
+          {branding.logoUrl ? (
+            <img
+              src={branding.logoUrl}
+              alt={branding.storeName}
+              className="h-9 w-9 shrink-0 rounded-xl object-contain bg-muted/50 transition group-hover:scale-105"
+            />
+          ) : (
+            <div className="h-9 w-9 shrink-0 rounded-xl bg-[color:var(--brand-pink)] grid place-items-center text-white font-black shadow-sm transition group-hover:scale-105">
+              {branding.storeName.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div className="min-w-0">
-            <p className="text-sm font-black leading-tight truncate">SHAJGOJ</p>
+            <p className="text-sm font-black leading-tight truncate">{branding.storeName}</p>
             <p className="text-[10px] text-muted-foreground truncate">Admin Console</p>
           </div>
         </Link>
@@ -94,6 +103,7 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
           </button>
         )}
       </div>
+
 
       <nav className="flex-1 overflow-y-auto admin-scroll px-3 py-4 space-y-5">
         {groups.map((group) => (
