@@ -44,14 +44,14 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
             <div className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_oklab,var(--brand-purple)_88%,transparent),color-mix(in_oklab,var(--brand-magenta)_55%,transparent)_45%,transparent_85%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(0deg,rgb(0_0_0/0.35),transparent_55%)]" />
 
-            <div className="relative h-full flex flex-col justify-center px-5 sm:px-10 md:px-16 max-w-[70%] md:max-w-[58%] text-primary-foreground">
+            <div className="relative h-full flex flex-col justify-center px-4 sm:px-10 md:px-16 max-w-[86%] sm:max-w-[70%] md:max-w-[58%] min-w-0 text-primary-foreground">
               {s.kicker ? (
-                <p className="text-[9px] sm:text-xs font-bold tracking-[0.28em] uppercase opacity-90 line-clamp-1">
+                <p className="text-[8px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.28em] uppercase opacity-90 line-clamp-1">
                   {s.kicker}
                 </p>
               ) : null}
               {s.title ? (
-                <h1 className="font-display mt-1.5 sm:mt-4 text-3xl sm:text-6xl lg:text-8xl uppercase break-words">
+                <h1 className="font-display mt-1 sm:mt-4 text-2xl sm:text-6xl lg:text-8xl uppercase break-words line-clamp-2">
                   {s.title}
                 </h1>
               ) : null}
@@ -85,7 +85,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous slide"
-              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-11 sm:w-11 rounded-full bg-background/70 backdrop-blur hover:bg-background grid place-items-center"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-11 sm:w-11 rounded-full bg-background/70 backdrop-blur hover:bg-background hidden sm:grid place-items-center"
             >
               <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
@@ -93,7 +93,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               type="button"
               onClick={() => go(1)}
               aria-label="Next slide"
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-11 sm:w-11 rounded-full bg-background/70 backdrop-blur hover:bg-background grid place-items-center"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-11 sm:w-11 rounded-full bg-background/70 backdrop-blur hover:bg-background hidden sm:grid place-items-center"
             >
               <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
