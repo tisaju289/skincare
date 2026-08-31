@@ -44,14 +44,14 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
             <div className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_oklab,var(--brand-purple)_88%,transparent),color-mix(in_oklab,var(--brand-magenta)_55%,transparent)_45%,transparent_85%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(0deg,rgb(0_0_0/0.35),transparent_55%)]" />
 
-            <div className="relative h-full flex flex-col justify-center px-5 sm:px-10 md:px-16 max-w-[70%] md:max-w-[58%] text-primary-foreground">
+            <div className="relative h-full flex flex-col justify-center px-4 sm:px-10 md:px-16 max-w-[86%] sm:max-w-[70%] md:max-w-[58%] min-w-0 text-primary-foreground">
               {s.kicker ? (
-                <p className="text-[9px] sm:text-xs font-bold tracking-[0.28em] uppercase opacity-90 line-clamp-1">
+                <p className="text-[8px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.28em] uppercase opacity-90 line-clamp-1">
                   {s.kicker}
                 </p>
               ) : null}
               {s.title ? (
-                <h1 className="font-display mt-1.5 sm:mt-4 text-3xl sm:text-6xl lg:text-8xl uppercase break-words">
+                <h1 className="font-display mt-1 sm:mt-4 text-2xl sm:text-6xl lg:text-8xl uppercase break-words line-clamp-2">
                   {s.title}
                 </h1>
               ) : null}
