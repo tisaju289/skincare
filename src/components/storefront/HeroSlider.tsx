@@ -93,7 +93,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               type="button"
               onClick={() => go(1)}
               aria-label="Next slide"
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-11 sm:w-11 rounded-full bg-background/70 backdrop-blur hover:bg-background grid place-items-center"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-11 sm:w-11 rounded-full bg-background/70 backdrop-blur hover:bg-background hidden sm:grid place-items-center"
             >
               <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
