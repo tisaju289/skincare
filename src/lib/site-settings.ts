@@ -183,6 +183,7 @@ export function normalizeHomeSections(value: unknown): HomeSection[] {
         subtitle: s.subtitle ?? "",
         limit: Number(s.limit) > 0 ? Number(s.limit) : undefined,
         link: s.link ?? "",
+        bg: typeof s.bg === "string" ? s.bg : undefined,
       });
     } else if (s.kind === "products") {
       out.push({
