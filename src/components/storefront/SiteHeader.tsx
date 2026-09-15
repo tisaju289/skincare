@@ -197,57 +197,8 @@ export function SiteHeader({
         </div>
 
 
-        {menus.length > 0 && (
-          <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex flex-wrap items-center gap-x-5 gap-y-2">
-            {menus.map((m, i) => {
-              const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
-              const pill = MENU_PILL[m.color] ?? "";
-              const base = `text-[13px] font-medium whitespace-nowrap py-1 tracking-wide ${
-                pill ? `${pill} text-[11px] font-semibold` : "text-foreground/75 hover:text-primary transition-colors"
-              }`;
-              const inner =
-                m.type === "category" ? (
-                  <Link to="/category/$slug" params={{ slug: m.slug }} className={base}>
-                    {m.label}
-                  </Link>
-                ) : m.url.startsWith("/") ? (
-                  <Link to={m.url} className={base}>
-                    {m.label}
-                  </Link>
-                ) : (
-                  <a href={m.url} className={base}>
-                    {m.label}
-                  </a>
-                );
-
-              if (!kids.length) return <div key={`${m.label}-${i}`}>{inner}</div>;
-
-              return (
-                <div key={`${m.label}-${i}`} className="relative group">
-                  <div className="flex items-center gap-1">
-                    {inner}
-                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-                  </div>
-                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition absolute left-0 top-full z-50 pt-2">
-                    <div className="min-w-52 rounded-xl border border-border bg-background shadow-lg p-2">
-                      {kids.map((k) => (
-                        <Link
-                          key={k.slug}
-                          to="/category/$slug"
-                          params={{ slug: k.slug }}
-                          className="block rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-[color:var(--brand-pink)]"
-                        >
-                          {k.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
       </header>
+
 
       {/* Mobile menu drawer */}
       <div className={`lg:hidden fixed inset-0 z-50 ${menuOpen ? "" : "pointer-events-none"}`} aria-hidden={!menuOpen}>
