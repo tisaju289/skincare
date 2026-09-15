@@ -87,8 +87,8 @@ function HotCard({ p }: { p: Product }) {
       params={{ slug: p.slug }}
       className="group mr-3 block w-40 shrink-0 sm:mr-4 sm:w-48"
     >
-      <div className="rounded-2xl border border-background/15 bg-background/10 p-3 text-background backdrop-blur transition-colors hover:bg-background/15">
-        <div className="relative aspect-square overflow-hidden rounded-xl bg-background/10">
+      <div className="rounded-2xl border border-border/70 bg-card p-3 text-card-foreground shadow-brand transition-colors group-hover:bg-secondary">
+        <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
           <img
             {...imgProps(p.image, { width: 320, widths: [160, 240, 320], sizes: "192px" })}
             alt={p.name}
@@ -102,11 +102,11 @@ function HotCard({ p }: { p: Product }) {
         </div>
         <p className="mt-2.5 line-clamp-2 min-h-[2.4rem] text-[13px] leading-snug">{p.name}</p>
         <div className="mt-1.5 flex items-baseline gap-1.5">
-          <span className="font-display text-base" style={{ color: "var(--brand-magenta)" }}>
+          <span className="font-display text-base text-primary">
             ৳{p.price}
           </span>
           {p.old != null && p.old > p.price && (
-            <span className="text-[11px] text-background/50 line-through">৳{p.old}</span>
+            <span className="text-[11px] text-muted-foreground line-through">৳{p.old}</span>
           )}
         </div>
       </div>
