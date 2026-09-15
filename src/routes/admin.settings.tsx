@@ -32,6 +32,7 @@ import {
   BUILTIN_SECTION_CONFIG,
   PRODUCT_SOURCE_LABELS,
   sectionLabel,
+  builtinBg,
   normalizeHeroSlides,
   normalizeHomeSections,
   normalizeProductBadges,
@@ -323,7 +324,7 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
                     const fields =
                       s.kind === "products"
                         ? (["title", "subtitle", "limit"] as const)
-                        : ((builtinCfg?.fields ?? []) as readonly ("title" | "subtitle" | "limit" | "link")[]);
+                        : ((builtinCfg?.fields ?? []) as readonly ("title" | "subtitle" | "limit" | "link" | "bg")[]);
                     const editable = fields.length > 0 || s.kind === "products";
                     const open = openSection === s.id;
                     return (
@@ -440,6 +441,34 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
                                   </option>
                                 ))}
                               </select>
+                            </label>
+                          )}
+                          {fields.includes("bg") && (
+                            <label className="block">
+                              <span className="text-xs font-semibold text-muted-foreground">Background color</span>
+                              <div className="mt-1 flex items-center gap-2">
+                                <input
+                                  type="color"
+                                  value={builtinBg(s)}
+                                  onChange={(e) => setSectionAt(i, { bg: e.target.value })}
+                                  className="h-10 w-14 rounded-lg border border-border bg-background p-1"
+                                  aria-label="Section background color"
+                                />
+                                <input
+                                  type="text"
+                                  value={s.bg ?? ""}
+                                  placeholder={builtinCfg?.bg ?? "#2B2320"}
+                                  onChange={(e) => setSectionAt(i, { bg: e.target.value })}
+                                  className="flex-1 px-3 py-2 rounded-lg border border-border bg-background text-sm"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setSectionAt(i, { bg: "" })}
+                                  className="px-3 py-2 rounded-lg border border-border text-xs font-semibold hover:bg-muted"
+                                >
+                                  Reset
+                                </button>
+                              </div>
                             </label>
                           )}
                           {fields.includes("limit") && (

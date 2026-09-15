@@ -17,6 +17,8 @@ import {
   normalizeHeroSlides,
   builtinText,
   builtinLimit,
+  builtinBg,
+  readableOn,
   PRODUCT_SOURCE_LABELS,
   type HomeSection,
   type SiteSettings,
@@ -230,18 +232,23 @@ function Index() {
       const items = picked.length ? picked : trending.slice(0, limit);
       if (items.length === 0) return null;
       const row = [...items, ...items];
+      const bg = builtinBg(s);
+      const fg = readableOn(bg);
       return (
         <section className="mx-auto mt-14 max-w-7xl px-4 md:mt-20">
-          <div className="overflow-hidden rounded-3xl bg-foreground py-12 text-background md:py-16">
+          <div
+            className="overflow-hidden rounded-3xl py-12 md:py-16"
+            style={{ backgroundColor: bg, color: fg }}
+          >
             <div className="mb-8 flex flex-col items-center px-4 text-center">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-background/55">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] opacity-60">
                 Bestsellers
               </span>
               <h2 className="font-display mt-2 text-3xl uppercase sm:text-5xl">
                 {builtinText(s, "title") || "Hot Products"}
               </h2>
               {builtinText(s, "subtitle") && (
-                <p className="mt-1 text-sm text-background/70">{builtinText(s, "subtitle")}</p>
+                <p className="mt-1 text-sm opacity-75">{builtinText(s, "subtitle")}</p>
               )}
             </div>
             <div
