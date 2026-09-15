@@ -74,7 +74,7 @@ function CategoryPage() {
       <SiteHeader categories={categories} settings={settings} />
 
       <section className="max-w-7xl mx-auto px-4 pt-6">
-        <div className={`relative rounded-3xl overflow-hidden bg-gradient-to-br ${category.color} p-6 sm:p-8 md:p-12 text-white`}>
+        <div className="relative overflow-hidden rounded-3xl bg-primary p-6 text-primary-foreground sm:p-8 md:p-12">
           <div className="relative z-10 max-w-xl">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-black">{category.name}</h1>
             {category.parent && (
