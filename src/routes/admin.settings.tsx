@@ -323,7 +323,7 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
                     const fields =
                       s.kind === "products"
                         ? (["title", "subtitle", "limit"] as const)
-                        : ((builtinCfg?.fields ?? []) as readonly ("title" | "subtitle" | "limit" | "link")[]);
+                        : ((builtinCfg?.fields ?? []) as readonly ("title" | "subtitle" | "limit" | "link" | "bg")[]);
                     const editable = fields.length > 0 || s.kind === "products";
                     const open = openSection === s.id;
                     return (
