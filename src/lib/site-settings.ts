@@ -56,17 +56,25 @@ export const HOME_SECTION_LABELS: Record<BuiltinSectionId, string> = {
 /** Which editable fields each built-in section supports, plus its default copy. */
 export const BUILTIN_SECTION_CONFIG: Record<
   BuiltinSectionId,
-  { fields: Array<"title" | "subtitle" | "limit" | "link">; title: string; subtitle: string; limit: number; link: string }
+  {
+    fields: Array<"title" | "subtitle" | "limit" | "link" | "bg">;
+    title: string;
+    subtitle: string;
+    limit: number;
+    link: string;
+    bg?: string;
+  }
 > = {
   hero: { fields: [], title: "", subtitle: "", limit: 0, link: "" },
   categories: { fields: ["title", "subtitle", "limit"], title: "", subtitle: "", limit: 12, link: "" },
   deals: { fields: ["title", "subtitle"], title: "DEALS YOU CANNOT MISS", subtitle: "", limit: 0, link: "" },
   hot: {
-    fields: ["title", "subtitle", "limit"],
+    fields: ["title", "subtitle", "limit", "bg"],
     title: "Hot Products",
     subtitle: "Flying off the shelves",
     limit: 12,
     link: "",
+    bg: "#2B2320",
   },
   trending: {
     fields: ["title", "subtitle", "limit", "link"],
