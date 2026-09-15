@@ -36,13 +36,14 @@ export function SiteFooter({
   return (
     <>
       {settings.newsletter_enabled !== false && (
-      <section className="max-w-7xl mx-auto px-4 mt-14">
-        <div className="rounded-3xl bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white p-6 sm:p-8 md:p-12 text-center">
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-black">
+      <section className="max-w-7xl mx-auto px-4 mt-20">
+        <div className="rounded-lg border border-border bg-secondary/55 px-6 py-10 sm:px-10 md:py-14 text-center">
+          <p className="eyebrow">Notes from the apothecary</p>
+          <h3 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl">
             {settings.newsletter_title || `Join the ${settings.store_name} beauty club`}
           </h3>
           {settings.newsletter_subtitle !== "" && (
-            <p className="mt-2 opacity-90 text-sm">
+            <p className="mt-3 text-muted-foreground text-sm">
               {settings.newsletter_subtitle || "Get 10% off your first order + weekly beauty tips."}
             </p>
           )}
@@ -54,11 +55,11 @@ export function SiteFooter({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               aria-label="Email address"
-              className="flex-1 min-w-0 rounded-full px-5 py-3 text-foreground outline-none"
+              className="flex-1 min-w-0 rounded border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary"
             />
             <button
               disabled={busy}
-              className="rounded-full bg-foreground text-background font-bold px-6 py-3 text-sm whitespace-nowrap disabled:opacity-60"
+              className="rounded bg-foreground text-background font-semibold px-6 py-3 text-sm whitespace-nowrap disabled:opacity-60"
             >
               {busy ? "Subscribing…" : settings.newsletter_button || "Subscribe"}
             </button>
@@ -68,12 +69,12 @@ export function SiteFooter({
       )}
 
       <footer className="mt-16 bg-foreground text-background">
-        <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 py-14 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           <div>
             {settings.logo_url ? (
               <img src={settings.logo_url} alt={`${settings.store_name} logo`} loading="lazy" decoding="async" className="h-10 w-auto object-contain" />
             ) : (
-              <p className="text-2xl font-black uppercase">{settings.store_name}</p>
+              <p className="font-display text-3xl">{settings.store_name}</p>
             )}
             <p className="mt-3 text-sm opacity-70">
               {settings.footer_about ||
@@ -94,7 +95,7 @@ export function SiteFooter({
             </div>
           </div>
           <div>
-            <p className="font-bold mb-3">Shop</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] mb-4">Shop</p>
             <ul className="space-y-2 text-sm opacity-80">
               {categories.slice(0, 5).map((c) => (
                 <li key={c.slug}>
@@ -107,7 +108,7 @@ export function SiteFooter({
           </div>
           {columns.map((col, i) => (
             <div key={i}>
-              <p className="font-bold mb-3">{col.title}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] mb-4">{col.title}</p>
               <ul className="space-y-2 text-sm opacity-80">
                 {col.links.map((l, j) => (
                   <li key={j}>
@@ -124,7 +125,7 @@ export function SiteFooter({
             </div>
           ))}
         </div>
-        <div className="border-t border-white/10 text-center text-xs opacity-60 py-4">
+        <div className="border-t border-background/10 text-center text-xs opacity-60 py-5">
           {settings.footer_copyright ||
             `© ${new Date().getFullYear()} ${settings.store_name}. All rights reserved.`}
         </div>

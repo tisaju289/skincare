@@ -17,8 +17,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const go = (d: number) => setIndex((i) => (i + d + count) % count);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 pt-4 md:pt-7">
-      <div className="relative aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-[1.75rem] md:rounded-[2.5rem] bg-gradient-soft dew-ring">
+    <section className="max-w-7xl mx-auto px-4 pt-3 md:pt-5">
+      <div className="relative aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-lg bg-muted shadow-brand">
         {slides.map((s, i) => (
           <div
             key={i}
@@ -40,19 +40,17 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               />
             ) : null}
 
-            {/* soft dewy scrim — light, skincare-editorial */}
-            <div className="absolute inset-0 bg-[linear-gradient(95deg,rgb(255_251_247/0.94),rgb(255_251_247/0.72)_38%,rgb(255_251_247/0.05)_72%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(90%_70%_at_0%_100%,color-mix(in_oklab,var(--brand-peach)_55%,transparent),transparent_60%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_oklab,var(--color-background)_96%,transparent),color-mix(in_oklab,var(--color-background)_72%,transparent)_42%,transparent_72%)]" />
 
-            <div className="relative flex h-full min-w-0 max-w-[92%] flex-col justify-center px-5 sm:max-w-[68%] sm:px-10 md:max-w-[55%] md:px-14">
+            <div className="relative flex h-full min-w-0 max-w-[94%] flex-col justify-center px-6 sm:max-w-[64%] sm:px-12 md:max-w-[52%] md:px-16">
               {s.kicker ? <p className="eyebrow line-clamp-1">{s.kicker}</p> : null}
               {s.title ? (
-                <h1 className="font-display mt-2 sm:mt-3 text-[2rem] leading-[1.03] sm:text-5xl lg:text-6xl text-foreground line-clamp-3">
+                <h1 className="font-display mt-3 text-[2.5rem] sm:text-6xl lg:text-7xl text-foreground line-clamp-3">
                   {s.title}
                 </h1>
               ) : null}
               {s.subtitle ? (
-                <p className="mt-2.5 max-w-md text-[13px] sm:text-base text-muted-foreground line-clamp-3">
+                <p className="mt-4 max-w-md text-sm sm:text-base text-foreground/70 leading-relaxed line-clamp-3">
                   {s.subtitle}
                 </p>
               ) : null}
@@ -60,13 +58,13 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                 {s.cta_label ? (
                   <a
                     href={s.cta_link || "/search"}
-                    className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 sm:px-7 py-2.5 sm:py-3.5 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.16em] text-background transition-all hover:gap-3.5"
+                    className="inline-flex items-center gap-2 rounded bg-foreground px-5 sm:px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-background transition-all hover:gap-3.5"
                   >
                     {s.cta_label} <ArrowRight className="h-3.5 w-3.5" />
                   </a>
                 ) : null}
                 {s.badge ? (
-                  <span className="inline-flex items-center rounded-full border border-foreground/15 bg-background/60 px-4 py-2.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] backdrop-blur">
+                  <span className="inline-flex items-center border-l border-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em]">
                     {s.badge}
                   </span>
                 ) : null}
