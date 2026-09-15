@@ -68,7 +68,7 @@ export function SearchAutocomplete({
         }}
         className="relative"
       >
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[color:var(--brand-pink)]" />
         <input
           value={q}
           onChange={(e) => {
@@ -79,7 +79,7 @@ export function SearchAutocomplete({
           type="search"
           placeholder={placeholder}
           aria-label="Search products"
-          className="w-full rounded border border-border focus:border-primary outline-none pl-11 pr-10 py-2.5 text-sm bg-card"
+          className="w-full rounded-full border-2 border-[color:var(--brand-pink)]/30 focus:border-[color:var(--brand-pink)] outline-none pl-11 pr-10 py-2.5 text-sm bg-white"
         />
         {busy && (
           <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
@@ -87,7 +87,7 @@ export function SearchAutocomplete({
       </form>
 
       {open && q.trim().length >= 2 && (
-        <div className="absolute left-0 right-0 top-full mt-2 z-50 rounded-md border border-border bg-background shadow-xl overflow-hidden max-h-[70vh] overflow-y-auto">
+        <div className="absolute left-0 right-0 top-full mt-2 z-50 rounded-2xl border border-border bg-background shadow-xl overflow-hidden max-h-[70vh] overflow-y-auto">
           {!hasResults && !busy && (
             <p className="px-4 py-4 text-sm text-muted-foreground">No matches for “{q.trim()}”.</p>
           )}
@@ -109,7 +109,7 @@ export function SearchAutocomplete({
                 <span className="block text-sm font-medium line-clamp-1">{p.name}</span>
                 <span className="block text-[11px] text-muted-foreground">{p.brand}</span>
               </span>
-              <span className="text-sm font-semibold text-primary">৳{p.price}</span>
+              <span className="text-sm font-black text-[color:var(--brand-pink)]">৳{p.price}</span>
             </Link>
           ))}
 
@@ -154,7 +154,7 @@ export function SearchAutocomplete({
                 setOpen(false);
                 navigate({ to: "/search", search: { q } });
               }}
-              className="w-full border-t border-border px-4 py-3 text-sm font-semibold text-primary hover:bg-muted text-left"
+              className="w-full border-t border-border px-4 py-3 text-sm font-bold text-[color:var(--brand-pink)] hover:bg-muted text-left"
             >
               See all results for “{q.trim()}”
             </button>

@@ -19,11 +19,11 @@ import {
 
 const MENU_PILL: Record<string, string> = {
   none: "",
-  pink: "bg-primary text-primary-foreground px-3 py-1.5 rounded",
-  magenta: "bg-secondary text-secondary-foreground px-3 py-1.5 rounded",
-  purple: "bg-foreground text-background px-3 py-1.5 rounded",
-  teal: "bg-accent text-accent-foreground px-3 py-1.5 rounded",
-  green: "bg-foreground text-background px-3 py-1.5 rounded",
+  pink: "bg-[color:var(--brand-pink)] text-white px-3 py-1.5 rounded-full",
+  magenta: "bg-[color:var(--brand-magenta)] text-white px-3 py-1.5 rounded-full",
+  purple: "bg-[color:var(--brand-purple)] text-white px-3 py-1.5 rounded-full",
+  teal: "bg-[color:var(--brand-teal)] text-white px-3 py-1.5 rounded-full",
+  green: "bg-[color:var(--brand-green)] text-white px-3 py-1.5 rounded-full",
 };
 
 export function SiteHeader({
@@ -60,7 +60,7 @@ export function SiteHeader({
     <>
       {settings.announcement_enabled !== false && settings.announcement_text && (
         <div
-          className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.15em] text-center py-2.5 px-4"
+          className="text-xs sm:text-sm text-center py-2 px-4"
           style={{
             backgroundColor: settings.announcement_bg || "var(--brand-pink)",
             color: settings.announcement_text_color || "#ffffff",
@@ -76,12 +76,12 @@ export function SiteHeader({
         </div>
       )}
 
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 py-3.5 flex items-center gap-3 sm:gap-5">
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-[color-mix(in_oklab,var(--color-background)_82%,transparent)] backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
           <button
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
-            className="lg:hidden h-9 w-9 shrink-0 grid place-items-center rounded border border-border hover:bg-muted"
+            className="lg:hidden h-9 w-9 shrink-0 grid place-items-center rounded-full border border-border/70 hover:bg-muted"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -95,7 +95,7 @@ export function SiteHeader({
                 className="h-8 sm:h-10 w-auto object-contain shrink-0"
               />
             )}
-            <span className="font-display text-2xl sm:text-3xl text-foreground truncate">
+            <span className="font-display text-xl sm:text-2xl tracking-tight text-foreground truncate">
               {settings.store_name}
             </span>
           </Link>
@@ -106,7 +106,7 @@ export function SiteHeader({
             <Link
               to="/wishlist"
               aria-label="Wishlist"
-              className="relative h-9 w-9 grid place-items-center rounded border border-border hover:bg-muted"
+              className="relative h-9 w-9 grid place-items-center rounded-full border border-border/70 hover:bg-muted"
             >
               <Heart className="h-4 w-4" />
               {wishCount > 0 && (
@@ -118,13 +118,13 @@ export function SiteHeader({
             <Link
               to="/search"
               search={{ q: "" }}
-              className="hidden lg:flex items-center gap-2 rounded border border-foreground/20 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] hover:bg-foreground hover:text-background transition-colors"
+              className="hidden lg:flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-foreground hover:text-background transition-colors"
             >
               All products
             </Link>
             <button
               onClick={() => setCartOpen(true)}
-              className="flex items-center gap-2 rounded bg-foreground text-background px-3 sm:px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em]"
+              className="flex items-center gap-2 rounded-full bg-foreground text-background px-3 sm:px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em]"
             >
               <ShoppingBag className="h-4 w-4" /> <span className="hidden sm:inline">Bag</span>
               <span className="bg-background text-foreground rounded-full h-5 min-w-5 px-1 grid place-items-center text-[10px] font-semibold">
@@ -136,17 +136,17 @@ export function SiteHeader({
         </div>
 
         <div className="md:hidden px-4 pb-3">
-           <SearchAutocomplete placeholder="Search formulas, concerns, brands…" />
+          <SearchAutocomplete placeholder="Search products…" />
         </div>
 
 
         {menus.length > 0 && (
-          <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex flex-wrap items-center justify-center gap-x-7 gap-y-2 border-t border-border/60 pt-3">
+          <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex flex-wrap items-center gap-x-5 gap-y-2">
             {menus.map((m, i) => {
               const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
               const pill = MENU_PILL[m.color] ?? "";
-               const base = `text-[11px] font-medium whitespace-nowrap py-1 uppercase tracking-[0.12em] ${
-                 pill ? `${pill} text-[10px] font-semibold` : "text-foreground/70 hover:text-primary transition-colors"
+              const base = `text-[13px] font-medium whitespace-nowrap py-1 tracking-wide ${
+                pill ? `${pill} text-[11px] font-semibold` : "text-foreground/75 hover:text-primary transition-colors"
               }`;
               const inner =
                 m.type === "category" ? (
@@ -172,13 +172,13 @@ export function SiteHeader({
                     <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                   </div>
                   <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition absolute left-0 top-full z-50 pt-2">
-                    <div className="min-w-52 rounded-md border border-border bg-background shadow-lg p-2">
+                    <div className="min-w-52 rounded-xl border border-border bg-background shadow-lg p-2">
                       {kids.map((k) => (
                         <Link
                           key={k.slug}
                           to="/category/$slug"
                           params={{ slug: k.slug }}
-                          className="block rounded px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-primary"
+                          className="block rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-[color:var(--brand-pink)]"
                         >
                           {k.name}
                         </Link>

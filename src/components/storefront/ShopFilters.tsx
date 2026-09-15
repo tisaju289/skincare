@@ -21,10 +21,10 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="lg:hidden w-full flex items-center justify-between gap-2 rounded-md border border-border bg-card px-4 py-3 text-sm font-semibold"
+        className="lg:hidden w-full flex items-center justify-between gap-2 rounded-2xl border border-border bg-white px-4 py-3 text-sm font-black"
       >
         <span className="flex items-center gap-2">
-          <SlidersHorizontal className="h-4 w-4 text-primary" />
+          <SlidersHorizontal className="h-4 w-4 text-[color:var(--brand-pink)]" />
           Filters &amp; categories
         </span>
         <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -35,16 +35,16 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
 
       <div className={`${open ? "block" : "hidden"} lg:block space-y-4`}>
       {/* Price range */}
-      <div className="rounded-md border border-border bg-card p-4">
+      <div className="rounded-2xl border border-border bg-white p-4">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-4 w-4 text-primary" />
-          <h2 className="text-sm font-semibold">Price range</h2>
+          <SlidersHorizontal className="h-4 w-4 text-[color:var(--brand-pink)]" />
+          <h2 className="text-sm font-black">Price range</h2>
         </div>
 
         <div className="relative mt-6 h-5">
           <div className="absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-muted" />
           <div
-            className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-primary"
+            className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-[color:var(--brand-pink)]"
             style={{
               left: `${((lo - min) / Math.max(1, max - min)) * 100}%`,
               right: `${100 - ((hi - min) / Math.max(1, max - min)) * 100}%`,
@@ -76,22 +76,22 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
 
         <button
           onClick={() => onChange([min, max])}
-          className="mt-3 text-xs font-semibold text-primary"
+          className="mt-3 text-xs font-bold text-[color:var(--brand-pink)]"
         >
           Reset price
         </button>
       </div>
 
       {/* Categories */}
-      <div className="rounded-md border border-border bg-card p-4">
-        <h2 className="text-sm font-semibold">Categories</h2>
+      <div className="rounded-2xl border border-border bg-white p-4">
+        <h2 className="text-sm font-black">Categories</h2>
         <ul className="mt-3 space-y-1">
           <li>
             <Link
               to="/search"
               search={{ q: "" }}
               className={`block rounded-lg px-3 py-2 text-sm ${
-                activeSlug ? "hover:bg-muted text-foreground/80" : "bg-foreground text-background font-semibold"
+                activeSlug ? "hover:bg-muted text-foreground/80" : "bg-[color:var(--brand-pink)] text-white font-bold"
               }`}
             >
               All products
@@ -106,7 +106,7 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
                   params={{ slug: c.slug }}
                   className={`block rounded-lg px-3 py-2 text-sm ${
                     activeSlug === c.slug
-                      ? "bg-foreground text-background font-semibold"
+                      ? "bg-[color:var(--brand-pink)] text-white font-bold"
                       : "hover:bg-muted text-foreground/80"
                   }`}
                 >
@@ -121,7 +121,7 @@ export function ShopFilters({ categories, activeSlug, min, max, value, onChange 
                           params={{ slug: k.slug }}
                           className={`block rounded-lg px-3 py-1.5 text-[13px] ${
                             activeSlug === k.slug
-                              ? "bg-secondary text-secondary-foreground font-semibold"
+                              ? "bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)] font-bold"
                               : "hover:bg-muted text-foreground/70"
                           }`}
                         >

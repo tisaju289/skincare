@@ -3,30 +3,13 @@ import { z } from "zod";
 import { mapCategories, mapProduct, pickProducts, CATEGORY_SELECT, PRODUCT_SELECT, type Category, type Product, type Review } from "@/lib/shop-data";
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
-  const { getPublicClient, fetchSettings, hasSupabaseEnv } = await import(
-    "@/lib/supabase-public.server"
-  );
-  const { resolveSettings } = await import("@/lib/site-settings");
-  if (!hasSupabaseEnv()) return resolveSettings(null);
+  const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
   return fetchSettings(getPublicClient());
 });
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const { getPublicClient, fetchSettings, hasSupabaseEnv } = await import(
-    "@/lib/supabase-public.server"
-  );
-  if (!hasSupabaseEnv()) {
-    const { resolveSettings } = await import("@/lib/site-settings");
-    return {
-      categories: [] as Category[],
-      products: [] as Product[],
-      trending: [] as Product[],
-      brands: [] as { slug: string; name: string; logo: string | null }[],
-      settings: resolveSettings(null),
-    };
-  }
+  const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
   const supabase = getPublicClient();
-
 
   const [cats, prods, brands, settings] = await Promise.all([
     supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
@@ -72,7 +55,7 @@ export const getCategoryPage = createServerFn({ method: "GET" })
       category: (all.find((c) => c.slug === category.slug) ?? {
         slug: category.slug,
         name: category.name,
-        color: category.color ?? "from-secondary to-muted",
+        color: category.color ?? "from-pink-400 to-rose-500",
         image: category.image ?? "",
         parent: null,
       }) as Category,

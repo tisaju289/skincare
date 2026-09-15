@@ -14,7 +14,7 @@ export function MobileBottomNav({
 
   return (
     <>
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-t border-border flex items-stretch pb-[env(safe-area-inset-bottom)]">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-background border-t border-border flex items-stretch pb-[env(safe-area-inset-bottom)]">
         <button type="button" onClick={onOpenMenu} className={item}>
           <LayoutGrid className="h-5 w-5" />
           Category
@@ -23,13 +23,13 @@ export function MobileBottomNav({
           <Tag className="h-5 w-5" />
           Brand
         </Link>
-        <Link to="/" className={item} activeProps={{ className: `${item} !text-primary` }} activeOptions={{ exact: true }}>
-          <span className="-mt-6 h-11 w-11 rounded-full bg-foreground text-background grid place-items-center shadow-lg ring-4 ring-background">
+        <Link to="/" className={item} activeProps={{ className: `${item} !text-[color:var(--brand-pink)]` }} activeOptions={{ exact: true }}>
+          <span className="-mt-6 h-11 w-11 rounded-full bg-[color:var(--brand-pink)] text-white grid place-items-center shadow-lg ring-4 ring-background">
             <Home className="h-5 w-5" />
           </span>
           Home
         </Link>
-        <Link to="/search" search={{ q: "" }} className={item} activeProps={{ className: `${item} !text-primary` }}>
+        <Link to="/search" search={{ q: "" }} className={item} activeProps={{ className: `${item} !text-[color:var(--brand-pink)]` }}>
           <Store className="h-5 w-5" />
           Shop
         </Link>
@@ -38,7 +38,7 @@ export function MobileBottomNav({
           <span className="relative">
             <ShoppingBag className="h-5 w-5" />
             {count > 0 && (
-              <span className="absolute -top-1.5 -right-2 bg-primary text-primary-foreground rounded-full h-4 min-w-4 px-1 grid place-items-center text-[9px] font-bold">
+              <span className="absolute -top-1.5 -right-2 bg-[color:var(--brand-pink)] text-white rounded-full h-4 min-w-4 px-1 grid place-items-center text-[9px] font-bold">
                 {count}
               </span>
             )}
