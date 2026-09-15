@@ -11,10 +11,11 @@ import { WhatsAppButton } from "./WhatsAppButton";
 import { ChevronDown } from "lucide-react";
 import {
   DEFAULT_SETTINGS,
-  normalizeHeaderMenus,
-  type HeaderMenu,
   type SiteSettings,
 } from "@/lib/site-settings";
+
+const NAV_LINK =
+  "text-[13px] font-medium whitespace-nowrap px-2.5 py-1.5 rounded-full text-foreground/75 hover:text-foreground hover:bg-muted transition-colors";
 
 
 const MENU_PILL: Record<string, string> = {
@@ -39,19 +40,8 @@ export function SiteHeader({
   const [menuOpen, setMenuOpen] = useState(false);
 
 
-  const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
-  const menus: HeaderMenu[] = configured.length
-    ? configured
-    : categories
-        .filter((c) => !c.parent)
-        .map((c) => ({
-          label: c.name,
-          type: "category" as const,
-          slug: c.slug,
-          url: "",
-          color: "none" as const,
-          enabled: true,
-        }));
+
+
 
 
 
