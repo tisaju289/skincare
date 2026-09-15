@@ -309,32 +309,42 @@ function Index() {
             {(showAllBrands ? list : list.slice(0, 6)).map((b) => (
               <Link
                 key={b.slug}
-                to="/search"
-                search={{ q: b.name }}
-                className="group aspect-[4/3] rounded-2xl border border-border bg-card hover:border-transparent hover:bg-gradient-soft transition-colors flex flex-col items-center justify-center gap-1.5 px-3 text-center"
+                to="/brand/$slug"
+                params={{ slug: b.slug }}
+                className="group rounded-2xl border border-border bg-card p-2.5 hover:border-transparent hover:bg-gradient-soft transition-colors text-center"
               >
-                {b.logo ? (
-                  <img
-                    {...imgProps(b.logo, { width: 240, widths: [120, 240, 360], sizes: "160px" })}
-                    alt={`${b.name} logo`}
-                    className="h-8 sm:h-10 w-auto max-w-full object-contain grayscale group-hover:grayscale-0 transition"
-                  />
-                ) : null}
-                <span className="font-display text-sm sm:text-base uppercase line-clamp-1">{b.name}</span>
+                <div className="aspect-[4/3] grid place-items-center rounded-xl bg-muted/40 overflow-hidden">
+                  {b.logo ? (
+                    <img
+                      {...imgProps(b.logo, { width: 320, widths: [160, 320, 480], sizes: "180px" })}
+                      alt={`${b.name} logo`}
+                      className="h-full w-full object-contain p-2 transition group-hover:scale-105"
+                    />
+                  ) : (
+                    <span className="font-display text-xl uppercase text-muted-foreground">{b.name.slice(0, 2)}</span>
+                  )}
+                </div>
+                <span className="mt-2 block font-display text-sm sm:text-base uppercase line-clamp-1">{b.name}</span>
               </Link>
             ))}
           </div>
-          {list.length > 6 && (
-            <div className="mt-5 flex justify-center">
+          <div className="mt-5 flex justify-center gap-2">
+            {list.length > 6 && (
               <button
                 onClick={() => setShowAllBrands((v) => !v)}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border px-5 py-2 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-muted"
               >
-                {showAllBrands ? "Show less" : "All brands"}
+                {showAllBrands ? "Show less" : "Show more"}
                 <ChevronRight className={`h-3.5 w-3.5 transition ${showAllBrands ? "-rotate-90" : "rotate-90"}`} />
               </button>
-            </div>
-          )}
+            )}
+            <Link
+              to="/brands"
+              className="inline-flex items-center rounded-full border border-border px-5 py-2 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-muted"
+            >
+              All brands
+            </Link>
+          </div>
         </section>
       ) : null;
     },

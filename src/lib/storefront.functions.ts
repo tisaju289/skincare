@@ -269,3 +269,58 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const getBrandsPage = createServerFn({ method: "GET" }).handler(async () => {
+  const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
+  const supabase = getPublicClient();
+
+  const [brands, cats, prods, settings] = await Promise.all([
+    supabase.from("brands").select("slug,name,logo").order("name"),
+    supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
+    supabase.from("products").select("brands(name)"),
+    fetchSettings(supabase),
+  ]);
+
+  const counts = new Map<string, number>();
+  for (const p of (prods.data ?? []) as unknown as { brands: { name: string } | null }[]) {
+    const n = p.brands?.name;
+    if (n) counts.set(n, (counts.get(n) ?? 0) + 1);
+  }
+
+  return {
+    brands: ((brands.data ?? []) as { slug: string; name: string; logo: string | null }[]).map((b) => ({
+      ...b,
+      count: counts.get(b.name) ?? 0,
+    })),
+    categories: mapCategories(cats.data as never),
+    settings,
+  };
+});
+
+export const getBrandPage = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ slug: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
+    const supabase = getPublicClient();
+
+    const [{ data: brand }, { data: cats }, settings] = await Promise.all([
+      supabase.from("brands").select("slug,name,logo").eq("slug", data.slug).maybeSingle(),
+      supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
+      fetchSettings(supabase),
+    ]);
+    if (!brand) return null;
+
+    const { data: prods } = await supabase
+      .from("products")
+      .select(PRODUCT_SELECT)
+      .order("rating", { ascending: false });
+
+    return {
+      brand: brand as { slug: string; name: string; logo: string | null },
+      categories: mapCategories(cats as never),
+      products: (prods ?? [])
+        .map((p) => mapProduct(p as never))
+        .filter((p) => p.brand === brand.name) as Product[],
+      settings,
+    };
+  });
