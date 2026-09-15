@@ -169,7 +169,7 @@ function Index() {
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-[linear-gradient(0deg,rgb(0_0_0/0.55),transparent_55%)]" />
-                  <span className="absolute left-2.5 bottom-2 right-2 font-display text-sm sm:text-lg uppercase text-primary-foreground leading-tight line-clamp-2">
+                  <span className="absolute inset-x-3 bottom-2.5 text-center font-display text-sm sm:text-lg uppercase text-primary-foreground leading-tight line-clamp-2">
                     {c.name}
                   </span>
                 </div>
