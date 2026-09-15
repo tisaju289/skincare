@@ -72,7 +72,7 @@
   --card-foreground: oklch(0.25 0.018 60);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.25 0.018 60);
-  --primary: oklch(0.63 0.115 72);
+  --primary: var(--brand-pink);
   --primary-foreground: oklch(0.99 0.006 80);
   --secondary: oklch(0.88 0.055 48);
   --secondary-foreground: oklch(0.3 0.04 50);
