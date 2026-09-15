@@ -8,7 +8,7 @@ import { CartDrawer } from "./CartDrawer";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { SearchAutocomplete } from "./SearchAutocomplete";
 import { WhatsAppButton } from "./WhatsAppButton";
-import { ChevronDown } from "lucide-react";
+
 import {
   DEFAULT_SETTINGS,
   type SiteSettings,
