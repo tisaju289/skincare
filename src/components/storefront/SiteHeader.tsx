@@ -11,10 +11,11 @@ import { WhatsAppButton } from "./WhatsAppButton";
 import { ChevronDown } from "lucide-react";
 import {
   DEFAULT_SETTINGS,
-  normalizeHeaderMenus,
-  type HeaderMenu,
   type SiteSettings,
 } from "@/lib/site-settings";
+
+const NAV_LINK =
+  "text-[13px] font-medium whitespace-nowrap px-2.5 py-1.5 rounded-full text-foreground/75 hover:text-foreground hover:bg-muted transition-colors";
 
 
 const MENU_PILL: Record<string, string> = {
@@ -37,21 +38,12 @@ export function SiteHeader({
   const { count: wishCount } = useWishlist();
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const topCats = categories.filter((c) => !c.parent);
 
 
-  const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
-  const menus: HeaderMenu[] = configured.length
-    ? configured
-    : categories
-        .filter((c) => !c.parent)
-        .map((c) => ({
-          label: c.name,
-          type: "category" as const,
-          slug: c.slug,
-          url: "",
-          color: "none" as const,
-          enabled: true,
-        }));
+
+
+
 
 
 
@@ -100,8 +92,73 @@ export function SiteHeader({
             </span>
           </Link>
 
+          <nav className="hidden lg:flex items-center gap-1 ml-2">
+            <Link to="/" className={NAV_LINK} activeOptions={{ exact: true }} activeProps={{ className: `${NAV_LINK} !text-[color:var(--brand-gold)] font-semibold` }}>
+              Home
+            </Link>
+            <div className="relative group">
+              <button type="button" className={`${NAV_LINK} flex items-center gap-1`}>
+                Category
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+              <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition absolute left-0 top-full z-50 pt-2">
+                <div className="min-w-52 rounded-xl border border-border bg-background shadow-lg p-2">
+                  {topCats.length === 0 && (
+                    <span className="block px-3 py-2 text-sm text-muted-foreground">No categories yet</span>
+                  )}
+                  {topCats.map((c) => {
+                    const kids = categories.filter((k) => k.parent === c.slug);
+                    if (!kids.length) {
+                      return (
+                        <Link
+                          key={c.slug}
+                          to="/category/$slug"
+                          params={{ slug: c.slug }}
+                          className="block rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
+                        >
+                          {c.name}
+                        </Link>
+                      );
+                    }
+                    return (
+                      <div key={c.slug} className="relative group/sub">
+                        <Link
+                          to="/category/$slug"
+                          params={{ slug: c.slug }}
+                          className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
+                        >
+                          {c.name}
+                          <ChevronDown className="h-3 w-3 -rotate-90 text-muted-foreground" />
+                        </Link>
+                        <div className="invisible opacity-0 group-hover/sub:visible group-hover/sub:opacity-100 transition absolute left-full top-0 z-50 pl-2">
+                          <div className="min-w-44 rounded-xl border border-border bg-background shadow-lg p-2">
+                            {kids.map((k) => (
+                              <Link
+                                key={k.slug}
+                                to="/category/$slug"
+                                params={{ slug: k.slug }}
+                                className="block rounded-lg px-3 py-2 text-[13px] text-foreground/70 hover:bg-muted"
+                              >
+                                {k.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            <Link to="/search" search={{ q: "" }} className={NAV_LINK}>
+              Shop
+            </Link>
+            <Link to="/brands" className={NAV_LINK}>
+              Brand
+            </Link>
+          </nav>
 
-          <SearchAutocomplete className="hidden md:block flex-1 min-w-0" />
+          <SearchAutocomplete className="hidden md:block flex-1 min-w-0 ml-4" />
           <div className="ml-auto flex items-center gap-2 shrink-0">
             <Link
               to="/wishlist"
@@ -140,57 +197,8 @@ export function SiteHeader({
         </div>
 
 
-        {menus.length > 0 && (
-          <div className="max-w-7xl mx-auto px-4 pb-3 hidden lg:flex flex-wrap items-center gap-x-5 gap-y-2">
-            {menus.map((m, i) => {
-              const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
-              const pill = MENU_PILL[m.color] ?? "";
-              const base = `text-[13px] font-medium whitespace-nowrap py-1 tracking-wide ${
-                pill ? `${pill} text-[11px] font-semibold` : "text-foreground/75 hover:text-primary transition-colors"
-              }`;
-              const inner =
-                m.type === "category" ? (
-                  <Link to="/category/$slug" params={{ slug: m.slug }} className={base}>
-                    {m.label}
-                  </Link>
-                ) : m.url.startsWith("/") ? (
-                  <Link to={m.url} className={base}>
-                    {m.label}
-                  </Link>
-                ) : (
-                  <a href={m.url} className={base}>
-                    {m.label}
-                  </a>
-                );
-
-              if (!kids.length) return <div key={`${m.label}-${i}`}>{inner}</div>;
-
-              return (
-                <div key={`${m.label}-${i}`} className="relative group">
-                  <div className="flex items-center gap-1">
-                    {inner}
-                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-                  </div>
-                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition absolute left-0 top-full z-50 pt-2">
-                    <div className="min-w-52 rounded-xl border border-border bg-background shadow-lg p-2">
-                      {kids.map((k) => (
-                        <Link
-                          key={k.slug}
-                          to="/category/$slug"
-                          params={{ slug: k.slug }}
-                          className="block rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-[color:var(--brand-pink)]"
-                        >
-                          {k.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
       </header>
+
 
       {/* Mobile menu drawer */}
       <div className={`lg:hidden fixed inset-0 z-50 ${menuOpen ? "" : "pointer-events-none"}`} aria-hidden={!menuOpen}>
@@ -217,36 +225,18 @@ export function SiteHeader({
               <Heart className="h-4 w-4" /> Wishlist {wishCount > 0 && `(${wishCount})`}
             </Link>
 
-            {menus.map((m, i) => {
-              const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
+            {topCats.map((c) => {
+              const kids = categories.filter((k) => k.parent === c.slug);
               return (
-                <div key={`${m.label}-${i}`}>
-                  {m.type === "category" ? (
-                    <Link
-                      to="/category/$slug"
-                      params={{ slug: m.slug }}
-                      onClick={() => setMenuOpen(false)}
-                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-                    >
-                      {m.label}
-                    </Link>
-                  ) : m.url.startsWith("/") ? (
-                    <Link
-                      to={m.url}
-                      onClick={() => setMenuOpen(false)}
-                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-                    >
-                      {m.label}
-                    </Link>
-                  ) : (
-                    <a
-                      href={m.url}
-                      onClick={() => setMenuOpen(false)}
-                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-                    >
-                      {m.label}
-                    </a>
-                  )}
+                <div key={c.slug}>
+                  <Link
+                    to="/category/$slug"
+                    params={{ slug: c.slug }}
+                    onClick={() => setMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
+                  >
+                    {c.name}
+                  </Link>
                   {kids.length > 0 && (
                     <div className="ml-3 border-l border-border pl-2">
                       {kids.map((k) => (
@@ -265,6 +255,7 @@ export function SiteHeader({
                 </div>
               );
             })}
+
           </nav>
         </div>
       </div>
