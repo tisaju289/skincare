@@ -55,7 +55,7 @@ export const getCategoryPage = createServerFn({ method: "GET" })
       category: (all.find((c) => c.slug === category.slug) ?? {
         slug: category.slug,
         name: category.name,
-        color: category.color ?? "from-pink-400 to-rose-500",
+        color: category.color ?? "from-secondary to-muted",
         image: category.image ?? "",
         parent: null,
       }) as Category,
