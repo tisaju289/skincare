@@ -40,7 +40,10 @@ const groups = [
   },
   {
     label: "System",
-    items: [{ title: "Settings", url: "/admin/settings", icon: Settings }],
+    items: [
+      { title: "Design", url: "/admin/design", icon: Paintbrush },
+      { title: "Settings", url: "/admin/settings", icon: Settings },
+    ],
   },
 ] as const;
 
