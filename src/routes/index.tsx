@@ -17,6 +17,8 @@ import {
   normalizeHeroSlides,
   builtinText,
   builtinLimit,
+  builtinBg,
+  readableOn,
   PRODUCT_SOURCE_LABELS,
   type HomeSection,
   type SiteSettings,
