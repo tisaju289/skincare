@@ -37,7 +37,9 @@ export function SiteHeader({
   const { count } = useCart();
   const { count: wishCount } = useWishlist();
   const [cartOpen, setCartOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const topCats = categories.filter((c) => !c.parent);
+
 
 
 
