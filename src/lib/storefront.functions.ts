@@ -3,13 +3,30 @@ import { z } from "zod";
 import { mapCategories, mapProduct, pickProducts, CATEGORY_SELECT, PRODUCT_SELECT, type Category, type Product, type Review } from "@/lib/shop-data";
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
-  const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
+  const { getPublicClient, fetchSettings, hasSupabaseEnv } = await import(
+    "@/lib/supabase-public.server"
+  );
+  const { resolveSettings } = await import("@/lib/site-settings");
+  if (!hasSupabaseEnv()) return resolveSettings(null);
   return fetchSettings(getPublicClient());
 });
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
+  const { getPublicClient, fetchSettings, hasSupabaseEnv } = await import(
+    "@/lib/supabase-public.server"
+  );
+  if (!hasSupabaseEnv()) {
+    const { resolveSettings } = await import("@/lib/site-settings");
+    return {
+      categories: [] as Category[],
+      products: [] as Product[],
+      trending: [] as Product[],
+      brands: [] as { slug: string; name: string; logo: string | null }[],
+      settings: resolveSettings(null),
+    };
+  }
   const supabase = getPublicClient();
+
 
   const [cats, prods, brands, settings] = await Promise.all([
     supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
