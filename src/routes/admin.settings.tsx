@@ -55,26 +55,27 @@ export const Route = createFileRoute("/admin/settings")({
 });
 
 const sections = [
-  { id: "store", icon: Store, title: "Store details", desc: "Name, contact info, currency" },
-  { id: "homepage", icon: LayoutList, title: "Homepage layout", desc: "Reorder & show/hide home sections" },
-  { id: "hero", icon: GalleryHorizontal, title: "Hero slider", desc: "Slides shown at the top of the homepage" },
-  { id: "headermenu", icon: MenuIcon, title: "Header menu", desc: "Top navigation links & dropdowns" },
-  { id: "productpage", icon: BadgeCheck, title: "Product page", desc: "Delivery / authentic / return badges" },
-  { id: "branding", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
-  { id: "footer", icon: PanelBottom, title: "Footer", desc: "Newsletter box, about text, link columns" },
-  { id: "seo", icon: Search, title: "SEO & sharing", desc: "Title, description, keywords, OG image" },
-  { id: "theme", icon: Palette, title: "Theme", desc: "Brand colours used across the site" },
-  { id: "payments", icon: CreditCard, title: "Payments", desc: "bKash, Nagad, cards, cash on delivery" },
-  { id: "shipping", icon: Truck, title: "Shipping", desc: "Delivery charge, free delivery, partner" },
-  { id: "notifications", icon: Bell, title: "Notifications", desc: "Order & low stock alerts" },
+  { id: "store", group: "settings", icon: Store, title: "Store details", desc: "Name, contact info, currency" },
+  { id: "homepage", group: "design", icon: LayoutList, title: "Homepage layout", desc: "Reorder & show/hide home sections" },
+  { id: "hero", group: "design", icon: GalleryHorizontal, title: "Hero slider", desc: "Slides shown at the top of the homepage" },
+  { id: "headermenu", group: "design", icon: MenuIcon, title: "Header menu", desc: "Top navigation links & dropdowns" },
+  { id: "productpage", group: "design", icon: BadgeCheck, title: "Product page", desc: "Delivery / authentic / return badges" },
+  { id: "branding", group: "design", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
+  { id: "footer", group: "design", icon: PanelBottom, title: "Footer", desc: "Newsletter box, about text, link columns" },
+  { id: "theme", group: "design", icon: Palette, title: "Theme", desc: "Brand colours used across the site" },
+  { id: "seo", group: "settings", icon: Search, title: "SEO & sharing", desc: "Title, description, keywords, OG image" },
+  { id: "payments", group: "settings", icon: CreditCard, title: "Payments", desc: "bKash, Nagad, cards, cash on delivery" },
+  { id: "shipping", group: "settings", icon: Truck, title: "Shipping", desc: "Delivery charge, free delivery, partner" },
+  { id: "notifications", group: "settings", icon: Bell, title: "Notifications", desc: "Order & low stock alerts" },
 ] as const;
 
 type Tab = (typeof sections)[number]["id"];
+export type SettingsScope = "settings" | "design";
 
-
-function SettingsPage() {
+export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } = {}) {
   const qc = useQueryClient();
-  const [tab, setTab] = useState<Tab>("store");
+  const visibleSections = sections.filter((s) => s.group === scope);
+  const [tab, setTab] = useState<Tab>(scope === "design" ? "homepage" : "store");
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [form, setForm] = useState<Partial<SiteSettings>>({});
 
