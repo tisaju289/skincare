@@ -76,12 +76,12 @@ export function SiteHeader({
         </div>
       )}
 
-      <header className="sticky top-0 z-40 bg-background border-b border-border">
+      <header className="sticky top-0 z-40 border-b border-border/70 bg-[color-mix(in_oklab,var(--color-background)_82%,transparent)] backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
           <button
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
-            className="lg:hidden h-9 w-9 shrink-0 grid place-items-center rounded-lg hover:bg-muted"
+            className="lg:hidden h-9 w-9 shrink-0 grid place-items-center rounded-full border border-border/70 hover:bg-muted"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -95,10 +95,11 @@ export function SiteHeader({
                 className="h-8 sm:h-10 w-auto object-contain shrink-0"
               />
             )}
-            <span className="text-lg sm:text-3xl font-black tracking-tight text-foreground uppercase truncate">
+            <span className="font-display text-xl sm:text-2xl tracking-tight text-foreground truncate">
               {settings.store_name}
             </span>
           </Link>
+
 
           <SearchAutocomplete className="hidden md:block flex-1 min-w-0" />
           <div className="ml-auto flex items-center gap-2 shrink-0">
