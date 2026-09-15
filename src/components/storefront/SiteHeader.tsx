@@ -106,11 +106,11 @@ export function SiteHeader({
             <Link
               to="/wishlist"
               aria-label="Wishlist"
-              className="relative h-9 w-9 grid place-items-center rounded-full border border-border hover:bg-muted"
+              className="relative h-9 w-9 grid place-items-center rounded-full border border-border/70 hover:bg-muted"
             >
               <Heart className="h-4 w-4" />
               {wishCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[color:var(--brand-pink)] text-white rounded-full h-4 min-w-4 px-1 grid place-items-center text-[10px] font-bold">
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-4 min-w-4 px-1 grid place-items-center text-[10px] font-semibold">
                   {wishCount}
                 </span>
               )}
@@ -118,19 +118,20 @@ export function SiteHeader({
             <Link
               to="/search"
               search={{ q: "" }}
-              className="hidden lg:flex items-center gap-2 rounded-full bg-foreground text-background px-4 py-2 text-xs font-semibold"
+              className="hidden lg:flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-foreground hover:text-background transition-colors"
             >
-              ALL PRODUCTS
+              All products
             </Link>
             <button
               onClick={() => setCartOpen(true)}
-              className="flex items-center gap-2 rounded-full bg-[color:var(--brand-pink)] text-white px-3 sm:px-4 py-2 text-xs font-semibold"
+              className="flex items-center gap-2 rounded-full bg-foreground text-background px-3 sm:px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em]"
             >
-              <ShoppingBag className="h-4 w-4" /> <span className="hidden sm:inline">BAG</span>
-              <span className="bg-white text-[color:var(--brand-pink)] rounded-full h-5 w-5 grid place-items-center text-[10px] font-bold">
+              <ShoppingBag className="h-4 w-4" /> <span className="hidden sm:inline">Bag</span>
+              <span className="bg-background text-foreground rounded-full h-5 min-w-5 px-1 grid place-items-center text-[10px] font-semibold">
                 {count}
               </span>
             </button>
+
           </div>
         </div>
 
@@ -144,8 +145,8 @@ export function SiteHeader({
             {menus.map((m, i) => {
               const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
               const pill = MENU_PILL[m.color] ?? "";
-              const base = `text-sm font-semibold whitespace-nowrap py-1 ${
-                pill ? `${pill} text-[11px] font-bold` : "text-foreground/80 hover:text-[color:var(--brand-pink)]"
+              const base = `text-[13px] font-medium whitespace-nowrap py-1 tracking-wide ${
+                pill ? `${pill} text-[11px] font-semibold` : "text-foreground/75 hover:text-primary transition-colors"
               }`;
               const inner =
                 m.type === "category" ? (
