@@ -9,7 +9,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
 
   useEffect(() => {
     if (count < 2) return;
-    const t = setInterval(() => setIndex((i) => (i + 1) % count), 5500);
+    const t = setInterval(() => setIndex((i) => (i + 1) % count), 6000);
     return () => clearInterval(t);
   }, [count]);
 
@@ -17,13 +17,13 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const go = (d: number) => setIndex((i) => (i + d + count) % count);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 pt-4 md:pt-6">
-      <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-gradient-brand shadow-brand">
+    <section className="max-w-7xl mx-auto px-4 pt-4 md:pt-7">
+      <div className="relative aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-[1.75rem] md:rounded-[2.5rem] bg-gradient-soft dew-ring">
         {slides.map((s, i) => (
           <div
             key={i}
-            className={`absolute inset-0 transition-all duration-700 ${
-              i === index ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
+            className={`absolute inset-0 transition-all duration-[900ms] ease-out ${
+              i === index ? "opacity-100 scale-100" : "opacity-0 scale-[1.04] pointer-events-none"
             }`}
             aria-hidden={i === index ? undefined : true}
           >
@@ -40,37 +40,33 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               />
             ) : null}
 
-            {/* editorial scrim */}
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_oklab,var(--brand-purple)_88%,transparent),color-mix(in_oklab,var(--brand-magenta)_55%,transparent)_45%,transparent_85%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(0deg,rgb(0_0_0/0.35),transparent_55%)]" />
+            {/* soft dewy scrim — light, skincare-editorial */}
+            <div className="absolute inset-0 bg-[linear-gradient(95deg,rgb(255_251_247/0.94),rgb(255_251_247/0.72)_38%,rgb(255_251_247/0.05)_72%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(90%_70%_at_0%_100%,color-mix(in_oklab,var(--brand-peach)_55%,transparent),transparent_60%)]" />
 
-            <div className="relative h-full flex flex-col justify-center px-4 sm:px-10 md:px-16 max-w-[86%] sm:max-w-[70%] md:max-w-[58%] min-w-0 text-primary-foreground">
-              {s.kicker ? (
-                <p className="text-[8px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.28em] uppercase opacity-90 line-clamp-1">
-                  {s.kicker}
-                </p>
-              ) : null}
+            <div className="relative flex h-full min-w-0 max-w-[92%] flex-col justify-center px-5 sm:max-w-[68%] sm:px-10 md:max-w-[55%] md:px-14">
+              {s.kicker ? <p className="eyebrow line-clamp-1">{s.kicker}</p> : null}
               {s.title ? (
-                <h1 className="font-display mt-1 sm:mt-4 text-2xl sm:text-6xl lg:text-8xl uppercase break-words line-clamp-2">
+                <h1 className="font-display mt-2 sm:mt-3 text-[2rem] leading-[1.03] sm:text-5xl lg:text-6xl text-foreground line-clamp-3">
                   {s.title}
                 </h1>
               ) : null}
               {s.subtitle ? (
-                <p className="mt-1 sm:mt-3 text-[11px] sm:text-lg font-medium opacity-90 max-w-md line-clamp-2">
+                <p className="mt-2.5 max-w-md text-[13px] sm:text-base text-muted-foreground line-clamp-3">
                   {s.subtitle}
                 </p>
               ) : null}
-              <div className="mt-2.5 sm:mt-6 flex items-center gap-3">
+              <div className="mt-4 sm:mt-7 flex flex-wrap items-center gap-2.5">
                 {s.cta_label ? (
                   <a
                     href={s.cta_link || "/search"}
-                    className="inline-flex items-center gap-2 rounded-full bg-background text-foreground font-bold px-4 sm:px-7 py-1.5 sm:py-3 text-[11px] sm:text-sm uppercase tracking-wider hover:gap-3 transition-all"
+                    className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 sm:px-7 py-2.5 sm:py-3.5 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.16em] text-background transition-all hover:gap-3.5"
                   >
-                    {s.cta_label} <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                    {s.cta_label} <ArrowRight className="h-3.5 w-3.5" />
                   </a>
                 ) : null}
                 {s.badge ? (
-                  <span className="hidden sm:inline-flex items-center rounded-full border border-current/40 px-4 py-2.5 text-xs font-bold uppercase tracking-widest">
+                  <span className="inline-flex items-center rounded-full border border-foreground/15 bg-background/60 px-4 py-2.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] backdrop-blur">
                     {s.badge}
                   </span>
                 ) : null}
@@ -85,27 +81,27 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous slide"
-              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-11 sm:w-11 rounded-full bg-background/70 backdrop-blur hover:bg-background hidden sm:grid place-items-center"
+              className="absolute right-20 bottom-5 hidden h-10 w-10 place-items-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background sm:grid dew-ring"
             >
-              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+              <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               type="button"
               onClick={() => go(1)}
               aria-label="Next slide"
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-11 sm:w-11 rounded-full bg-background/70 backdrop-blur hover:bg-background hidden sm:grid place-items-center"
+              className="absolute right-6 bottom-5 hidden h-10 w-10 place-items-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background sm:grid dew-ring"
             >
-              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
+              <ChevronRight className="h-4 w-4" />
             </button>
-            <div className="absolute bottom-3 sm:bottom-5 right-4 sm:right-6 flex gap-1.5">
+            <div className="absolute bottom-4 left-5 flex gap-1.5 sm:left-10">
               {slides.map((_, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setIndex(i)}
                   aria-label={`Go to slide ${i + 1}`}
-                  className={`h-1.5 rounded-full transition-all ${
-                    i === index ? "w-8 bg-background" : "w-3 bg-background/50"
+                  className={`h-1 rounded-full transition-all ${
+                    i === index ? "w-9 bg-foreground" : "w-3.5 bg-foreground/25"
                   }`}
                 />
               ))}

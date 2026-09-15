@@ -11,29 +11,40 @@ export function ProductCard({ product: p }: { product: Product }) {
   const wishlist = useWishlist();
   const soldOut = p.stock <= 0;
   const saved = wishlist.has(p.slug);
+  const off = p.old && p.old > p.price ? Math.round(((p.old - p.price) / p.old) * 100) : null;
 
   return (
-    <div className="group bg-white rounded-2xl border border-border overflow-hidden hover:shadow-lg transition flex flex-col">
+    <div className="group relative flex flex-col overflow-hidden rounded-[1.4rem] glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-brand">
       <div className="relative">
         <Link to="/product/$slug" params={{ slug: p.slug }} className="block">
-          <div className={`relative aspect-square ${p.color} overflow-hidden`}>
-            {p.tag && (
-              <span className="absolute top-2 left-2 z-10 bg-[color:var(--brand-pink)] text-white text-[10px] font-bold px-2 py-1 rounded">
-                {p.tag}
-              </span>
-            )}
-            {soldOut && (
-              <span className="absolute bottom-2 left-2 z-10 bg-foreground text-background text-[10px] font-bold px-2 py-1 rounded">
-                SOLD OUT
-              </span>
-            )}
+          <div className="relative aspect-[4/5] overflow-hidden bg-gradient-soft">
             <img
               {...imgProps(p.image, { width: 480, widths: [240, 360, 480, 720], sizes: "(max-width: 640px) 45vw, 260px" })}
               alt={p.name}
-              className="h-full w-full object-cover group-hover:scale-105 transition"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
             />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,rgb(255_255_255/0.35),transparent_55%)]" />
           </div>
         </Link>
+
+        <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1.5">
+          {p.tag && (
+            <span className="rounded-full bg-foreground/85 px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase text-background backdrop-blur">
+              {p.tag}
+            </span>
+          )}
+          {off && (
+            <span className="rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold text-primary-foreground">
+              −{off}%
+            </span>
+          )}
+          {soldOut && (
+            <span className="rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em]">
+              Sold out
+            </span>
+          )}
+        </div>
+
         <button
           type="button"
           aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
@@ -42,41 +53,48 @@ export function ProductCard({ product: p }: { product: Product }) {
             const added = wishlist.toggle({ slug: p.slug, name: p.name, price: p.price, image: p.image, brand: p.brand });
             toast.success(added ? "Saved to wishlist" : "Removed from wishlist");
           }}
-          className="absolute top-2 right-2 z-10 h-8 w-8 grid place-items-center rounded-full bg-background/90 border border-border shadow-sm hover:bg-background"
+          className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background dew-ring"
         >
-          <Heart className={`h-4 w-4 ${saved ? "fill-[color:var(--brand-pink)] text-[color:var(--brand-pink)]" : "text-foreground/60"}`} />
+          <Heart className={`h-4 w-4 ${saved ? "fill-primary text-primary" : "text-foreground/55"}`} />
         </button>
       </div>
-      <div className="p-3 flex flex-col flex-1">
-        <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{p.brand}</p>
+
+      <div className="flex flex-1 flex-col p-3.5">
+        <p className="eyebrow text-[10px]">{p.brand}</p>
         <Link to="/product/$slug" params={{ slug: p.slug }}>
-          <h3 className="text-sm font-medium line-clamp-2 min-h-[2.5rem] mt-1 hover:text-[color:var(--brand-pink)]">
+          <h3 className="font-display mt-1.5 line-clamp-2 min-h-[2.6rem] text-[15px] leading-snug transition-colors group-hover:text-primary">
             {p.name}
           </h3>
         </Link>
-        <div className="flex items-center gap-1 mt-1">
+
+        <div className="mt-1.5 flex items-center gap-1">
           {[1, 2, 3, 4, 5].map((i) => (
             <Star
               key={i}
-              className={`h-3 w-3 ${i <= Math.round(p.rating) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`}
+              className={`h-3 w-3 ${i <= Math.round(p.rating) ? "fill-primary text-primary" : "text-muted-foreground/25"}`}
             />
           ))}
-          <span className="text-[10px] text-muted-foreground ml-1">({p.reviews})</span>
+          <span className="ml-1 text-[10px] text-muted-foreground">({p.reviews})</span>
         </div>
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-base font-black text-[color:var(--brand-pink)]">৳{p.price}</span>
-          {p.old != null && <span className="text-xs text-muted-foreground line-through">৳{p.old}</span>}
+
+        <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+          <div className="min-w-0">
+            <p className="font-display text-lg text-foreground">৳{p.price}</p>
+            {p.old != null && <p className="text-[11px] text-muted-foreground line-through">৳{p.old}</p>}
+          </div>
+          <button
+            disabled={soldOut}
+            aria-label="Add to bag"
+            onClick={() => {
+              add({ slug: p.slug, name: p.name, price: p.price, image: p.image });
+              toast.success("Added to bag");
+            }}
+            className="inline-flex items-center gap-1.5 rounded-full border border-foreground/15 px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-transparent hover:bg-primary hover:text-primary-foreground disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground"
+          >
+            <ShoppingBag className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">{soldOut ? "Sold" : "Add"}</span>
+          </button>
         </div>
-        <button
-          disabled={soldOut}
-          onClick={() => {
-            add({ slug: p.slug, name: p.name, price: p.price, image: p.image });
-            toast.success("Added to bag");
-          }}
-          className="mt-3 w-full rounded-full bg-[color:var(--brand-pink)] text-white text-xs font-bold py-2 flex items-center justify-center gap-1.5 disabled:bg-muted disabled:text-muted-foreground"
-        >
-          <ShoppingBag className="h-3.5 w-3.5" /> {soldOut ? "Sold out" : "Add to bag"}
-        </button>
       </div>
     </div>
   );
