@@ -29,6 +29,8 @@ export type HomeSection = {
   source?: ProductSource;
   limit?: number;
   link?: string;
+  /** Optional background color (hex) for sections that support it. */
+  bg?: string;
 };
 
 export type HeroSlide = {
