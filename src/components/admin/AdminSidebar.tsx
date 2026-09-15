@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   LayoutDashboard, Package, ShoppingCart, Tag, Settings,
-  Percent, MessageSquare, LogOut, ExternalLink, X, Sparkles, Layers,
+  Percent, MessageSquare, LogOut, ExternalLink, X, Sparkles, Layers, Paintbrush,
 } from "lucide-react";
 import { setAdminNavOpen, useAdminNavOpen } from "./admin-nav";
 import { useAdminBranding } from "@/lib/admin-branding";
