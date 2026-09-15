@@ -1192,7 +1192,6 @@ alter table public.store_settings
 -- ---------- 20260729154936_5d5a9707-d01b-44bc-af41-3403cd9b1df7.sql ----------
 REVOKE ALL ON FUNCTION public.handle_new_user() FROM anon, authenticated, public;
 REVOKE ALL ON FUNCTION public.update_updated_at_column() FROM anon, authenticated, public;
-REVOKE ALL ON FUNCTION public.rls_auto_enable() FROM anon, authenticated, public;
 REVOKE ALL ON FUNCTION public.sync_product_status() FROM anon, authenticated, public;
 
 DROP FUNCTION IF EXISTS public.place_order(text, text, text, text, jsonb, payment_method, text, text);
@@ -1210,7 +1209,6 @@ ALTER TABLE public.store_settings
 -- ---------- 20260731161517_48a8f7e7-1915-40a0-bebc-3bfc7be65a25.sql ----------
 -- Lock down internal SECURITY DEFINER helpers from the exposed API
 REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.rls_auto_enable() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated;
 
