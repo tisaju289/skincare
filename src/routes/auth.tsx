@@ -50,7 +50,7 @@ function AuthPage() {
         });
         if (error) throw error;
         setInfo(
-          "Account created. An admin must grant you the 'admin' role in the user_roles table before you can access the admin panel.",
+          "Account created. Check your email and click the confirmation link. The very first account on this store automatically becomes the admin.",
         );
       }
     } catch (err) {

@@ -81,16 +81,26 @@ CREATE POLICY "Users can insert own profile" ON public.profiles
 CREATE TRIGGER trg_profiles_updated BEFORE UPDATE ON public.profiles
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
--- Auto-create profile on signup
+-- Auto-create profile on signup; first ever account becomes admin
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
+DECLARE
+  v_has_admin boolean;
 BEGIN
   INSERT INTO public.profiles (id, full_name)
-  VALUES (NEW.id, COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email));
+  VALUES (NEW.id, COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email))
+  ON CONFLICT (id) DO NOTHING;
+
+  SELECT EXISTS (SELECT 1 FROM public.user_roles WHERE role = 'admin') INTO v_has_admin;
+
+  INSERT INTO public.user_roles (user_id, role)
+  VALUES (NEW.id, CASE WHEN v_has_admin THEN 'user' ELSE 'admin' END::app_role)
+  ON CONFLICT (user_id, role) DO NOTHING;
+
   RETURN NEW;
 END;
 $$;
