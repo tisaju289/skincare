@@ -45,35 +45,35 @@ const dealBanners = [
   { title: "Season sale", sub: "১৬% ছাড়", note: "Limited stock" },
 ];
 
-/** Editorial section heading: eyebrow label, display headline, optional action. */
+/** Editorial section heading: eyebrow label, display headline — centered. */
 function SectionHead({
   index,
   eyebrow,
   title,
   subtitle,
-  action,
 }: {
   index?: string;
   eyebrow?: string;
   title: string;
   subtitle?: string;
-  action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-7 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
-      <div className="min-w-0">
-        <div className="flex items-center gap-3">
-          {index ? (
-            <span className="font-display text-sm text-gradient-brand tracking-[0.2em]">{index}</span>
-          ) : null}
-          {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
-        </div>
-        <h2 className="font-display mt-2 text-3xl sm:text-5xl uppercase">{title}</h2>
-        {subtitle ? <p className="mt-1 text-sm text-muted-foreground max-w-xl">{subtitle}</p> : null}
+    <div className="mb-7 flex flex-col items-center text-center border-b border-border pb-5">
+      <div className="flex items-center justify-center gap-3">
+        {index ? (
+          <span className="font-display text-sm text-gradient-brand tracking-[0.2em]">{index}</span>
+        ) : null}
+        {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
       </div>
-      {action}
+      <h2 className="font-display mt-2 text-3xl sm:text-5xl uppercase">{title}</h2>
+      {subtitle ? <p className="mt-1 text-sm text-muted-foreground max-w-xl">{subtitle}</p> : null}
     </div>
   );
+}
+
+/** Bottom-of-section action row (e.g. View all). */
+function SectionFooter({ children }: { children: React.ReactNode }) {
+  return <div className="mt-6 flex justify-center">{children}</div>;
 }
 
 function ViewAll() {
@@ -197,7 +197,6 @@ function Index() {
             eyebrow="Editors' pick"
             title={builtinText(s, "title") || "Trending now"}
             subtitle={builtinText(s, "subtitle")}
-            action={<ViewAll />}
           />
           {items.length === 0 ? (
             <p className="text-sm text-muted-foreground">No products yet. Add some from the admin panel.</p>
@@ -208,6 +207,9 @@ function Index() {
               ))}
             </div>
           )}
+          <SectionFooter>
+            <ViewAll />
+          </SectionFooter>
         </section>
       );
     },
@@ -306,7 +308,6 @@ function Index() {
               eyebrow="Curated"
               title={s.title?.trim() || PRODUCT_SOURCE_LABELS[s.source ?? "latest"]}
               subtitle={s.subtitle || undefined}
-              action={<ViewAll />}
             />
             {(() => {
               const items = pickProducts(pool, s.source, s.limit ?? 10);
@@ -320,6 +321,9 @@ function Index() {
                 </div>
               );
             })()}
+            <SectionFooter>
+              <ViewAll />
+            </SectionFooter>
           </section>
         ) : (
           <div key={s.id}>{blocks[s.id]?.(s)}</div>
