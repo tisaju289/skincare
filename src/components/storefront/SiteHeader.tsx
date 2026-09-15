@@ -11,6 +11,9 @@ import { WhatsAppButton } from "./WhatsAppButton";
 
 import {
   DEFAULT_SETTINGS,
+  DEFAULT_HEADER_MENUS,
+  normalizeHeaderMenus,
+  type HeaderMenu,
   type SiteSettings,
 } from "@/lib/site-settings";
 
@@ -39,6 +42,8 @@ export function SiteHeader({
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const topCats = categories.filter((c) => !c.parent);
+  const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
+  const menus: HeaderMenu[] = configured.length ? configured : DEFAULT_HEADER_MENUS;
 
 
 
@@ -93,18 +98,35 @@ export function SiteHeader({
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1 ml-2">
-            <Link to="/" className={NAV_LINK} activeOptions={{ exact: true }} activeProps={{ className: `${NAV_LINK} !text-[color:var(--brand-gold)] font-semibold` }}>
-              Home
-            </Link>
-            <Link to="/categories" className={NAV_LINK}>
-              Category
-            </Link>
-            <Link to="/search" search={{ q: "" }} className={NAV_LINK}>
-              Shop
-            </Link>
-            <Link to="/brands" className={NAV_LINK}>
-              Brand
-            </Link>
+            {menus.map((m, i) => {
+              const cls = `${NAV_LINK} ${MENU_PILL[m.color] ?? ""}`;
+              if (m.type === "category") {
+                return (
+                  <Link key={i} to="/category/$slug" params={{ slug: m.slug }} className={cls}>
+                    {m.label}
+                  </Link>
+                );
+              }
+              if (m.url.startsWith("/search")) {
+                return (
+                  <Link key={i} to="/search" search={{ q: "" }} className={cls}>
+                    {m.label}
+                  </Link>
+                );
+              }
+              if (m.url.startsWith("/")) {
+                return (
+                  <Link key={i} to={m.url} className={cls}>
+                    {m.label}
+                  </Link>
+                );
+              }
+              return (
+                <a key={i} href={m.url} className={cls}>
+                  {m.label}
+                </a>
+              );
+            })}
           </nav>
 
           <SearchAutocomplete className="hidden md:block flex-1 min-w-0 ml-4" />

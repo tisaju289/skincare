@@ -270,7 +270,10 @@ export type HeaderMenu = {
 };
 
 export const DEFAULT_HEADER_MENUS: HeaderMenu[] = [
-  { label: "All products", type: "link", slug: "", url: "/search", color: "none", enabled: true },
+  { label: "Home", type: "link", slug: "", url: "/", color: "none", enabled: true },
+  { label: "Category", type: "link", slug: "", url: "/categories", color: "none", enabled: true },
+  { label: "Shop", type: "link", slug: "", url: "/search", color: "none", enabled: true },
+  { label: "Brand", type: "link", slug: "", url: "/brands", color: "none", enabled: true },
 ];
 
 export function normalizeHeaderMenus(value: unknown): HeaderMenu[] {
