@@ -231,29 +231,31 @@ function Index() {
       if (items.length === 0) return null;
       const row = [...items, ...items];
       return (
-        <section className="mt-14 overflow-hidden bg-foreground py-12 text-background md:mt-20 md:py-16">
-          <div className="mb-8 flex flex-col items-center px-4 text-center">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-background/55">
-              Bestsellers
-            </span>
-            <h2 className="font-display mt-2 text-3xl uppercase sm:text-5xl">
-              {builtinText(s, "title") || "Hot Products"}
-            </h2>
-            {builtinText(s, "subtitle") && (
-              <p className="mt-1 text-sm text-background/70">{builtinText(s, "subtitle")}</p>
-            )}
-          </div>
-          <div
-            className="relative"
-            style={{
-              maskImage: "linear-gradient(90deg, transparent, black 7%, black 93%, transparent)",
-              WebkitMaskImage: "linear-gradient(90deg, transparent, black 7%, black 93%, transparent)",
-            }}
-          >
-            <div className="marquee-track flex w-max px-4">
-              {row.map((p, i) => (
-                <HotCard key={`${p.slug}-${i}`} p={p} />
-              ))}
+        <section className="mx-auto mt-14 max-w-7xl px-4 md:mt-20">
+          <div className="overflow-hidden rounded-3xl bg-foreground py-12 text-background md:py-16">
+            <div className="mb-8 flex flex-col items-center px-4 text-center">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-background/55">
+                Bestsellers
+              </span>
+              <h2 className="font-display mt-2 text-3xl uppercase sm:text-5xl">
+                {builtinText(s, "title") || "Hot Products"}
+              </h2>
+              {builtinText(s, "subtitle") && (
+                <p className="mt-1 text-sm text-background/70">{builtinText(s, "subtitle")}</p>
+              )}
+            </div>
+            <div
+              className="relative"
+              style={{
+                maskImage: "linear-gradient(90deg, transparent, black 7%, black 93%, transparent)",
+                WebkitMaskImage: "linear-gradient(90deg, transparent, black 7%, black 93%, transparent)",
+              }}
+            >
+              <div className="marquee-track flex w-max px-4">
+                {row.map((p, i) => (
+                  <HotCard key={`${p.slug}-${i}`} p={p} />
+                ))}
+              </div>
             </div>
           </div>
         </section>
