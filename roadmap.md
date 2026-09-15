@@ -1,3 +1,3 @@
 # Roadmap
 
-- [ ] Redesign the full storefront UI/UX as a modern skincare website using the selected layout direction.
+- [ ] Keep the existing homepage section layout, but redesign all storefront styling and interactions as a modern skincare website.
