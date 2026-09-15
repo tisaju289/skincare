@@ -11,6 +11,9 @@ import { WhatsAppButton } from "./WhatsAppButton";
 
 import {
   DEFAULT_SETTINGS,
+  DEFAULT_HEADER_MENUS,
+  normalizeHeaderMenus,
+  type HeaderMenu,
   type SiteSettings,
 } from "@/lib/site-settings";
 
