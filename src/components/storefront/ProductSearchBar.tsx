@@ -17,7 +17,7 @@ export function ProductSearchBar({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label="Search products"
-        className="w-full rounded-full border border-border bg-white pl-9 pr-4 py-2.5 text-sm outline-none focus:border-[color:var(--brand-pink)]"
+        className="w-full rounded border border-border bg-card pl-9 pr-4 py-2.5 text-sm outline-none focus:border-primary"
       />
     </div>
   );
