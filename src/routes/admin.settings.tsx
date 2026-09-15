@@ -32,6 +32,7 @@ import {
   BUILTIN_SECTION_CONFIG,
   PRODUCT_SOURCE_LABELS,
   sectionLabel,
+  builtinBg,
   normalizeHeroSlides,
   normalizeHomeSections,
   normalizeProductBadges,
