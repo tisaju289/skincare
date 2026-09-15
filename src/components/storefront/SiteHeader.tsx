@@ -8,7 +8,7 @@ import { CartDrawer } from "./CartDrawer";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { SearchAutocomplete } from "./SearchAutocomplete";
 import { WhatsAppButton } from "./WhatsAppButton";
-import { ChevronDown } from "lucide-react";
+
 import {
   DEFAULT_SETTINGS,
   type SiteSettings,
@@ -96,60 +96,9 @@ export function SiteHeader({
             <Link to="/" className={NAV_LINK} activeOptions={{ exact: true }} activeProps={{ className: `${NAV_LINK} !text-[color:var(--brand-gold)] font-semibold` }}>
               Home
             </Link>
-            <div className="relative group">
-              <button type="button" className={`${NAV_LINK} flex items-center gap-1`}>
-                Category
-                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-              </button>
-              <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition absolute left-0 top-full z-50 pt-2">
-                <div className="min-w-52 rounded-xl border border-border bg-background shadow-lg p-2">
-                  {topCats.length === 0 && (
-                    <span className="block px-3 py-2 text-sm text-muted-foreground">No categories yet</span>
-                  )}
-                  {topCats.map((c) => {
-                    const kids = categories.filter((k) => k.parent === c.slug);
-                    if (!kids.length) {
-                      return (
-                        <Link
-                          key={c.slug}
-                          to="/category/$slug"
-                          params={{ slug: c.slug }}
-                          className="block rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
-                        >
-                          {c.name}
-                        </Link>
-                      );
-                    }
-                    return (
-                      <div key={c.slug} className="relative group/sub">
-                        <Link
-                          to="/category/$slug"
-                          params={{ slug: c.slug }}
-                          className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
-                        >
-                          {c.name}
-                          <ChevronDown className="h-3 w-3 -rotate-90 text-muted-foreground" />
-                        </Link>
-                        <div className="invisible opacity-0 group-hover/sub:visible group-hover/sub:opacity-100 transition absolute left-full top-0 z-50 pl-2">
-                          <div className="min-w-44 rounded-xl border border-border bg-background shadow-lg p-2">
-                            {kids.map((k) => (
-                              <Link
-                                key={k.slug}
-                                to="/category/$slug"
-                                params={{ slug: k.slug }}
-                                className="block rounded-lg px-3 py-2 text-[13px] text-foreground/70 hover:bg-muted"
-                              >
-                                {k.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            <Link to="/categories" className={NAV_LINK}>
+              Category
+            </Link>
             <Link to="/search" search={{ q: "" }} className={NAV_LINK}>
               Shop
             </Link>

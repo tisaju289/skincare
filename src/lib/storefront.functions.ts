@@ -324,3 +324,23 @@ export const getBrandPage = createServerFn({ method: "GET" })
       settings,
     };
   });
+
+export const getCategoriesPage = createServerFn({ method: "GET" }).handler(async () => {
+  const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
+  const supabase = getPublicClient();
+
+  const [cats, prods, settings] = await Promise.all([
+    supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
+    supabase.from("products").select("categories(slug)"),
+    fetchSettings(supabase),
+  ]);
+
+  const counts = new Map<string, number>();
+  for (const p of (prods.data ?? []) as unknown as { categories: { slug: string } | null }[]) {
+    const s = p.categories?.slug;
+    if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
+  }
+
+  const list = mapCategories(cats.data as never).map((c) => ({ ...c, count: counts.get(c.slug) ?? 0 }));
+  return { categories: list, settings };
+});
