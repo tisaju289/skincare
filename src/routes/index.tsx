@@ -76,6 +76,42 @@ function SectionFooter({ children }: { children: React.ReactNode }) {
   return <div className="mt-6 flex justify-center">{children}</div>;
 }
 
+/** Compact single-row card used inside the hot-products marquee band. */
+function HotCard({ p }: { p: Product }) {
+  const off = p.old && p.old > p.price ? Math.round(((p.old - p.price) / p.old) * 100) : null;
+  return (
+    <Link
+      to="/product/$slug"
+      params={{ slug: p.slug }}
+      className="group mr-3 block w-40 shrink-0 sm:mr-4 sm:w-48"
+    >
+      <div className="rounded-2xl border border-background/15 bg-background/10 p-3 text-background backdrop-blur transition-colors hover:bg-background/15">
+        <div className="relative aspect-square overflow-hidden rounded-xl bg-background/10">
+          <img
+            {...imgProps(p.image, { width: 320, widths: [160, 240, 320], sizes: "192px" })}
+            alt={p.name}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          {off && (
+            <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
+              −{off}%
+            </span>
+          )}
+        </div>
+        <p className="mt-2.5 line-clamp-2 min-h-[2.4rem] text-[13px] leading-snug">{p.name}</p>
+        <div className="mt-1.5 flex items-baseline gap-1.5">
+          <span className="font-display text-base" style={{ color: "var(--brand-magenta)" }}>
+            ৳{p.price}
+          </span>
+          {p.old != null && p.old > p.price && (
+            <span className="text-[11px] text-background/50 line-through">৳{p.old}</span>
+          )}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 function ViewAll() {
   return (
     <Link
@@ -187,6 +223,42 @@ function Index() {
         </div>
       </section>
     ),
+
+    hot: (s) => {
+      const limit = builtinLimit(s);
+      const picked = pickProducts(pool, "flash_sale", limit);
+      const items = picked.length ? picked : trending.slice(0, limit);
+      if (items.length === 0) return null;
+      const row = [...items, ...items];
+      return (
+        <section className="mt-14 overflow-hidden bg-foreground py-12 text-background md:mt-20 md:py-16">
+          <div className="mb-8 flex flex-col items-center px-4 text-center">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-background/55">
+              Bestsellers
+            </span>
+            <h2 className="font-display mt-2 text-3xl uppercase sm:text-5xl">
+              {builtinText(s, "title") || "Hot Products"}
+            </h2>
+            {builtinText(s, "subtitle") && (
+              <p className="mt-1 text-sm text-background/70">{builtinText(s, "subtitle")}</p>
+            )}
+          </div>
+          <div
+            className="relative"
+            style={{
+              maskImage: "linear-gradient(90deg, transparent, black 7%, black 93%, transparent)",
+              WebkitMaskImage: "linear-gradient(90deg, transparent, black 7%, black 93%, transparent)",
+            }}
+          >
+            <div className="marquee-track flex w-max px-4">
+              {row.map((p, i) => (
+                <HotCard key={`${p.slug}-${i}`} p={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    },
 
     trending: (s) => {
       const items = trending.slice(0, builtinLimit(s));

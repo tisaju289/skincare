@@ -1,4 +1,4 @@
-export type BuiltinSectionId = "hero" | "categories" | "deals" | "trending" | "brands" | "trust";
+export type BuiltinSectionId = "hero" | "categories" | "deals" | "hot" | "trending" | "brands" | "trust";
 export type HomeSectionId = BuiltinSectionId;
 
 /** Where a custom product section pulls its products from. */
@@ -45,6 +45,7 @@ export const HOME_SECTION_LABELS: Record<BuiltinSectionId, string> = {
   hero: "Hero slider",
   categories: "Category circles",
   deals: "Deal banners",
+  hot: "Hot products (marquee)",
   trending: "Trending products",
   brands: "Shop by brand",
   trust: "Trust badges",
@@ -58,6 +59,13 @@ export const BUILTIN_SECTION_CONFIG: Record<
   hero: { fields: [], title: "", subtitle: "", limit: 0, link: "" },
   categories: { fields: ["title", "subtitle", "limit"], title: "", subtitle: "", limit: 12, link: "" },
   deals: { fields: ["title", "subtitle"], title: "DEALS YOU CANNOT MISS", subtitle: "", limit: 0, link: "" },
+  hot: {
+    fields: ["title", "subtitle", "limit"],
+    title: "Hot Products",
+    subtitle: "Flying off the shelves",
+    limit: 12,
+    link: "",
+  },
   trending: {
     fields: ["title", "subtitle", "limit", "link"],
     title: "Trending Now",
@@ -91,6 +99,7 @@ export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
   { id: "hero", kind: "builtin", enabled: true },
   { id: "categories", kind: "builtin", enabled: true },
   { id: "deals", kind: "builtin", enabled: true },
+  { id: "hot", kind: "builtin", enabled: true },
   { id: "trending", kind: "builtin", enabled: true },
   { id: "brands", kind: "builtin", enabled: true },
   { id: "trust", kind: "builtin", enabled: true },
