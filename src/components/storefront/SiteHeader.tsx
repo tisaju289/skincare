@@ -225,36 +225,18 @@ export function SiteHeader({
               <Heart className="h-4 w-4" /> Wishlist {wishCount > 0 && `(${wishCount})`}
             </Link>
 
-            {menus.map((m, i) => {
-              const kids = m.type === "category" ? categories.filter((k) => k.parent === m.slug) : [];
+            {topCats.map((c) => {
+              const kids = categories.filter((k) => k.parent === c.slug);
               return (
-                <div key={`${m.label}-${i}`}>
-                  {m.type === "category" ? (
-                    <Link
-                      to="/category/$slug"
-                      params={{ slug: m.slug }}
-                      onClick={() => setMenuOpen(false)}
-                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-                    >
-                      {m.label}
-                    </Link>
-                  ) : m.url.startsWith("/") ? (
-                    <Link
-                      to={m.url}
-                      onClick={() => setMenuOpen(false)}
-                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-                    >
-                      {m.label}
-                    </Link>
-                  ) : (
-                    <a
-                      href={m.url}
-                      onClick={() => setMenuOpen(false)}
-                      className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
-                    >
-                      {m.label}
-                    </a>
-                  )}
+                <div key={c.slug}>
+                  <Link
+                    to="/category/$slug"
+                    params={{ slug: c.slug }}
+                    onClick={() => setMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-muted"
+                  >
+                    {c.name}
+                  </Link>
                   {kids.length > 0 && (
                     <div className="ml-3 border-l border-border pl-2">
                       {kids.map((k) => (
@@ -273,6 +255,7 @@ export function SiteHeader({
                 </div>
               );
             })}
+
           </nav>
         </div>
       </div>
