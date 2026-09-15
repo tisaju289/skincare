@@ -105,6 +105,26 @@ export function builtinLimit(s: HomeSection): number {
   return n > 0 ? n : (cfg?.limit ?? 12);
 }
 
+/** Resolved background color for a section that supports one. */
+export function builtinBg(s: HomeSection): string {
+  const cfg = BUILTIN_SECTION_CONFIG[s.id as BuiltinSectionId];
+  const v = (s.bg ?? "").toString().trim();
+  return /^#[0-9a-fA-F]{6}$/.test(v) ? v : (cfg?.bg ?? "#2B2320");
+}
+
+/** Readable foreground (near-white or near-black) for a hex background. */
+export function readableOn(hex: string): string {
+  const m = /^#([0-9a-fA-F]{6})$/.exec(hex.trim());
+  if (!m) return "#FFFFFF";
+  const n = parseInt(m[1], 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum > 0.45 ? "#1A1A1A" : "#FFFFFF";
+}
+
 export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
   { id: "hero", kind: "builtin", enabled: true },
   { id: "categories", kind: "builtin", enabled: true },
