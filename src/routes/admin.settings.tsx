@@ -251,10 +251,13 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
 
   return (
     <>
-      <AdminTopbar title="Settings" subtitle="Configure your store" />
+      <AdminTopbar
+        title={scope === "design" ? "Design" : "Settings"}
+        subtitle={scope === "design" ? "Customize how your store looks" : "Configure your store"}
+      />
       <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
         <nav className="flex gap-2 overflow-x-auto admin-scroll -mx-3 px-3 sm:mx-0 sm:px-0 snap-x">
-          {sections.map((s) => {
+          {visibleSections.map((s) => {
             const Icon = s.icon;
             return (
               <button
