@@ -39,6 +39,8 @@ export function SiteHeader({
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const topCats = categories.filter((c) => !c.parent);
+  const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
+  const menus: HeaderMenu[] = configured.length ? configured : DEFAULT_HEADER_MENUS;
 
 
 
