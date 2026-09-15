@@ -12,7 +12,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <aside className="relative w-full max-w-md bg-background h-full flex flex-col shadow-2xl">
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <p className="font-black text-lg">Your Bag ({items.length})</p>
+          <p className="font-display text-2xl">Your bag ({items.length})</p>
           <button onClick={onClose} aria-label="Close bag" className="h-9 w-9 grid place-items-center rounded-full hover:bg-muted">
             <X className="h-5 w-5" />
           </button>
@@ -30,7 +30,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 {i.variantLabel && (
                   <p className="text-[11px] text-muted-foreground mt-0.5">{i.variantLabel}</p>
                 )}
-                <p className="text-sm font-black text-[color:var(--brand-pink)] mt-1">৳{i.price}</p>
+                <p className="text-sm font-semibold text-primary mt-1">৳{i.price}</p>
                 <div className="mt-2 flex items-center gap-2">
                   <div className="flex items-center border border-border rounded-full">
                     <button onClick={() => setQty(i.key, i.quantity - 1)} aria-label="Decrease" className="h-8 w-8 grid place-items-center">
@@ -60,8 +60,8 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
             to="/checkout"
             onClick={onClose}
             aria-disabled={items.length === 0}
-            className={`block text-center rounded-full py-3 font-bold text-white ${
-              items.length === 0 ? "bg-muted-foreground/40 pointer-events-none" : "bg-[color:var(--brand-pink)]"
+            className={`block text-center rounded py-3 font-semibold ${
+              items.length === 0 ? "bg-muted-foreground/40 text-background pointer-events-none" : "bg-foreground text-background"
             }`}
           >
             Checkout

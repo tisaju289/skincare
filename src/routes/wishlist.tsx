@@ -34,14 +34,14 @@ function WishlistPage() {
       <SiteHeader categories={[]} settings={settings} />
 
       <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
-        <h1 className="text-2xl sm:text-3xl font-black flex items-center gap-2">
-          <Heart className="h-6 w-6 text-[color:var(--brand-pink)]" /> Wishlist
+        <h1 className="font-display text-4xl sm:text-5xl flex items-center gap-3">
+          <Heart className="h-6 w-6 text-primary" /> Wishlist
         </h1>
 
         {ready && items.length === 0 && (
           <div className="py-20 text-center">
             <p className="text-muted-foreground">You haven't saved anything yet.</p>
-            <Link to="/search" search={{ q: "" }} className="mt-4 inline-block font-bold text-[color:var(--brand-pink)]">
+            <Link to="/search" search={{ q: "" }} className="mt-4 inline-block font-semibold text-primary">
               Browse products →
             </Link>
           </div>
@@ -49,7 +49,7 @@ function WishlistPage() {
 
         <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {items.map((p) => (
-            <div key={p.slug} className="bg-white rounded-2xl border border-border overflow-hidden flex flex-col">
+            <div key={p.slug} className="bg-card rounded-md border border-border overflow-hidden flex flex-col">
               <Link to="/product/$slug" params={{ slug: p.slug }}>
                 <img
                   {...imgProps(p.image, { width: 480, widths: [240, 360, 480], sizes: "(max-width: 640px) 45vw, 260px" })}
@@ -60,18 +60,18 @@ function WishlistPage() {
               <div className="p-3 flex flex-col flex-1">
                 <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{p.brand}</p>
                 <Link to="/product/$slug" params={{ slug: p.slug }}>
-                  <h2 className="text-sm font-medium line-clamp-2 min-h-[2.5rem] mt-1 hover:text-[color:var(--brand-pink)]">
+                  <h2 className="text-sm font-medium line-clamp-2 min-h-[2.5rem] mt-1 hover:text-primary">
                     {p.name}
                   </h2>
                 </Link>
-                <p className="mt-2 text-base font-black text-[color:var(--brand-pink)]">৳{p.price}</p>
+                <p className="mt-2 text-base font-semibold text-primary">৳{p.price}</p>
                 <div className="mt-3 flex items-center gap-2">
                   <button
                     onClick={() => {
                       add({ slug: p.slug, name: p.name, price: p.price, image: p.image });
                       toast.success("Added to bag");
                     }}
-                    className="flex-1 rounded-full bg-[color:var(--brand-pink)] text-white text-xs font-bold py-2 flex items-center justify-center gap-1.5"
+                    className="flex-1 rounded bg-foreground text-background text-xs font-semibold py-2 flex items-center justify-center gap-1.5"
                   >
                     <ShoppingBag className="h-3.5 w-3.5" /> Add to bag
                   </button>

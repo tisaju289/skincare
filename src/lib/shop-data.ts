@@ -49,7 +49,7 @@ export function mapCategories(rows: CategoryRow[] | null | undefined): Category[
   return list.map((c) => ({
     slug: c.slug,
     name: c.name,
-    color: c.color ?? "from-pink-400 to-rose-500",
+    color: c.color ?? "from-secondary to-muted",
     image: c.image ?? "",
     parent: c.parent_id ? (bySlug.get(c.parent_id) ?? null) : null,
   }));
@@ -91,9 +91,9 @@ export function mapProduct(row: ProductRow): Product {
   return {
     slug: row.slug,
     name: row.name,
-    brand: row.brands?.name ?? "Shajgoj",
-    category: row.categories?.slug ?? "makeup",
-    categoryName: row.categories?.name ?? "Beauty",
+    brand: row.brands?.name ?? "The Skin Edit",
+    category: row.categories?.slug ?? "skincare",
+    categoryName: row.categories?.name ?? "Skincare",
     price: Number(row.price ?? 0),
     old: row.old_price == null ? null : Number(row.old_price),
     tag: row.tag,

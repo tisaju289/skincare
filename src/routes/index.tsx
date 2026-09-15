@@ -60,16 +60,16 @@ function SectionHead({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-7 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
+    <div className="mb-8 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 border-b border-border pb-5">
       <div className="min-w-0">
         <div className="flex items-center gap-3">
           {index ? (
-            <span className="font-display text-sm text-gradient-brand tracking-[0.2em]">{index}</span>
+            <span className="h-px w-8 bg-primary" aria-hidden="true" />
           ) : null}
           {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
         </div>
-        <h2 className="font-display mt-2 text-3xl sm:text-5xl uppercase">{title}</h2>
-        {subtitle ? <p className="mt-1 text-sm text-muted-foreground max-w-xl">{subtitle}</p> : null}
+        <h2 className="font-display mt-2 text-4xl sm:text-5xl">{title}</h2>
+        {subtitle ? <p className="mt-2 text-sm text-muted-foreground max-w-xl">{subtitle}</p> : null}
       </div>
       {action}
     </div>
@@ -81,7 +81,7 @@ function ViewAll() {
     <Link
       to="/search"
       search={{ q: "" }}
-      className="group inline-flex items-center gap-1.5 rounded-full border border-foreground/15 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-foreground hover:text-background transition-colors"
+      className="group inline-flex items-center gap-1.5 border-b border-foreground/30 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] hover:border-primary hover:text-primary transition-colors"
     >
       View all
       <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -124,14 +124,14 @@ function Index() {
                 params={{ slug: c.slug }}
                 className={`${i >= 6 && !showAllCats ? "hidden" : "flex"} group flex-col gap-2`}
               >
-                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-muted">
                   <img
                     {...imgProps(c.image, { width: 400, widths: [200, 320, 480], sizes: "(max-width: 640px) 33vw, 180px" })}
                     alt={c.name}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-[linear-gradient(0deg,rgb(0_0_0/0.55),transparent_55%)]" />
-                  <span className="absolute left-2.5 bottom-2 right-2 font-display text-sm sm:text-lg uppercase text-primary-foreground leading-tight line-clamp-2">
+                  <div className="absolute inset-0 bg-[linear-gradient(0deg,color-mix(in_oklab,var(--color-foreground)_70%,transparent),transparent_58%)]" />
+                  <span className="absolute left-3 bottom-3 right-3 text-xs sm:text-sm font-medium text-primary-foreground leading-tight line-clamp-2">
                     {c.name}
                   </span>
                 </div>
@@ -167,15 +167,15 @@ function Index() {
               key={d.title}
               to="/search"
               search={{ q: "" }}
-              className={`group relative overflow-hidden rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-40 sm:min-h-56 ${
+                className={`group relative overflow-hidden rounded-md p-5 sm:p-7 flex flex-col justify-between min-h-40 sm:min-h-56 ${
                 i === 0
-                  ? "bg-gradient-brand text-primary-foreground md:col-span-2"
-                  : "bg-gradient-soft text-foreground border border-border"
+                  ? "bg-foreground text-background md:col-span-2"
+                  : "bg-secondary/55 text-foreground border border-border"
               }`}
             >
               <p className="text-[10px] font-bold uppercase tracking-[0.22em] opacity-80">{d.title}</p>
               <div>
-                <p className="font-display text-3xl sm:text-5xl uppercase">{d.sub}</p>
+                <p className="font-display text-3xl sm:text-5xl">{d.sub}</p>
                 <p className="mt-1 text-xs opacity-75">{d.note}</p>
               </div>
               <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.18em]">
@@ -228,7 +228,7 @@ function Index() {
                 key={b.slug}
                 to="/search"
                 search={{ q: b.name }}
-                className="group aspect-[4/3] rounded-2xl border border-border bg-card hover:border-transparent hover:bg-gradient-soft transition-colors flex flex-col items-center justify-center gap-1.5 px-3 text-center"
+                className="group aspect-[4/3] rounded-md border border-border bg-card hover:border-primary/50 hover:bg-secondary/30 transition-colors flex flex-col items-center justify-center gap-1.5 px-3 text-center"
               >
                 {b.logo ? (
                   <img
@@ -237,7 +237,7 @@ function Index() {
                     className="h-8 sm:h-10 w-auto max-w-full object-contain grayscale group-hover:grayscale-0 transition"
                   />
                 ) : null}
-                <span className="font-display text-sm sm:text-base uppercase line-clamp-1">{b.name}</span>
+                <span className="text-xs sm:text-sm font-medium line-clamp-1">{b.name}</span>
               </Link>
             ))}
           </div>
@@ -258,11 +258,11 @@ function Index() {
 
     trust: (s) => (
       <section className="max-w-7xl mx-auto px-4 mt-16 md:mt-24">
-        <div className="rounded-[1.75rem] bg-gradient-brand text-primary-foreground p-6 md:p-10 shadow-brand">
+        <div className="rounded-lg bg-foreground text-background p-6 md:p-10 shadow-brand">
           {(builtinText(s, "title") || builtinText(s, "subtitle")) && (
             <div className="mb-7 max-w-2xl">
               {builtinText(s, "title") && (
-                <h2 className="font-display text-3xl sm:text-5xl uppercase">{builtinText(s, "title")}</h2>
+                <h2 className="font-display text-3xl sm:text-5xl">{builtinText(s, "title")}</h2>
               )}
               {builtinText(s, "subtitle") && (
                 <p className="mt-1 text-sm opacity-85">{builtinText(s, "subtitle")}</p>
@@ -281,7 +281,7 @@ function Index() {
                   <Icon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-display text-lg uppercase leading-none">{title}</p>
+                  <p className="text-sm font-semibold leading-none">{title}</p>
                   <p className="text-xs opacity-80 mt-1">{sub}</p>
                 </div>
               </div>

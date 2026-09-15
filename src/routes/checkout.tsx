@@ -81,14 +81,14 @@ function CheckoutPage() {
       <SiteHeader categories={[]} settings={settings} />
         <div className="max-w-lg mx-auto px-4 py-24 text-center">
           <CheckCircle2 className="h-14 w-14 mx-auto text-emerald-500" />
-          <h1 className="mt-4 text-2xl sm:text-3xl font-black">Order confirmed</h1>
+          <h1 className="font-display mt-4 text-4xl sm:text-5xl">Order confirmed</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Your order number is <span className="font-bold text-foreground">{done}</span>. We'll call you shortly to
             confirm delivery.
           </p>
           <Link
             to="/"
-            className="mt-6 inline-block rounded-full bg-[color:var(--brand-pink)] text-white font-bold px-8 py-3"
+            className="mt-6 inline-block rounded bg-foreground text-background font-semibold px-8 py-3"
           >
             Continue shopping
           </Link>
@@ -106,12 +106,12 @@ function CheckoutPage() {
       <SiteHeader categories={[]} settings={settings} />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-2xl sm:text-3xl font-black">Checkout</h1>
+        <h1 className="font-display text-4xl sm:text-5xl">Checkout</h1>
 
         {items.length === 0 ? (
           <div className="py-20 text-center">
             <p className="text-muted-foreground">Your bag is empty.</p>
-            <Link to="/" className="mt-4 inline-block font-bold text-[color:var(--brand-pink)]">
+            <Link to="/" className="mt-4 inline-block font-semibold text-primary">
               ← Continue shopping
             </Link>
           </div>
@@ -130,7 +130,7 @@ function CheckoutPage() {
                   rows={3}
                   value={form.address}
                   onChange={(e) => set("address", e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded border border-border bg-background px-3 py-2 text-sm focus:border-primary outline-none"
                 />
               </div>
 
@@ -145,9 +145,9 @@ function CheckoutPage() {
                       type="button"
                       key={z.id}
                       onClick={() => setZone(z.id)}
-                      className={`rounded-xl border px-3 py-2.5 text-sm font-semibold ${
+                      className={`rounded border px-3 py-2.5 text-sm font-semibold ${
                         zone === z.id
-                          ? "border-[color:var(--brand-pink)] bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)]"
+                          ? "border-primary bg-secondary/60 text-foreground"
                           : "border-border"
                       }`}
                     >
@@ -160,14 +160,14 @@ function CheckoutPage() {
 
               <div>
                 <p className="text-xs font-bold text-muted-foreground mb-2">Payment method</p>
-                <div className="rounded-xl border border-[color:var(--brand-pink)] bg-[color:var(--brand-pink)]/10 px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-pink)]">
+                <div className="rounded border border-primary/50 bg-secondary/40 px-3 py-2.5 text-sm font-semibold text-foreground">
                   Cash on Delivery
                 </div>
               </div>
             </div>
 
-            <aside className="h-fit rounded-2xl border border-border p-5 bg-muted/30">
-              <h2 className="font-black">Order summary</h2>
+            <aside className="h-fit rounded-md border border-border p-5 bg-muted/30">
+              <h2 className="font-display text-2xl">Order summary</h2>
               <ul className="mt-4 space-y-3">
                 {items.map((i) => (
                   <li key={i.key ?? i.slug} className="flex gap-3 text-sm">
@@ -195,14 +195,14 @@ function CheckoutPage() {
               </div>
               <button
                 disabled={busy}
-                className="mt-5 w-full rounded-full bg-[color:var(--brand-pink)] text-white font-bold py-3 disabled:opacity-60"
+                className="mt-5 w-full rounded bg-foreground text-background font-semibold py-3 disabled:opacity-60"
               >
                 {busy ? "Placing order…" : "Place order"}
               </button>
               <button
                 type="button"
                 onClick={() => navigate({ to: "/" })}
-                className="mt-2 w-full rounded-full border border-border font-semibold py-2.5 text-sm"
+                className="mt-2 w-full rounded border border-border font-semibold py-2.5 text-sm"
               >
                 Continue shopping
               </button>

@@ -139,7 +139,7 @@ function ProductPage() {
 
       <section className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-6 md:gap-8">
         <div className="space-y-3">
-          <div className={`aspect-square rounded-3xl overflow-hidden ${product.color}`}>
+          <div className={`aspect-square rounded-lg overflow-hidden ${product.color}`}>
             <img
               {...imgProps(activeImage, { width: 960, widths: [480, 720, 960, 1200], sizes: "(max-width: 768px) 100vw, 560px", eager: true })}
               alt={product.name}
@@ -151,8 +151,8 @@ function ProductPage() {
               <button
                 key={i}
                 onClick={() => setActiveImage(src)}
-                className={`aspect-square rounded-xl overflow-hidden ${product.color} border-2 ${
-                  activeImage === src ? "border-[color:var(--brand-pink)]" : "border-transparent"
+                className={`aspect-square rounded overflow-hidden ${product.color} border-2 ${
+                  activeImage === src ? "border-primary" : "border-transparent"
                 }`}
               >
                 <img
@@ -167,7 +167,7 @@ function ProductPage() {
 
         <div>
           <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">{product.brand}</p>
-          <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl font-black leading-tight">{product.name}</h1>
+          <h1 className="font-display mt-2 text-4xl sm:text-5xl md:text-6xl leading-[1.02]">{product.name}</h1>
           <div className="mt-3 flex items-center gap-2">
             {[1, 2, 3, 4, 5].map((i) => (
               <Star key={i} className={`h-4 w-4 ${i <= Math.round(product.rating) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
@@ -177,7 +177,7 @@ function ProductPage() {
             </span>
           </div>
           <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-            <span className="text-3xl sm:text-4xl font-black text-[color:var(--brand-pink)]">৳{price}</span>
+            <span className="text-2xl sm:text-3xl font-semibold text-primary">৳{price}</span>
             {product.old != null && <span className="text-base sm:text-lg text-muted-foreground line-through">৳{product.old}</span>}
             {product.tag && <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded">{product.tag}</span>}
           </div>
@@ -204,9 +204,9 @@ function ProductPage() {
                         setVariantId(v.id);
                         if (v.image) setActiveImage(v.image);
                       }}
-                      className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${
+                      className={`rounded border px-4 py-2 text-xs font-semibold transition ${
                         active
-                          ? "border-[color:var(--brand-pink)] bg-[color:var(--brand-pink)]/10 text-[color:var(--brand-pink)]"
+                          ? "border-primary bg-secondary/60 text-foreground"
                           : "border-border hover:border-foreground/40"
                       } ${out ? "opacity-40 line-through cursor-not-allowed" : ""}`}
                     >
@@ -222,7 +222,7 @@ function ProductPage() {
           <p className="mt-6 text-sm text-foreground/80 leading-relaxed">{product.description}</p>
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <div className="flex items-center border border-border rounded-full shrink-0">
+            <div className="flex items-center border border-border rounded shrink-0">
               <button onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease quantity" className="h-10 w-10 grid place-items-center">
                 <Minus className="h-4 w-4" />
               </button>
@@ -247,7 +247,7 @@ function ProductPage() {
                 );
                 toast.success(`${qty} × ${product.name} added to bag`);
               }}
-              className="flex-1 min-w-[10rem] rounded-full bg-[color:var(--brand-pink)] text-white font-bold py-3 flex items-center justify-center gap-2 hover:opacity-90 disabled:bg-muted disabled:text-muted-foreground"
+              className="flex-1 min-w-[10rem] rounded bg-foreground text-background font-semibold py-3 flex items-center justify-center gap-2 hover:opacity-90 disabled:bg-muted disabled:text-muted-foreground"
             >
               <ShoppingBag className="h-4 w-4" /> {soldOut ? "Sold out" : "Add to Bag"}
             </button>
@@ -259,9 +259,9 @@ function ProductPage() {
                 const added = wishlist.toggle(mini);
                 toast.success(added ? "Saved to wishlist" : "Removed from wishlist");
               }}
-              className="h-12 w-12 shrink-0 rounded-full border border-border grid place-items-center hover:bg-muted"
+              className="h-12 w-12 shrink-0 rounded border border-border grid place-items-center hover:bg-muted"
             >
-              <Heart className={`h-5 w-5 ${saved ? "fill-[color:var(--brand-pink)] text-[color:var(--brand-pink)]" : ""}`} />
+              <Heart className={`h-5 w-5 ${saved ? "fill-primary text-primary" : ""}`} />
             </button>
           </div>
 
@@ -289,7 +289,7 @@ function ProductPage() {
                   const Icon = PRODUCT_BADGE_ICON_MAP[b.icon] ?? Truck;
                   return (
                     <div key={`${b.title}-${i}`} className="flex items-center gap-2">
-                      <Icon className="h-5 w-5 text-[color:var(--brand-pink)]" />
+                       <Icon className="h-5 w-5 text-primary" />
                       <div>
                         <p className="text-xs font-bold">{b.title}</p>
                         <p className="text-[10px] text-muted-foreground">{b.subtitle}</p>
@@ -316,7 +316,7 @@ function ProductPage() {
               onClick={() => setTab(t.id)}
               className={`px-4 py-3 text-sm font-bold -mb-px border-b-2 ${
                 tab === t.id
-                  ? "border-[color:var(--brand-pink)] text-[color:var(--brand-pink)]"
+                  ? "border-primary text-primary"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -332,11 +332,11 @@ function ProductPage() {
         ) : (
           <div className="pt-6 grid lg:grid-cols-2 gap-8">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black mb-4">Customer reviews</h2>
+                  <h2 className="font-display text-3xl sm:text-4xl mb-4">Customer reviews</h2>
               {reviews.length === 0 && <p className="text-sm text-muted-foreground">No reviews yet. Be the first!</p>}
               <div className="space-y-4">
                 {reviews.map((r) => (
-                  <div key={r.id} className="border border-border rounded-2xl p-4">
+                   <div key={r.id} className="border border-border rounded-md p-4">
                     <div className="flex items-center gap-2">
                       <p className="font-bold text-sm">{r.user_name}</p>
                       <div className="flex">
@@ -351,8 +351,8 @@ function ProductPage() {
               </div>
             </div>
 
-            <form onSubmit={sendReview} className="bg-muted/50 border border-border rounded-2xl p-5 h-fit">
-              <h3 className="font-black">Write a review</h3>
+             <form onSubmit={sendReview} className="bg-muted/50 border border-border rounded-md p-5 h-fit">
+               <h3 className="font-display text-2xl">Write a review</h3>
               <input
                 required
                 value={rName}
@@ -376,7 +376,7 @@ function ProductPage() {
                 aria-label="Review comment"
                 className="mt-3 w-full rounded-lg border border-border px-3 py-2 text-sm bg-background"
               />
-              <button disabled={rBusy} className="mt-3 rounded-full bg-[color:var(--brand-pink)] text-white font-bold px-6 py-2.5 text-sm disabled:opacity-60">
+              <button disabled={rBusy} className="mt-3 rounded bg-foreground text-background font-semibold px-6 py-2.5 text-sm disabled:opacity-60">
                 {rBusy ? "Submitting…" : "Submit review"}
               </button>
             </form>
@@ -386,7 +386,7 @@ function ProductPage() {
 
       {related.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 mt-16">
-          <h2 className="text-xl sm:text-2xl font-black mb-6">You might also like</h2>
+           <h2 className="font-display text-3xl sm:text-4xl mb-6">You might also like</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {related.map((p) => (
               <ProductCard key={p.slug} product={p} />
