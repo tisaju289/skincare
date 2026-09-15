@@ -917,7 +917,7 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
 
               {tab === "theme" && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <ColorField label="Primary (pink)" value={str("theme_pink")} onChange={(v) => set("theme_pink", v)} />
+                  <ColorField label="Primary (brand color)" value={str("theme_pink")} onChange={(v) => set("theme_pink", v)} />
                   <ColorField
                     label="Magenta"
                     value={str("theme_magenta")}

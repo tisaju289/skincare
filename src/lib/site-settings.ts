@@ -426,8 +426,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   seo_description:
     "Shop 100% authentic makeup, skincare, haircare, fragrance and personal care. Cash on delivery all over Bangladesh.",
   seo_keywords: "beauty, skincare, makeup, cosmetics, bangladesh",
-  theme_pink: "#b9822f",
-  theme_magenta: "#d9a441",
+  theme_pink: "#6B3FA0",
+  theme_magenta: "#9d6bc8",
   theme_purple: "#2b2320",
   theme_teal: "#4f8c86",
   theme_green: "#6b8f5e",
