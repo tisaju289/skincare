@@ -93,6 +93,14 @@ export const BUILTIN_SECTION_CONFIG: Record<
     link: "/search",
   },
   brands: { fields: ["title", "subtitle", "limit", "link"], title: "Shop by Brand", subtitle: "", limit: 12, link: "" },
+  reviews: {
+    fields: ["title", "subtitle", "limit", "bg"],
+    title: "Customer Reviews",
+    subtitle: "What our customers say",
+    limit: 6,
+    link: "",
+    bg: "#F6EFEA",
+  },
   trust: { fields: ["title", "subtitle"], title: "", subtitle: "", limit: 0, link: "" },
 };
 
