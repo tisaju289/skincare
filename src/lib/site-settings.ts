@@ -1,4 +1,12 @@
-export type BuiltinSectionId = "hero" | "categories" | "deals" | "hot" | "trending" | "brands" | "trust";
+export type BuiltinSectionId =
+  | "hero"
+  | "categories"
+  | "deals"
+  | "hot"
+  | "trending"
+  | "brands"
+  | "reviews"
+  | "trust";
 export type HomeSectionId = BuiltinSectionId;
 
 /** Where a custom product section pulls its products from. */
@@ -50,6 +58,7 @@ export const HOME_SECTION_LABELS: Record<BuiltinSectionId, string> = {
   hot: "Hot products (marquee)",
   trending: "Trending products",
   brands: "Shop by brand",
+  reviews: "Customer reviews",
   trust: "Trust badges",
 };
 
@@ -84,6 +93,14 @@ export const BUILTIN_SECTION_CONFIG: Record<
     link: "/search",
   },
   brands: { fields: ["title", "subtitle", "limit", "link"], title: "Shop by Brand", subtitle: "", limit: 12, link: "" },
+  reviews: {
+    fields: ["title", "subtitle", "limit", "bg"],
+    title: "Customer Reviews",
+    subtitle: "What our customers say",
+    limit: 6,
+    link: "",
+    bg: "#F6EFEA",
+  },
   trust: { fields: ["title", "subtitle"], title: "", subtitle: "", limit: 0, link: "" },
 };
 
@@ -132,6 +149,7 @@ export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
   { id: "hot", kind: "builtin", enabled: true },
   { id: "trending", kind: "builtin", enabled: true },
   { id: "brands", kind: "builtin", enabled: true },
+  { id: "reviews", kind: "builtin", enabled: true },
   { id: "trust", kind: "builtin", enabled: true },
 ];
 

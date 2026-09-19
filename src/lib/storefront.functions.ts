@@ -11,10 +11,15 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
   const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
   const supabase = getPublicClient();
 
-  const [cats, prods, brands, settings] = await Promise.all([
+  const [cats, prods, brands, revs, settings] = await Promise.all([
     supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
     supabase.from("products").select(PRODUCT_SELECT).order("created_at", { ascending: false }).limit(80),
     supabase.from("brands").select("slug,name,logo").order("name"),
+    supabase
+      .from("reviews")
+      .select("id,user_name,rating,comment,created_at,products(name,slug,image)")
+      .order("created_at", { ascending: false })
+      .limit(24),
     fetchSettings(supabase),
   ]);
 
@@ -25,6 +30,19 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
     products: pool,
     trending: pickProducts(pool, "trending", 10),
     brands: (brands.data ?? []) as { slug: string; name: string; logo: string | null }[],
+    reviews: (revs.data ?? []).map((r) => {
+      const prod = (r as unknown as { products: { name: string; slug: string; image: string | null } | null }).products;
+      return {
+        id: r.id as string,
+        user_name: r.user_name as string,
+        rating: Number(r.rating ?? 5),
+        comment: (r.comment as string | null) ?? "",
+        created_at: r.created_at as string,
+        product_name: prod?.name ?? "",
+        product_slug: prod?.slug ?? "",
+        product_image: prod?.image ?? "",
+      };
+    }),
     settings,
   };
 });

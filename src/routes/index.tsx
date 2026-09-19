@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { ArrowUpRight, ChevronRight, Truck, ShieldCheck, RefreshCw, Headphones } from "lucide-react";
+import { ArrowUpRight, ChevronRight, Truck, ShieldCheck, RefreshCw, Headphones, Star } from "lucide-react";
 import { getHomeData } from "@/lib/storefront.functions";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
@@ -127,15 +127,66 @@ function ViewAll() {
   );
 }
 
+type HomeReview = {
+  id: string;
+  user_name: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  product_name: string;
+  product_slug: string;
+  product_image: string;
+};
+
+/** Single customer testimonial card. */
+function ReviewCard({ r }: { r: HomeReview }) {
+  return (
+    <div className="flex h-full flex-col rounded-2xl border border-border/70 bg-card p-5 text-card-foreground shadow-brand">
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <Star
+            key={n}
+            className={`h-4 w-4 ${n <= r.rating ? "fill-primary text-primary" : "text-muted-foreground/30"}`}
+          />
+        ))}
+      </div>
+      {r.comment ? (
+        <p className="mt-3 flex-1 text-sm leading-relaxed text-foreground/85">“{r.comment}”</p>
+      ) : (
+        <p className="mt-3 flex-1 text-sm text-muted-foreground">Loved it!</p>
+      )}
+      <div className="mt-4 flex items-center gap-3 border-t border-border/60 pt-3">
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+          {r.user_name.slice(0, 1).toUpperCase()}
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold">{r.user_name}</p>
+          {r.product_slug ? (
+            <Link
+              to="/product/$slug"
+              params={{ slug: r.product_slug }}
+              className="block truncate text-xs text-muted-foreground hover:text-primary"
+            >
+              {r.product_name}
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Index() {
   const data = Route.useLoaderData() as {
     categories: Category[];
     trending: Product[];
     products: Product[];
     brands: { slug: string; name: string; logo?: string | null }[];
+    reviews?: HomeReview[];
     settings: SiteSettings;
   };
   const { categories, trending, brands, settings } = data;
+  const reviews = data.reviews ?? [];
   const pool = data.products ?? trending;
   const topCategories = categories.filter((c) => !c.parent);
   const [showAllCats, setShowAllCats] = useState(false);
@@ -347,6 +398,28 @@ function Index() {
           </div>
         </section>
       ) : null;
+    },
+
+    reviews: (s) => {
+      const items = reviews.slice(0, builtinLimit(s));
+      if (items.length === 0) return null;
+      const bg = builtinBg(s);
+      return (
+        <section className="mx-auto mt-14 max-w-7xl px-4 md:mt-20">
+          <div className="rounded-3xl px-4 py-12 md:px-10 md:py-16" style={{ backgroundColor: bg }}>
+            <SectionHead
+              eyebrow="Real people, real glow"
+              title={builtinText(s, "title") || "Customer Reviews"}
+              subtitle={builtinText(s, "subtitle")}
+            />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((r) => (
+                <ReviewCard key={r.id} r={r} />
+              ))}
+            </div>
+          </div>
+        </section>
+      );
     },
 
     trust: (s) => (
