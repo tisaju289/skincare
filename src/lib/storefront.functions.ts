@@ -11,10 +11,15 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
   const { getPublicClient, fetchSettings } = await import("@/lib/supabase-public.server");
   const supabase = getPublicClient();
 
-  const [cats, prods, brands, settings] = await Promise.all([
+  const [cats, prods, brands, revs, settings] = await Promise.all([
     supabase.from("categories").select(CATEGORY_SELECT).order("sort_order"),
     supabase.from("products").select(PRODUCT_SELECT).order("created_at", { ascending: false }).limit(80),
     supabase.from("brands").select("slug,name,logo").order("name"),
+    supabase
+      .from("reviews")
+      .select("id,user_name,rating,comment,created_at,products(name,slug,image)")
+      .order("created_at", { ascending: false })
+      .limit(24),
     fetchSettings(supabase),
   ]);
 
