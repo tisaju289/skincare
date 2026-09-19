@@ -400,6 +400,28 @@ function Index() {
       ) : null;
     },
 
+    reviews: (s) => {
+      const items = reviews.slice(0, builtinLimit(s));
+      if (items.length === 0) return null;
+      const bg = builtinBg(s);
+      return (
+        <section className="mx-auto mt-14 max-w-7xl px-4 md:mt-20">
+          <div className="rounded-3xl px-4 py-12 md:px-10 md:py-16" style={{ backgroundColor: bg }}>
+            <SectionHead
+              eyebrow="Real people, real glow"
+              title={builtinText(s, "title") || "Customer Reviews"}
+              subtitle={builtinText(s, "subtitle")}
+            />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((r) => (
+                <ReviewCard key={r.id} r={r} />
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    },
+
     trust: (s) => (
       <section className="max-w-7xl mx-auto px-4 mt-16 md:mt-24">
         <div className="rounded-[1.75rem] bg-gradient-brand text-primary-foreground p-6 md:p-10 shadow-brand">
