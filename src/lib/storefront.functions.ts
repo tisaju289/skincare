@@ -30,6 +30,19 @@ export const getHomeData = createServerFn({ method: "GET" }).handler(async () =>
     products: pool,
     trending: pickProducts(pool, "trending", 10),
     brands: (brands.data ?? []) as { slug: string; name: string; logo: string | null }[],
+    reviews: (revs.data ?? []).map((r) => {
+      const prod = (r as unknown as { products: { name: string; slug: string; image: string | null } | null }).products;
+      return {
+        id: r.id as string,
+        user_name: r.user_name as string,
+        rating: Number(r.rating ?? 5),
+        comment: (r.comment as string | null) ?? "",
+        created_at: r.created_at as string,
+        product_name: prod?.name ?? "",
+        product_slug: prod?.slug ?? "",
+        product_image: prod?.image ?? "",
+      };
+    }),
     settings,
   };
 });
