@@ -149,6 +149,7 @@ export const DEFAULT_HOME_SECTIONS: HomeSection[] = [
   { id: "hot", kind: "builtin", enabled: true },
   { id: "trending", kind: "builtin", enabled: true },
   { id: "brands", kind: "builtin", enabled: true },
+  { id: "reviews", kind: "builtin", enabled: true },
   { id: "trust", kind: "builtin", enabled: true },
 ];
 
