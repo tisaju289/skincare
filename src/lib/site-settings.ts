@@ -58,6 +58,7 @@ export const HOME_SECTION_LABELS: Record<BuiltinSectionId, string> = {
   hot: "Hot products (marquee)",
   trending: "Trending products",
   brands: "Shop by brand",
+  reviews: "Customer reviews",
   trust: "Trust badges",
 };
 
