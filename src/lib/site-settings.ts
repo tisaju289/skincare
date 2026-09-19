@@ -1,4 +1,12 @@
-export type BuiltinSectionId = "hero" | "categories" | "deals" | "hot" | "trending" | "brands" | "trust";
+export type BuiltinSectionId =
+  | "hero"
+  | "categories"
+  | "deals"
+  | "hot"
+  | "trending"
+  | "brands"
+  | "reviews"
+  | "trust";
 export type HomeSectionId = BuiltinSectionId;
 
 /** Where a custom product section pulls its products from. */
