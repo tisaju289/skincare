@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { ArrowUpRight, ChevronRight, Truck, ShieldCheck, RefreshCw, Headphones } from "lucide-react";
+import { ArrowUpRight, ChevronRight, Truck, ShieldCheck, RefreshCw, Headphones, Star } from "lucide-react";
 import { getHomeData } from "@/lib/storefront.functions";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
