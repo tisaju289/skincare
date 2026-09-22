@@ -148,6 +148,25 @@ function Index() {
           ))}
         </section>
 
+        <section className="mt-8">
+          <SectionTitle title="Shop by Category" subtitle="Find your beauty essentials." href="/categories" />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {categories.slice(0, 6).map((category) => (
+              <Link
+                key={category.slug}
+                to="/category/$slug"
+                params={{ slug: category.slug }}
+                className="group relative aspect-square overflow-hidden border border-border bg-muted"
+              >
+                <img {...imgProps(category.image, { width: 300, widths: [160, 300], sizes: "(max-width: 640px) 50vw, 16vw" })} alt={category.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 flex items-center justify-center bg-background/40 transition group-hover:bg-background/25">
+                  <span className="font-display text-sm font-semibold text-foreground drop-shadow-sm md:text-base">{category.name}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <ProductShelf title="New Arrivals" subtitle="Fresh beauty picks, just for you." products={firstShelf} promo={promos[0]} />
         <ProductShelf title="Best Sellers" subtitle="Loved by thousands. Beauty that delivers." products={secondShelf} promo={promos[1]} />
 
