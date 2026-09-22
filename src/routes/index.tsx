@@ -139,14 +139,6 @@ function Index() {
           <div className="min-w-0 flex-1"><HeroSlider slides={slides} /></div>
         </section>
 
-        <section className="grid grid-cols-2 border-x border-b border-border bg-card md:grid-cols-5">
-          {benefits.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex min-h-20 items-center gap-3 border-r border-t border-border px-4 first:border-t-0 md:border-t-0 last:border-r-0">
-              <Icon className="h-6 w-6 shrink-0 text-foreground" />
-              <div><p className="text-xs font-bold">{title}</p><p className="text-[10px] text-muted-foreground">{text}</p></div>
-            </div>
-          ))}
-        </section>
 
         <section className="mt-8">
           <SectionTitle title="Shop by Category" subtitle="Find your beauty essentials." href="/categories" />
