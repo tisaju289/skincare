@@ -39,6 +39,8 @@ import {
   normalizeHeaderMenus,
   normalizeFooterColumns,
   type FooterColumn,
+  normalizeShelfPromos,
+  type ShelfPromo,
   HEADER_MENU_COLORS,
   type HeaderMenu,
   type HeaderMenuColor,
