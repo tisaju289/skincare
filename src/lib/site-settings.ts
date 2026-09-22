@@ -334,6 +334,28 @@ export const DEFAULT_FOOTER_COLUMNS: FooterColumn[] = [
   },
 ];
 
+/** Offer banner image shown beside a homepage product shelf. */
+export type ShelfPromo = { image: string; link: string; enabled: boolean };
+
+export const DEFAULT_SHELF_PROMOS: ShelfPromo[] = [
+  { image: "", link: "/search", enabled: true },
+  { image: "", link: "/search", enabled: true },
+];
+
+export function normalizeShelfPromos(value: unknown): ShelfPromo[] {
+  const stored = Array.isArray(value) ? value : [];
+  const clean = stored
+    .filter((p) => p && typeof p === "object")
+    .map((p: any) => ({
+      image: String(p.image ?? ""),
+      link: String(p.link ?? "/search"),
+      enabled: p.enabled !== false,
+    }));
+  const out = clean.slice(0, 2);
+  while (out.length < 2) out.push({ ...DEFAULT_SHELF_PROMOS[out.length] });
+  return out;
+}
+
 export function normalizeFooterColumns(value: unknown): FooterColumn[] {
   const stored = Array.isArray(value) ? value : [];
   const clean = stored
