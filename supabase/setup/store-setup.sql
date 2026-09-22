@@ -1413,11 +1413,11 @@ VALUES ('media', 'media', true, 10485760)
 ON CONFLICT (id) DO UPDATE SET public = true, file_size_limit = 10485760;
 
 
-======================================================================
+-- ======================================================================
 -- DEMO CATALOG DATA — 6 categories, 12 brands, 14 products with
 -- images, reviews and promo codes so the store is ready to sell
 -- right after import. Safe to re-run (ON CONFLICT DO NOTHING).
-======================================================================
+-- ======================================================================
 
 -- Brands
 
