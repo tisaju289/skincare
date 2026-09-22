@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Heart, ShoppingBag, Menu, X, UserRound } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
@@ -8,6 +8,7 @@ import { CartDrawer } from "./CartDrawer";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { SearchAutocomplete } from "./SearchAutocomplete";
 import { WhatsAppButton } from "./WhatsAppButton";
+import { Button } from "@/components/ui/button";
 
 import {
   DEFAULT_SETTINGS,
@@ -18,16 +19,16 @@ import {
 } from "@/lib/site-settings";
 
 const NAV_LINK =
-  "text-[13px] font-medium whitespace-nowrap px-2.5 py-1.5 rounded-full text-foreground/75 hover:text-foreground hover:bg-muted transition-colors";
+  "text-[12px] font-semibold uppercase whitespace-nowrap px-3 py-3 text-foreground/75 hover:text-primary transition-colors";
 
 
 const MENU_PILL: Record<string, string> = {
   none: "",
-  pink: "bg-[color:var(--brand-pink)] text-white px-3 py-1.5 rounded-full",
-  magenta: "bg-[color:var(--brand-magenta)] text-white px-3 py-1.5 rounded-full",
-  purple: "bg-[color:var(--brand-purple)] text-white px-3 py-1.5 rounded-full",
-  teal: "bg-[color:var(--brand-teal)] text-white px-3 py-1.5 rounded-full",
-  green: "bg-[color:var(--brand-green)] text-white px-3 py-1.5 rounded-full",
+  pink: "bg-[color:var(--brand-pink)] text-primary-foreground px-3 py-1.5 rounded-full",
+  magenta: "bg-[color:var(--brand-magenta)] text-primary-foreground px-3 py-1.5 rounded-full",
+  purple: "bg-[color:var(--brand-purple)] text-primary-foreground px-3 py-1.5 rounded-full",
+  teal: "bg-[color:var(--brand-teal)] text-primary-foreground px-3 py-1.5 rounded-full",
+  green: "bg-[color:var(--brand-green)] text-primary-foreground px-3 py-1.5 rounded-full",
 };
 
 export function SiteHeader({
@@ -73,15 +74,17 @@ export function SiteHeader({
         </div>
       )}
 
-      <header className="sticky top-0 z-40 border-b border-border/70 bg-[color-mix(in_oklab,var(--color-background)_82%,transparent)] backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 sm:gap-4">
-          <button
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:gap-5">
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
-            className="lg:hidden h-9 w-9 shrink-0 grid place-items-center rounded-full border border-border/70 hover:bg-muted"
+            className="lg:hidden shrink-0"
           >
             <Menu className="h-5 w-5" />
-          </button>
+          </Button>
           <Link to="/" className="flex items-center gap-2 shrink-0 min-w-0">
             {settings.logo_url && (
               <img
@@ -92,12 +95,12 @@ export function SiteHeader({
                 className="h-8 sm:h-10 w-auto object-contain shrink-0"
               />
             )}
-            <span className="font-display text-xl sm:text-2xl tracking-tight text-foreground truncate">
+            <span className="font-display text-2xl font-bold text-primary sm:text-3xl">
               {settings.store_name}
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1 ml-2">
+          <nav className="hidden items-center gap-1 lg:flex">
             {menus.map((m, i) => {
               const cls = `${NAV_LINK} ${MENU_PILL[m.color] ?? ""}`;
               if (m.type === "category") {
@@ -129,12 +132,12 @@ export function SiteHeader({
             })}
           </nav>
 
-          <SearchAutocomplete className="hidden md:block flex-1 min-w-0 ml-4" />
+          <SearchAutocomplete className="ml-auto hidden min-w-0 max-w-xs flex-1 md:block" />
           <div className="ml-auto flex items-center gap-2 shrink-0">
             <Link
               to="/wishlist"
               aria-label="Wishlist"
-              className="relative h-9 w-9 grid place-items-center rounded-full border border-border/70 hover:bg-muted"
+               className="relative grid h-9 w-9 place-items-center hover:text-primary"
             >
               <Heart className="h-4 w-4" />
               {wishCount > 0 && (
@@ -143,22 +146,19 @@ export function SiteHeader({
                 </span>
               )}
             </Link>
-            <Link
-              to="/search"
-              search={{ q: "" }}
-              className="hidden lg:flex items-center gap-2 rounded-full border border-foreground/15 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-foreground hover:text-background transition-colors"
-            >
-              All products
+            <Link to="/auth" aria-label="Account" className="hidden h-9 w-9 place-items-center hover:text-primary sm:grid">
+              <UserRound className="h-4 w-4" />
             </Link>
-            <button
+            <Button
+              variant="default"
               onClick={() => setCartOpen(true)}
-              className="flex items-center gap-2 rounded-full bg-foreground text-background px-3 sm:px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em]"
+              className="rounded-none px-3 text-[11px] font-semibold uppercase sm:px-4"
             >
               <ShoppingBag className="h-4 w-4" /> <span className="hidden sm:inline">Bag</span>
-              <span className="bg-background text-foreground rounded-full h-5 min-w-5 px-1 grid place-items-center text-[10px] font-semibold">
+               <span className="grid h-5 min-w-5 place-items-center rounded-full bg-background px-1 text-[10px] font-semibold text-foreground">
                 {count}
               </span>
-            </button>
+            </Button>
 
           </div>
         </div>
@@ -175,7 +175,7 @@ export function SiteHeader({
       <div className={`lg:hidden fixed inset-0 z-50 ${menuOpen ? "" : "pointer-events-none"}`} aria-hidden={!menuOpen}>
         <div
           onClick={() => setMenuOpen(false)}
-          className={`absolute inset-0 bg-black/50 transition-opacity ${menuOpen ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 bg-foreground/50 transition-opacity ${menuOpen ? "opacity-100" : "opacity-0"}`}
         />
         <div
           className={`absolute inset-y-0 left-0 w-[82%] max-w-80 bg-background flex flex-col transition-transform duration-200 ${
@@ -184,9 +184,9 @@ export function SiteHeader({
         >
           <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
             <span className="text-sm font-black uppercase truncate">{settings.store_name}</span>
-            <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="h-8 w-8 shrink-0 grid place-items-center rounded-lg hover:bg-muted">
+             <Button variant="ghost" size="icon" onClick={() => setMenuOpen(false)} aria-label="Close menu" className="shrink-0">
               <X className="h-4 w-4" />
-            </button>
+             </Button>
           </div>
           <nav className="flex-1 overflow-y-auto p-3 space-y-1">
             <Link to="/search" search={{ q: "" }} onClick={() => setMenuOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-bold hover:bg-muted">
