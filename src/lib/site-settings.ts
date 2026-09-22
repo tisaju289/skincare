@@ -377,6 +377,7 @@ export type SiteSettings = {
   product_badges: ProductBadge[];
   header_menus: HeaderMenu[];
   footer_columns: FooterColumn[];
+  shelf_promos: ShelfPromo[];
 
   footer_about: string | null;
   footer_copyright: string | null;
