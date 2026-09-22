@@ -117,15 +117,15 @@ function HotProducts({ products }: { products: Product[] }) {
   const loop = [...items, ...items];
   return (
     <section className="mt-8 overflow-hidden rounded-xl border border-orange-500/30 bg-gradient-to-br from-orange-950 via-red-900 to-rose-950 shadow-lg">
-      <div className="flex items-center gap-3 px-5 py-3">
+      <div className="flex items-center gap-3 px-5 py-5">
         <span className="text-2xl">🔥</span>
         <div>
           <h2 className="font-display text-xl font-bold uppercase tracking-wide text-orange-100">Hot Products</h2>
           <p className="text-[11px] text-orange-200/70">Trending now — grab them before they're gone</p>
         </div>
       </div>
-      <div className="group relative overflow-hidden">
-        <div className="marquee-track flex w-max gap-3 px-4 pb-4">
+      <div className="group relative overflow-hidden py-5">
+        <div className="marquee-track flex w-max gap-3 px-4">
           {loop.map((p, i) => (
             <div key={`${p.slug}-${i}`} className="w-48 shrink-0">
               <ProductCard product={p} />
