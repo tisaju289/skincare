@@ -127,24 +127,9 @@ function HotProducts({ products }: { products: Product[] }) {
       <div className="group relative overflow-hidden">
         <div className="marquee-track flex w-max gap-3 px-4 pb-4">
           {loop.map((p, i) => (
-            <Link
-              key={`${p.slug}-${i}`}
-              to="/product/$slug"
-              params={{ slug: p.slug }}
-              className="flex w-44 shrink-0 items-center gap-3 rounded-lg bg-card p-2.5 shadow-md transition hover:shadow-xl"
-            >
-              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-secondary">
-                <img {...imgProps(p.image, { width: 120, widths: [80, 120], sizes: "64px" })} alt={p.name} className="h-full w-full object-contain p-1" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[10px] font-medium text-muted-foreground">{p.brand}</p>
-                <h3 className="line-clamp-2 text-xs font-semibold leading-snug text-foreground">{p.name}</h3>
-                <div className="mt-1 flex items-baseline gap-1.5">
-                  <span className="text-sm font-bold text-foreground">৳{p.price}</span>
-                  {p.old != null && <span className="text-[10px] text-muted-foreground line-through">৳{p.old}</span>}
-                </div>
-              </div>
-            </Link>
+            <div key={`${p.slug}-${i}`} className="w-48 shrink-0">
+              <ProductCard product={p} />
+            </div>
           ))}
         </div>
       </div>
