@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Heart, ShoppingBag, Menu, X, UserRound } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Heart, ShoppingBag, Menu, X, UserRound, Search } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
