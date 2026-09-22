@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -81,6 +81,7 @@ function ProductPage() {
   };
   const { product, gallery, variants, related, reviews, categories, settings } = data;
   const { add } = useCart();
+  const navigate = useNavigate();
   const wishlist = useWishlist();
   const saved = wishlist.has(product.slug);
   const [qty, setQty] = useState(1);
@@ -265,19 +266,46 @@ function ProductPage() {
             </button>
           </div>
 
-          {whatsappEnabled(settings) && (
-            <a
-              href={whatsappLink(
-                settings,
-                `Hi! I want to order:\n${product.name}${variant ? ` (${variant.value})` : ""}\nQty: ${qty}\nPrice: ৳${price}`,
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 w-full rounded-full bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 hover:brightness-105"
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <button
+              disabled={soldOut}
+              onClick={() => {
+                add(
+                  {
+                    slug: product.slug,
+                    name: product.name,
+                    price,
+                    image: variant?.image || product.image,
+                    variantId: variant?.id ?? null,
+                    variantLabel: variant ? `${variant.name}: ${variant.value}` : null,
+                  },
+                  qty,
+                );
+                navigate({ to: "/checkout" });
+              }}
+              className="rounded-full bg-foreground text-background font-bold py-3 flex items-center justify-center gap-2 hover:opacity-90 disabled:bg-muted disabled:text-muted-foreground"
             >
-              <MessageCircle className="h-4 w-4" /> Order on WhatsApp
-            </a>
-          )}
+              <ShoppingBag className="h-4 w-4" /> {soldOut ? "Sold out" : "Buy Now"}
+            </button>
+            {whatsappEnabled(settings) ? (
+              <a
+                href={whatsappLink(
+                  settings,
+                  `Hi! I want to order:\n${product.name}${variant ? ` (${variant.value})` : ""}\nQty: ${qty}\nPrice: ৳${price}`,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 hover:brightness-105"
+              >
+                <MessageCircle className="h-4 w-4" /> WhatsApp Order
+              </a>
+            ) : (
+              <button disabled className="rounded-full bg-muted text-muted-foreground font-bold py-3 flex items-center justify-center gap-2">
+                <MessageCircle className="h-4 w-4" /> WhatsApp Order
+              </button>
+            )}
+          </div>
+
 
 
 
