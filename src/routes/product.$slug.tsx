@@ -266,6 +266,46 @@ function ProductPage() {
             </button>
           </div>
 
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <button
+              disabled={soldOut}
+              onClick={() => {
+                add(
+                  {
+                    slug: product.slug,
+                    name: product.name,
+                    price,
+                    image: variant?.image || product.image,
+                    variantId: variant?.id ?? null,
+                    variantLabel: variant ? `${variant.name}: ${variant.value}` : null,
+                  },
+                  qty,
+                );
+                navigate({ to: "/checkout" });
+              }}
+              className="rounded-full bg-foreground text-background font-bold py-3 flex items-center justify-center gap-2 hover:opacity-90 disabled:bg-muted disabled:text-muted-foreground"
+            >
+              <ShoppingBag className="h-4 w-4" /> {soldOut ? "Sold out" : "Buy Now"}
+            </button>
+            {whatsappEnabled(settings) ? (
+              <a
+                href={whatsappLink(
+                  settings,
+                  `Hi! I want to order:\n${product.name}${variant ? ` (${variant.value})` : ""}\nQty: ${qty}\nPrice: ৳${price}`,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 hover:brightness-105"
+              >
+                <MessageCircle className="h-4 w-4" /> WhatsApp Order
+              </a>
+            ) : (
+              <button disabled className="rounded-full bg-muted text-muted-foreground font-bold py-3 flex items-center justify-center gap-2">
+                <MessageCircle className="h-4 w-4" /> WhatsApp Order
+              </button>
+            )}
+          </div>
+
           {whatsappEnabled(settings) && (
             <a
               href={whatsappLink(
