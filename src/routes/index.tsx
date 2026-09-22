@@ -147,8 +147,8 @@ function Index() {
           ))}
         </section>
 
-        <ProductShelf title="New Arrivals" subtitle="Fresh beauty picks, just for you." products={firstShelf} promo="UP TO 50% OFF" tone="offer" />
-        <ProductShelf title="Best Sellers" subtitle="Loved by thousands. Beauty that delivers." products={secondShelf} promo="Beauty Kits" tone="kit" />
+        <ProductShelf title="New Arrivals" subtitle="Fresh beauty picks, just for you." products={firstShelf} promo={promos[0]} />
+        <ProductShelf title="Best Sellers" subtitle="Loved by thousands. Beauty that delivers." products={secondShelf} promo={promos[1]} />
 
         <section className="mt-8">
           <SectionTitle title="Featured Collections" subtitle="Everything for your daily beauty ritual." href="/categories" />
