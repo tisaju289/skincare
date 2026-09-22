@@ -190,7 +190,7 @@ function Index() {
 
         <section className="mt-8">
           <SectionTitle title="Featured Collections" subtitle="Everything for your daily beauty ritual." href="/categories" />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {categories.slice(0, 4).map((category) => (
               <Link key={category.slug} to="/category/$slug" params={{ slug: category.slug }} className="group relative aspect-[1.65/1] overflow-hidden bg-muted">
                 <img {...imgProps(category.image, { width: 600, widths: [320, 480, 600], sizes: "(max-width: 640px) 100vw, 25vw" })} alt={category.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
