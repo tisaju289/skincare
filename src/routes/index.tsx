@@ -151,7 +151,7 @@ function Index() {
                 className="group relative aspect-square overflow-hidden border border-border bg-muted"
               >
                 <img {...imgProps(category.image, { width: 300, widths: [160, 300], sizes: "(max-width: 640px) 50vw, 16vw" })} alt={category.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                <div className="absolute inset-0 flex items-center justify-center bg-background/40 transition group-hover:bg-background/25">
+                <div className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-background/40 p-2 transition group-hover:bg-background/25">
                   <span className="font-display text-sm font-semibold text-foreground drop-shadow-sm md:text-base">{category.name}</span>
                 </div>
               </Link>
