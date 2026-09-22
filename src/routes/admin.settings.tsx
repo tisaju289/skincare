@@ -117,6 +117,7 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
         product_badges: normalizeProductBadges((q.data as SiteSettings).product_badges),
         header_menus: normalizeHeaderMenus((q.data as SiteSettings).header_menus),
         footer_columns: normalizeFooterColumns((q.data as SiteSettings).footer_columns),
+        shelf_promos: normalizeShelfPromos((q.data as SiteSettings).shelf_promos),
       });
   }, [q.data]);
 
