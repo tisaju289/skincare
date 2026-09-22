@@ -81,6 +81,7 @@ function ProductPage() {
   };
   const { product, gallery, variants, related, reviews, categories, settings } = data;
   const { add } = useCart();
+  const navigate = useNavigate();
   const wishlist = useWishlist();
   const saved = wishlist.has(product.slug);
   const [qty, setQty] = useState(1);
