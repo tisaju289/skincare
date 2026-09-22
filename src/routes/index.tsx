@@ -126,6 +126,7 @@ function Index() {
   const firstShelf = (newArrivals.length ? newArrivals : pool).slice(0, 5);
   const secondShelf = (bestSellers.length ? bestSellers : [...pool].reverse()).slice(0, 5);
   const slides = normalizeHeroSlides(data.settings.hero_slides);
+  const promos = normalizeShelfPromos(data.settings.shelf_promos);
 
   return (
     <div className="min-h-screen bg-background">
