@@ -124,8 +124,8 @@ function HotProducts({ products }: { products: Product[] }) {
           <p className="text-[11px] text-orange-200/70">Trending now — grab them before they're gone</p>
         </div>
       </div>
-      <div className="group relative overflow-hidden">
-        <div className="marquee-track flex w-max gap-3 px-4 pb-4">
+      <div className="group relative overflow-hidden py-5">
+        <div className="marquee-track flex w-max gap-3 px-4">
           {loop.map((p, i) => (
             <div key={`${p.slug}-${i}`} className="w-48 shrink-0">
               <ProductCard product={p} />
