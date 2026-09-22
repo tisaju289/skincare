@@ -566,6 +566,7 @@ export type Database = {
           seo_description: string | null
           seo_keywords: string | null
           seo_title: string | null
+          shelf_promos: Json
           shipping_flat_rate: number
           shipping_inside_dhaka: number
           shipping_outside_dhaka: number
@@ -624,6 +625,7 @@ export type Database = {
           seo_description?: string | null
           seo_keywords?: string | null
           seo_title?: string | null
+          shelf_promos?: Json
           shipping_flat_rate?: number
           shipping_inside_dhaka?: number
           shipping_outside_dhaka?: number
@@ -682,6 +684,7 @@ export type Database = {
           seo_description?: string | null
           seo_keywords?: string | null
           seo_title?: string | null
+          shelf_promos?: Json
           shipping_flat_rate?: number
           shipping_inside_dhaka?: number
           shipping_outside_dhaka?: number

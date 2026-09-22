@@ -334,6 +334,28 @@ export const DEFAULT_FOOTER_COLUMNS: FooterColumn[] = [
   },
 ];
 
+/** Offer banner image shown beside a homepage product shelf. */
+export type ShelfPromo = { image: string; link: string; enabled: boolean };
+
+export const DEFAULT_SHELF_PROMOS: ShelfPromo[] = [
+  { image: "", link: "/search", enabled: true },
+  { image: "", link: "/search", enabled: true },
+];
+
+export function normalizeShelfPromos(value: unknown): ShelfPromo[] {
+  const stored = Array.isArray(value) ? value : [];
+  const clean = stored
+    .filter((p) => p && typeof p === "object")
+    .map((p: any) => ({
+      image: String(p.image ?? ""),
+      link: String(p.link ?? "/search"),
+      enabled: p.enabled !== false,
+    }));
+  const out = clean.slice(0, 2);
+  while (out.length < 2) out.push({ ...DEFAULT_SHELF_PROMOS[out.length] });
+  return out;
+}
+
 export function normalizeFooterColumns(value: unknown): FooterColumn[] {
   const stored = Array.isArray(value) ? value : [];
   const clean = stored
@@ -355,6 +377,7 @@ export type SiteSettings = {
   product_badges: ProductBadge[];
   header_menus: HeaderMenu[];
   footer_columns: FooterColumn[];
+  shelf_promos: ShelfPromo[];
 
   footer_about: string | null;
   footer_copyright: string | null;
@@ -416,6 +439,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   product_badges: DEFAULT_PRODUCT_BADGES,
   header_menus: [],
   footer_columns: DEFAULT_FOOTER_COLUMNS,
+  shelf_promos: DEFAULT_SHELF_PROMOS,
   footer_about: null,
   footer_copyright: null,
   newsletter_enabled: true,
@@ -483,6 +507,7 @@ export function resolveSettings(row: unknown): SiteSettings {
   out.product_badges = normalizeProductBadges(r.product_badges);
   out.header_menus = normalizeHeaderMenus(r.header_menus);
   out.footer_columns = normalizeFooterColumns(r.footer_columns);
+  out.shelf_promos = normalizeShelfPromos(r.shelf_promos);
   out.newsletter_enabled = r.newsletter_enabled !== false;
   return out as SiteSettings;
 }

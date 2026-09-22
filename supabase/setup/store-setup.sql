@@ -780,6 +780,7 @@ GRANT EXECUTE ON FUNCTION public.place_order(text, text, text, text, jsonb, paym
 
 -- ---------- 20260727050426_4edeb447-6624-44fa-9b2e-bebc03b62e22.sql ----------
 ALTER TABLE public.store_settings
+  ADD COLUMN IF NOT EXISTS shelf_promos jsonb NOT NULL DEFAULT '[]'::jsonb,
   ADD COLUMN IF NOT EXISTS logo_url text,
   ADD COLUMN IF NOT EXISTS favicon_url text,
   ADD COLUMN IF NOT EXISTS og_image_url text,

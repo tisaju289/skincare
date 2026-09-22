@@ -39,6 +39,8 @@ import {
   normalizeHeaderMenus,
   normalizeFooterColumns,
   type FooterColumn,
+  normalizeShelfPromos,
+  type ShelfPromo,
   HEADER_MENU_COLORS,
   type HeaderMenu,
   type HeaderMenuColor,
@@ -59,6 +61,7 @@ const sections = [
   { id: "store", group: "settings", icon: Store, title: "Store details", desc: "Name, contact info, currency" },
   { id: "homepage", group: "design", icon: LayoutList, title: "Homepage layout", desc: "Reorder & show/hide home sections" },
   { id: "hero", group: "design", icon: GalleryHorizontal, title: "Hero slider", desc: "Slides shown at the top of the homepage" },
+  { id: "offers", group: "design", icon: ImageIcon, title: "Offer banners", desc: "2 images beside New Arrivals & Best Sellers" },
   { id: "headermenu", group: "design", icon: MenuIcon, title: "Header menu", desc: "Top navigation links & dropdowns" },
   { id: "productpage", group: "design", icon: BadgeCheck, title: "Product page", desc: "Delivery / authentic / return badges" },
   { id: "branding", group: "design", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
@@ -114,13 +117,14 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
         product_badges: normalizeProductBadges((q.data as SiteSettings).product_badges),
         header_menus: normalizeHeaderMenus((q.data as SiteSettings).header_menus),
         footer_columns: normalizeFooterColumns((q.data as SiteSettings).footer_columns),
+        shelf_promos: normalizeShelfPromos((q.data as SiteSettings).shelf_promos),
       });
   }, [q.data]);
 
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges", "header_menus", "footer_columns"]);
+      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges", "header_menus", "footer_columns", "shelf_promos"]);
       const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
@@ -142,6 +146,9 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
   const productBadges = normalizeProductBadges(form.product_badges);
   const headerMenus = normalizeHeaderMenus(form.header_menus);
   const footerColumns = normalizeFooterColumns(form.footer_columns);
+  const shelfPromos = normalizeShelfPromos(form.shelf_promos);
+  const setPromo = (index: number, patch: Partial<ShelfPromo>) =>
+    set("shelf_promos", shelfPromos.map((p, i) => (i === index ? { ...p, ...patch } : p)));
 
   const setColumn = (i: number, patch: Partial<FooterColumn>) =>
     set("footer_columns", footerColumns.map((c, idx) => (idx === i ? { ...c, ...patch } : c)));
@@ -573,6 +580,43 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
                 </div>
               )}
 
+
+              {tab === "offers" && (
+                <div className="space-y-4">
+                  <p className="text-xs text-muted-foreground">
+                    These two images show on the right side of the New Arrivals and Best Sellers rows on the homepage.
+                    Recommended size: 560 × 700 px. Leave the image empty to hide the banner.
+                  </p>
+                  {shelfPromos.map((p, i) => (
+                    <div key={i} className="rounded-xl border border-border p-4 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-bold">{i === 0 ? "Banner 1 — beside New Arrivals" : "Banner 2 — beside Best Sellers"}</p>
+                        <label className="flex items-center gap-2 text-xs font-semibold">
+                          <input
+                            type="checkbox"
+                            checked={p.enabled}
+                            onChange={(e) => setPromo(i, { enabled: e.target.checked })}
+                            className="h-4 w-4"
+                          />
+                          Show
+                        </label>
+                      </div>
+                      <ImageInput
+                        label="Banner image"
+                        folder="offers"
+                        value={p.image}
+                        onChange={(v) => setPromo(i, { image: v })}
+                      />
+                      <Field
+                        label="Link"
+                        value={p.link}
+                        onChange={(v) => setPromo(i, { link: v })}
+                        hint="e.g. /search or /category/skincare"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {tab === "headermenu" && (
                 <div className="space-y-2">
