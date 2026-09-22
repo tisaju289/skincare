@@ -111,6 +111,47 @@ function ProductShelf({ title, subtitle, products, promo }: { title: string; sub
   );
 }
 
+function HotProducts({ products }: { products: Product[] }) {
+  const items = products.length ? products : [];
+  if (!items.length) return null;
+  const loop = [...items, ...items];
+  return (
+    <section className="mt-8 overflow-hidden rounded-xl border border-orange-500/30 bg-gradient-to-br from-orange-950 via-red-900 to-rose-950 shadow-lg">
+      <div className="flex items-center gap-3 px-5 py-3">
+        <span className="text-2xl">🔥</span>
+        <div>
+          <h2 className="font-display text-xl font-bold uppercase tracking-wide text-orange-100">Hot Products</h2>
+          <p className="text-[11px] text-orange-200/70">Trending now — grab them before they're gone</p>
+        </div>
+      </div>
+      <div className="group relative overflow-hidden">
+        <div className="marquee-track flex w-max gap-3 px-4 pb-4">
+          {loop.map((p, i) => (
+            <Link
+              key={`${p.slug}-${i}`}
+              to="/product/$slug"
+              params={{ slug: p.slug }}
+              className="flex w-44 shrink-0 items-center gap-3 rounded-lg bg-card p-2.5 shadow-md transition hover:shadow-xl"
+            >
+              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md bg-secondary">
+                <img {...imgProps(p.image, { width: 120, widths: [80, 120], sizes: "64px" })} alt={p.name} className="h-full w-full object-contain p-1" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[10px] font-medium text-muted-foreground">{p.brand}</p>
+                <h3 className="line-clamp-2 text-xs font-semibold leading-snug text-foreground">{p.name}</h3>
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  <span className="text-sm font-bold text-foreground">৳{p.price}</span>
+                  {p.old != null && <span className="text-[10px] text-muted-foreground line-through">৳{p.old}</span>}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Index() {
   const data = Route.useLoaderData() as {
     categories: Category[];
