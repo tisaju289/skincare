@@ -439,6 +439,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   product_badges: DEFAULT_PRODUCT_BADGES,
   header_menus: [],
   footer_columns: DEFAULT_FOOTER_COLUMNS,
+  shelf_promos: DEFAULT_SHELF_PROMOS,
   footer_about: null,
   footer_copyright: null,
   newsletter_enabled: true,
