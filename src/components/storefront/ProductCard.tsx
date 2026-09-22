@@ -27,7 +27,7 @@ export function ProductCard({ product: p }: { product: Product }) {
         </Link>
 
         <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1.5">
-          {p.tag && (
+          {p.tag && !p.tag.includes("%") && (
             <span className="rounded-full bg-foreground/85 px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase text-background backdrop-blur">
               {p.tag}
             </span>
