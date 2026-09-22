@@ -75,21 +75,36 @@ const benefits = [
   { icon: Headphones, title: "24/7 Support", text: "We're here for you" },
 ];
 
-function ProductShelf({ title, subtitle, products, promo, tone }: { title: string; subtitle: string; products: Product[]; promo: string; tone: "offer" | "kit" }) {
+function PromoBanner({ promo }: { promo: ShelfPromo }) {
+  const image = (promo.image ?? "").trim();
+  if (!promo.enabled || !image) return null;
+  const href = (promo.link ?? "").trim() || "/search";
+  const inner = (
+    <img
+      {...imgProps(image, { width: 560, widths: [320, 560], sizes: "(max-width: 1024px) 100vw, 17rem" })}
+      alt=""
+      className="h-full w-full object-cover transition duration-500 hover:scale-105"
+    />
+  );
+  const cls = "block h-full min-h-44 overflow-hidden border border-border bg-muted";
+  return href.startsWith("/") ? (
+    <Link to={href} className={cls}>{inner}</Link>
+  ) : (
+    <a href={href} className={cls} target="_blank" rel="noreferrer">{inner}</a>
+  );
+}
+
+function ProductShelf({ title, subtitle, products, promo }: { title: string; subtitle: string; products: Product[]; promo: ShelfPromo }) {
+  const hasPromo = promo.enabled && Boolean((promo.image ?? "").trim());
   return (
-    <section className="mt-8 grid gap-4 lg:grid-cols-[1fr_17rem]">
+    <section className={`mt-8 grid gap-4 ${hasPromo ? "lg:grid-cols-[1fr_17rem]" : ""}`}>
       <div className="min-w-0">
         <SectionTitle title={title} subtitle={subtitle} />
         <div className="grid grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-3 xl:grid-cols-5">
           {products.slice(0, 5).map((product) => <ProductCard key={product.slug} product={product} />)}
         </div>
       </div>
-      <Link to="/search" search={{ q: "" }} className={`beauty-promo ${tone === "offer" ? "beauty-promo-offer" : "beauty-promo-kit"}`}>
-        <span className="text-xs font-semibold uppercase">{tone === "offer" ? "Limited time offer" : "Curated for you"}</span>
-        <strong className="font-display text-4xl leading-none">{promo}</strong>
-        <span className="max-w-36 text-sm">{tone === "offer" ? "On selected beauty favorites" : "Everything you love in one set"}</span>
-        <span className="mt-2 inline-flex w-fit items-center gap-1 bg-foreground px-4 py-2 text-xs font-semibold text-background">Shop Now <ArrowRight className="h-3.5 w-3.5" /></span>
-      </Link>
+      <PromoBanner promo={promo} />
     </section>
   );
 }
