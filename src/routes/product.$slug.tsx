@@ -139,12 +139,24 @@ function ProductPage() {
 
       <section className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-6 md:gap-8">
         <div className="space-y-3">
-          <div className={`aspect-square rounded-3xl overflow-hidden ${product.color}`}>
+          <div className="relative aspect-square rounded-3xl overflow-hidden bg-muted">
             <img
               {...imgProps(activeImage, { width: 960, widths: [480, 720, 960, 1200], sizes: "(max-width: 768px) 100vw, 560px", eager: true })}
               alt={product.name}
               className="h-full w-full object-cover"
             />
+            <button
+              type="button"
+              aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
+              aria-pressed={saved}
+              onClick={() => {
+                const added = wishlist.toggle(mini);
+                toast.success(added ? "Saved to wishlist" : "Removed from wishlist");
+              }}
+              className="absolute top-3 right-3 h-11 w-11 rounded-full bg-white/80 backdrop-blur grid place-items-center shadow-sm hover:bg-white"
+            >
+              <Heart className={`h-5 w-5 ${saved ? "fill-[color:var(--brand-pink)] text-[color:var(--brand-pink)]" : ""}`} />
+            </button>
           </div>
           <div className="grid grid-cols-4 gap-3">
             {images.slice(0, 4).map((src, i) => (
@@ -250,18 +262,6 @@ function ProductPage() {
               className="flex-1 min-w-[10rem] rounded-full bg-[color:var(--brand-pink)] text-white font-bold py-3 flex items-center justify-center gap-2 hover:opacity-90 disabled:bg-muted disabled:text-muted-foreground"
             >
               <ShoppingBag className="h-4 w-4" /> {soldOut ? "Sold out" : "Add to Bag"}
-            </button>
-            <button
-              type="button"
-              aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
-              aria-pressed={saved}
-              onClick={() => {
-                const added = wishlist.toggle(mini);
-                toast.success(added ? "Saved to wishlist" : "Removed from wishlist");
-              }}
-              className="h-12 w-12 shrink-0 rounded-full border border-border grid place-items-center hover:bg-muted"
-            >
-              <Heart className={`h-5 w-5 ${saved ? "fill-[color:var(--brand-pink)] text-[color:var(--brand-pink)]" : ""}`} />
             </button>
           </div>
 
