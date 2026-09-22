@@ -97,7 +97,7 @@ function PromoBanner({ promo }: { promo: ShelfPromo }) {
 function ProductShelf({ title, subtitle, products, promo }: { title: string; subtitle: string; products: Product[]; promo: ShelfPromo }) {
   const hasPromo = promo.enabled && Boolean((promo.image ?? "").trim());
   return (
-    <section className={`mt-8 grid gap-4 ${hasPromo ? "lg:grid-cols-[1fr_17rem]" : ""}`}>
+    <section className={`fire-border mt-8 rounded-xl p-4 grid gap-4 ${hasPromo ? "lg:grid-cols-[1fr_17rem]" : ""}`}>
       <div className="min-w-0">
         <SectionTitle title={title} subtitle={subtitle} />
         <div className="grid grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-3 xl:grid-cols-5">
@@ -224,7 +224,7 @@ function Index() {
         </section>
 
         {data.brands.length > 0 ? (
-          <section className="mt-8 border-y border-border py-6">
+          <section className="fire-border mt-8 rounded-xl py-6">
             <div className="grid grid-cols-3 items-center gap-5 sm:grid-cols-4 lg:grid-cols-8">
               {data.brands.slice(0, 8).map((brand) => (
                 <Link key={brand.slug} to="/brand/$slug" params={{ slug: brand.slug }} className="grid h-12 place-items-center grayscale transition hover:grayscale-0">
