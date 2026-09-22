@@ -35,12 +35,10 @@ export const Route = createFileRoute("/")({
 
 function SectionTitle({ title, subtitle, href = "/search" }: { title: string; subtitle?: string; href?: string }) {
   return (
-    <div className="mb-4 flex items-end justify-between gap-4">
-      <div>
-        <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl">{title}</h2>
-        {subtitle ? <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p> : null}
-      </div>
-      <Link to={href} search={href === "/search" ? { q: "" } : undefined} className="flex shrink-0 items-center gap-1 text-xs font-semibold text-primary hover:underline">
+    <div className="mb-4 flex flex-col items-center text-center">
+      <h2 className="font-display text-2xl font-semibold text-foreground md:text-3xl">{title}</h2>
+      {subtitle ? <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p> : null}
+      <Link to={href} search={href === "/search" ? { q: "" } : undefined} className="mt-2 flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
         View All <ArrowRight className="h-3.5 w-3.5" />
       </Link>
     </div>
