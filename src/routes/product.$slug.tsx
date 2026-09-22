@@ -263,18 +263,6 @@ function ProductPage() {
             >
               <ShoppingBag className="h-4 w-4" /> {soldOut ? "Sold out" : "Add to Bag"}
             </button>
-            <button
-              type="button"
-              aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
-              aria-pressed={saved}
-              onClick={() => {
-                const added = wishlist.toggle(mini);
-                toast.success(added ? "Saved to wishlist" : "Removed from wishlist");
-              }}
-              className="h-12 w-12 shrink-0 rounded-full border border-border grid place-items-center hover:bg-muted"
-            >
-              <Heart className={`h-5 w-5 ${saved ? "fill-[color:var(--brand-pink)] text-[color:var(--brand-pink)]" : ""}`} />
-            </button>
           </div>
 
           {whatsappEnabled(settings) && (
