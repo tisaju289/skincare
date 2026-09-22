@@ -38,7 +38,7 @@ export function SiteFooter({
   return (
     <>
       {settings.newsletter_enabled !== false && (
-      <section className="border-y border-primary/15 bg-secondary">
+      <section className="border-y border-primary/15 bg-secondary mt-10 sm:mt-14">
         <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 py-10 md:grid-cols-2 md:py-12">
           <div>
           <p className="mb-2 text-[10px] font-bold uppercase text-primary">Stay in the glow</p>
