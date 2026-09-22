@@ -124,7 +124,7 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
   const save = useMutation({
     mutationFn: async () => {
       if (!q.data?.id) throw new Error("No settings row found");
-      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges", "header_menus", "footer_columns"]);
+      const payload = sanitizeRow(form as Record<string, any>, [], ["home_sections", "hero_slides", "product_badges", "header_menus", "footer_columns", "shelf_promos"]);
       const { error } = await supabase.from("store_settings").update(payload as never).eq("id", q.data.id);
       if (error) throw error;
     },
