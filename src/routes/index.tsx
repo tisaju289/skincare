@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
+  ChevronLeft,
   ChevronRight,
   Gift,
   Headphones,
@@ -157,6 +158,28 @@ function FlashSale({ products }: { products: Product[] }) {
   // Countdown resets every 12 hours from load
   const [target] = useState(() => Date.now() + 12 * 3_600_000);
   const { h, m, s } = useCountdown(target);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollByCard = useCallback((dir: 1 | -1) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>("[data-card]");
+    const step = card ? card.offsetWidth + 12 : el.clientWidth * 0.8;
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || products.length <= 1) return;
+    const id = setInterval(() => {
+      const card = el.querySelector<HTMLElement>("[data-card]");
+      const step = card ? card.offsetWidth + 12 : el.clientWidth * 0.8;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+      el.scrollBy({ left: atEnd ? -el.scrollWidth : step, behavior: "smooth" });
+    }, 3500);
+    return () => clearInterval(id);
+  }, [products.length]);
+
   if (!products.length) return null;
   return (
     <section className="mt-8 overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-primary/5">
@@ -186,10 +209,33 @@ function FlashSale({ products }: { products: Product[] }) {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-px overflow-hidden border-t border-border bg-border sm:grid-cols-3 xl:grid-cols-5">
-        {products.slice(0, 5).map((product) => (
-          <ProductCard key={product.slug} product={product} />
-        ))}
+      <div className="relative">
+        <button
+          type="button"
+          aria-label="Previous"
+          onClick={() => scrollByCard(-1)}
+          className="absolute left-1 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-border bg-background/90 text-foreground shadow-md transition hover:bg-primary hover:text-primary-foreground"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <div
+          ref={scrollRef}
+          className="flex gap-3 overflow-x-auto scroll-smooth px-4 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {products.map((product) => (
+            <div key={product.slug} data-card className="w-44 shrink-0 sm:w-48">
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          aria-label="Next"
+          onClick={() => scrollByCard(1)}
+          className="absolute right-1 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-border bg-background/90 text-foreground shadow-md transition hover:bg-primary hover:text-primary-foreground"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
     </section>
   );
