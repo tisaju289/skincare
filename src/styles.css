@@ -367,3 +367,11 @@
     animation: none;
   }
 }
+
+/* ---------------- Homepage fire-theme section borders ---------------- */
+
+@utility fire-border {
+  border: 1px solid transparent;
+  border-image: linear-gradient(135deg, #f97316, #ef4444, #e11d48, #f97316) 1;
+  box-shadow: 0 0 12px -4px color-mix(in oklab, #ef4444 35%, transparent);
+}
