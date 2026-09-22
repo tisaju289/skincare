@@ -164,7 +164,7 @@ function Index() {
         </section>
 
 
-        <section className="fire-border mt-8 rounded-xl p-4">
+        <section className="mt-8 rounded-xl p-4">
           <SectionTitle title="Shop by Category" subtitle="Find your beauty essentials." href="/categories" />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {categories.slice(0, 6).map((category) => (
