@@ -136,6 +136,65 @@ function HotProducts({ products }: { products: Product[] }) {
   );
 }
 
+function useCountdown(targetMs: number) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const diff = Math.max(0, targetMs - now);
+  const h = Math.floor(diff / 3_600_000);
+  const m = Math.floor((diff % 3_600_000) / 60_000);
+  const s = Math.floor((diff % 60_000) / 1000);
+  return { h, m, s };
+}
+
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function FlashSale({ products }: { products: Product[] }) {
+  // Countdown resets every 12 hours from load
+  const [target] = useState(() => Date.now() + 12 * 3_600_000);
+  const { h, m, s } = useCountdown(target);
+  if (!products.length) return null;
+  return (
+    <section className="mt-8 overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-primary/5">
+      <div className="flex flex-col items-center gap-3 px-5 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">⚡</span>
+          <div>
+            <h2 className="font-display text-xl font-bold uppercase tracking-wide text-primary">Flash Sale</h2>
+            <p className="text-[11px] text-muted-foreground">Limited time deals — hurry up!</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-muted-foreground">Ends in</span>
+          <div className="flex items-center gap-1">
+            {[
+              { v: h, l: "Hrs" },
+              { v: m, l: "Min" },
+              { v: s, l: "Sec" },
+            ].map((unit, i) => (
+              <span key={i} className="flex items-center gap-1">
+                <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary font-mono text-sm font-bold text-primary-foreground tabular-nums">
+                  {pad(unit.v)}
+                </span>
+                {i < 2 && <span className="text-primary font-bold">:</span>}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-px overflow-hidden border-t border-border bg-border sm:grid-cols-3 xl:grid-cols-5">
+        {products.slice(0, 5).map((product) => (
+          <ProductCard key={product.slug} product={product} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Index() {
   const data = Route.useLoaderData() as {
     categories: Category[];
