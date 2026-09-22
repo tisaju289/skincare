@@ -280,26 +280,6 @@ function ProductPage() {
           )}
 
 
-          {(() => {
-            const badges = normalizeProductBadges(settings.product_badges).filter((b) => b.enabled);
-            if (!badges.length) return null;
-            return (
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-border pt-6">
-                {badges.map((b, i) => {
-                  const Icon = PRODUCT_BADGE_ICON_MAP[b.icon] ?? Truck;
-                  return (
-                    <div key={`${b.title}-${i}`} className="flex items-center gap-2">
-                      <Icon className="h-5 w-5 text-[color:var(--brand-pink)]" />
-                      <div>
-                        <p className="text-xs font-bold">{b.title}</p>
-                        <p className="text-[10px] text-muted-foreground">{b.subtitle}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })()}
 
         </div>
       </section>
