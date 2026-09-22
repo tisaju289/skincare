@@ -581,6 +581,43 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
               )}
 
 
+              {tab === "offers" && (
+                <div className="space-y-4">
+                  <p className="text-xs text-muted-foreground">
+                    These two images show on the right side of the New Arrivals and Best Sellers rows on the homepage.
+                    Recommended size: 560 × 700 px. Leave the image empty to hide the banner.
+                  </p>
+                  {shelfPromos.map((p, i) => (
+                    <div key={i} className="rounded-xl border border-border p-4 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-bold">{i === 0 ? "Banner 1 — beside New Arrivals" : "Banner 2 — beside Best Sellers"}</p>
+                        <label className="flex items-center gap-2 text-xs font-semibold">
+                          <input
+                            type="checkbox"
+                            checked={p.enabled}
+                            onChange={(e) => setPromo(i, { enabled: e.target.checked })}
+                            className="h-4 w-4"
+                          />
+                          Show
+                        </label>
+                      </div>
+                      <ImageInput
+                        label="Banner image"
+                        folder="offers"
+                        value={p.image}
+                        onChange={(v) => setPromo(i, { image: v })}
+                      />
+                      <Field
+                        label="Link"
+                        value={p.link}
+                        onChange={(v) => setPromo(i, { link: v })}
+                        hint="e.g. /search or /category/skincare"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {tab === "headermenu" && (
                 <div className="space-y-2">
                   <p className="text-xs text-muted-foreground">
