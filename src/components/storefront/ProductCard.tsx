@@ -14,7 +14,7 @@ export function ProductCard({ product: p }: { product: Product }) {
   const saved = wishlist.has(p.slug);
 
   return (
-    <div className="group relative flex flex-col overflow-hidden bg-card transition-colors hover:bg-secondary/40">
+    <div className="group relative flex flex-col overflow-hidden bg-card border border-border rounded-xl transition-colors hover:border-primary/40 hover:bg-secondary/40">
       <div className="relative">
         <Link to="/product/$slug" params={{ slug: p.slug }} className="block">
           <div className="relative aspect-square overflow-hidden bg-card">
