@@ -243,6 +243,8 @@ function Index() {
           </div>
         </section>
 
+        <FlashSale products={pickProducts(pool, "flash_sale", 5).length ? pickProducts(pool, "flash_sale", 5) : pickProducts(pool, "discount", 5)} />
+
         <HotProducts products={pickProducts(pool, "trending", 12)} />
 
         <ProductShelf title="New Arrivals" subtitle="Fresh beauty picks, just for you." products={firstShelf} promo={promos[0]} />
