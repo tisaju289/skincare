@@ -152,6 +152,16 @@ export function SiteHeader({
 
           <SearchAutocomplete className="ml-auto hidden min-w-0 max-w-xs flex-1 md:block" />
           <div className="ml-auto flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search"
+              className={`relative grid h-9 w-9 place-items-center hover:text-primary transition-opacity duration-200 md:hidden ${
+                searchHidden ? "opacity-0 pointer-events-none" : "opacity-100"
+              }`}
+            >
+              <Search className="h-4 w-4" />
+            </button>
             <Link
               to="/wishlist"
               aria-label="Wishlist"
@@ -181,12 +191,20 @@ export function SiteHeader({
           </div>
         </div>
 
-        <div className="md:hidden px-4 pb-3">
-          <SearchAutocomplete placeholder="Search products…" />
-        </div>
-
 
       </header>
+
+      {/* Mobile search overlay */}
+      {searchOpen && (
+        <div className="md:hidden fixed inset-0 z-50 bg-background">
+          <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+            <SearchAutocomplete className="flex-1" placeholder="Search products…" />
+            <Button variant="ghost" size="icon" onClick={() => setSearchOpen(false)} aria-label="Close search" className="shrink-0">
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      )}
 
 
       {/* Mobile menu drawer */}
