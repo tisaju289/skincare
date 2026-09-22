@@ -42,9 +42,9 @@ export function SiteFooter({
         <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 py-10 md:grid-cols-2 md:py-12">
           <div>
           <p className="mb-2 text-[10px] font-bold uppercase text-primary">Stay in the glow</p>
-          <h3 className="font-display text-2xl font-semibold md:text-3xl">
+          <h4 className="font-display text-2xl font-semibold md:text-3xl">
             {settings.newsletter_title || `Join the ${settings.store_name} beauty club`}
-          </h3>
+          </h4>
           {settings.newsletter_subtitle !== "" && (
             <p className="mt-2 text-sm text-muted-foreground">
               {settings.newsletter_subtitle || "Get 10% off your first order + weekly beauty tips."}
