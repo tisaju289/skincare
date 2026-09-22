@@ -11,7 +11,6 @@ export function ProductCard({ product: p }: { product: Product }) {
   const wishlist = useWishlist();
   const soldOut = p.stock <= 0;
   const saved = wishlist.has(p.slug);
-  const off = p.old && p.old > p.price ? Math.round(((p.old - p.price) / p.old) * 100) : null;
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-[1.4rem] glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-brand">
@@ -31,11 +30,6 @@ export function ProductCard({ product: p }: { product: Product }) {
           {p.tag && (
             <span className="rounded-full bg-foreground/85 px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase text-background backdrop-blur">
               {p.tag}
-            </span>
-          )}
-          {off && (
-            <span className="rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold text-primary-foreground">
-              −{off}%
             </span>
           )}
           {soldOut && (
