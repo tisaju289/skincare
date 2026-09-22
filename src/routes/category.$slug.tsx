@@ -5,7 +5,6 @@ import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { ShopFilters } from "@/components/storefront/ShopFilters";
-import { ProductSearchBar } from "@/components/storefront/ProductSearchBar";
 import type { Category, Product } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { siteHead, DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
@@ -113,9 +112,8 @@ function CategoryPage() {
         />
 
         <div className="min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-            <ProductSearchBar value={query} onChange={setQuery} placeholder={`Search in ${category.name}…`} />
-            <p className="text-sm text-muted-foreground shrink-0">{filtered.length} results</p>
+          <div className="flex items-center gap-3 mb-6">
+            <p className="text-sm text-muted-foreground">{filtered.length} results</p>
           </div>
 
           {filtered.length === 0 ? (
