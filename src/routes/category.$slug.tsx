@@ -5,7 +5,6 @@ import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { ShopFilters } from "@/components/storefront/ShopFilters";
-import { ProductSearchBar } from "@/components/storefront/ProductSearchBar";
 import type { Category, Product } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { siteHead, DEFAULT_SETTINGS, type SiteSettings } from "@/lib/site-settings";
