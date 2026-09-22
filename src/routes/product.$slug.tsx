@@ -300,7 +300,7 @@ function ProductPage() {
                 <MessageCircle className="h-4 w-4" /> WhatsApp Order
               </a>
             ) : (
-              <button disabled className="rounded-full bg-muted text-muted-foreground font-bold py-3 flex items-center justify-center gap-2">
+              <button disabled className="rounded-full bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 opacity-50">
                 <MessageCircle className="h-4 w-4" /> WhatsApp Order
               </button>
             )}
