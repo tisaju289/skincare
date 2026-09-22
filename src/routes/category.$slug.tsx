@@ -113,9 +113,8 @@ function CategoryPage() {
         />
 
         <div className="min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-            <ProductSearchBar value={query} onChange={setQuery} placeholder={`Search in ${category.name}…`} />
-            <p className="text-sm text-muted-foreground shrink-0">{filtered.length} results</p>
+          <div className="flex items-center gap-3 mb-6">
+            <p className="text-sm text-muted-foreground">{filtered.length} results</p>
           </div>
 
           {filtered.length === 0 ? (
