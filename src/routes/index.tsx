@@ -164,7 +164,7 @@ function Index() {
         </section>
 
 
-        <section className="mt-8">
+        <section className="fire-border mt-8 rounded-xl p-4">
           <SectionTitle title="Shop by Category" subtitle="Find your beauty essentials." href="/categories" />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {categories.slice(0, 6).map((category) => (
@@ -188,7 +188,7 @@ function Index() {
         <ProductShelf title="New Arrivals" subtitle="Fresh beauty picks, just for you." products={firstShelf} promo={promos[0]} />
         <ProductShelf title="Best Sellers" subtitle="Loved by thousands. Beauty that delivers." products={secondShelf} promo={promos[1]} />
 
-        <section className="mt-8">
+        <section className="fire-border mt-8 rounded-xl p-4">
           <SectionTitle title="Featured Collections" subtitle="Everything for your daily beauty ritual." href="/categories" />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {categories.slice(0, 4).map((category) => (
@@ -204,7 +204,7 @@ function Index() {
           </div>
         </section>
 
-        <section className="mt-8 grid gap-4 lg:grid-cols-[1fr_20rem]">
+        <section className="fire-border mt-8 rounded-xl p-4 lg:grid lg:grid-cols-[1fr_20rem] lg:gap-4">
           <div>
             <SectionTitle title="Beauty Articles" subtitle="Tips, trends and stories for a more beautiful you." />
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
