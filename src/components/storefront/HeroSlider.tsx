@@ -17,8 +17,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const go = (d: number) => setIndex((i) => (i + d + count) % count);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 pt-4 md:pt-7">
-      <div className="relative aspect-[16/9] md:aspect-[16/5] overflow-hidden rounded-[1.75rem] md:rounded-[2.5rem] bg-gradient-soft">
+    <section className="min-w-0 flex-1">
+      <div className="relative aspect-[16/9] md:aspect-[16/6] overflow-hidden bg-gradient-soft">
         {slides.map((s, i) => (
           <div
             key={i}
@@ -48,7 +48,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous slide"
-              className="absolute right-20 bottom-5 hidden h-10 w-10 place-items-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background sm:grid dew-ring"
+                className="absolute left-4 top-1/2 hidden h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-background/85 backdrop-blur transition hover:bg-background sm:grid dew-ring"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -56,11 +56,11 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               type="button"
               onClick={() => go(1)}
               aria-label="Next slide"
-              className="absolute right-6 bottom-5 hidden h-10 w-10 place-items-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background sm:grid dew-ring"
+                className="absolute right-4 top-1/2 hidden h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-background/85 backdrop-blur transition hover:bg-background sm:grid dew-ring"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
-            <div className="absolute bottom-4 left-5 flex gap-1.5 sm:left-10">
+            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
               {slides.map((_, i) => (
                 <button
                   key={i}
@@ -68,7 +68,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                   onClick={() => setIndex(i)}
                   aria-label={`Go to slide ${i + 1}`}
                   className={`h-1 rounded-full transition-all ${
-                    i === index ? "w-9 bg-foreground" : "w-3.5 bg-foreground/25"
+                    i === index ? "w-8 bg-primary" : "w-3 bg-background/70"
                   }`}
                 />
               ))}

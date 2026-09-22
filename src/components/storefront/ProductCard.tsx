@@ -5,6 +5,7 @@ import type { Product } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { imgProps } from "@/lib/image";
+import { Button } from "@/components/ui/button";
 
 export function ProductCard({ product: p }: { product: Product }) {
   const { add } = useCart();
@@ -13,16 +14,15 @@ export function ProductCard({ product: p }: { product: Product }) {
   const saved = wishlist.has(p.slug);
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-[1.4rem] glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-brand">
+    <div className="group relative flex flex-col overflow-hidden border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-brand">
       <div className="relative">
         <Link to="/product/$slug" params={{ slug: p.slug }} className="block">
-          <div className="relative aspect-[4/5] overflow-hidden bg-gradient-soft">
+          <div className="relative aspect-[4/5] overflow-hidden bg-muted">
             <img
               {...imgProps(p.image, { width: 480, widths: [240, 360, 480, 720], sizes: "(max-width: 640px) 45vw, 260px" })}
               alt={p.name}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+               className="h-full w-full object-contain p-2 transition-transform duration-700 group-hover:scale-[1.04]"
             />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,rgb(255_255_255/0.35),transparent_55%)]" />
           </div>
         </Link>
 
@@ -39,7 +39,9 @@ export function ProductCard({ product: p }: { product: Product }) {
           )}
         </div>
 
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           type="button"
           aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
           aria-pressed={saved}
@@ -47,14 +49,14 @@ export function ProductCard({ product: p }: { product: Product }) {
             const added = wishlist.toggle({ slug: p.slug, name: p.name, price: p.price, image: p.image, brand: p.brand });
             toast.success(added ? "Saved to wishlist" : "Removed from wishlist");
           }}
-          className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background dew-ring"
+          className="absolute right-3 top-3 z-10 rounded-full bg-background/90 backdrop-blur"
         >
           <Heart className={`h-4 w-4 ${saved ? "fill-primary text-primary" : "text-foreground/55"}`} />
-        </button>
+        </Button>
       </div>
 
       <div className="flex flex-1 flex-col p-3.5">
-        <p className="eyebrow text-[10px]">{p.brand}</p>
+         <p className="text-[10px] font-semibold uppercase text-primary">{p.brand}</p>
         <Link to="/product/$slug" params={{ slug: p.slug }}>
           <h3 className="font-display mt-1.5 line-clamp-2 min-h-[2.6rem] text-[15px] leading-snug transition-colors group-hover:text-primary">
             {p.name}
@@ -73,21 +75,22 @@ export function ProductCard({ product: p }: { product: Product }) {
 
         <div className="mt-auto flex items-end justify-between gap-2 pt-3">
           <div className="min-w-0">
-            <p className="font-display text-lg text-foreground">৳{p.price}</p>
+             <p className="font-display text-lg text-primary">৳{p.price}</p>
             {p.old != null && <p className="text-[11px] text-muted-foreground line-through">৳{p.old}</p>}
           </div>
-          <button
+           <Button
+             variant="outline"
             disabled={soldOut}
             aria-label="Add to bag"
             onClick={() => {
               add({ slug: p.slug, name: p.name, price: p.price, image: p.image });
               toast.success("Added to bag");
             }}
-            className="inline-flex items-center gap-1.5 rounded-full border border-foreground/15 px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-transparent hover:bg-primary hover:text-primary-foreground disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-foreground"
+             className="h-9 rounded-none border-primary px-3.5 text-[11px] font-semibold uppercase text-primary hover:bg-primary hover:text-primary-foreground"
           >
             <ShoppingBag className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">{soldOut ? "Sold" : "Add"}</span>
-          </button>
+           </Button>
         </div>
       </div>
     </div>
