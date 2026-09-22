@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { ArrowUpRight, ChevronRight, Truck, ShieldCheck, RefreshCw, Headphones, Star } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronRight, Truck, ShieldCheck, RefreshCw, Headphones, Star, Sparkles } from "lucide-react";
 import { getHomeData } from "@/lib/storefront.functions";
 import { SiteHeader } from "@/components/storefront/SiteHeader";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
@@ -10,6 +10,7 @@ import { pickProducts, type Category, type Product } from "@/lib/shop-data";
 import { SiteTheme } from "@/components/storefront/SiteTheme";
 import { HeroSlider } from "@/components/storefront/HeroSlider";
 import { imgProps } from "@/lib/image";
+import { Button } from "@/components/ui/button";
 import {
   siteHead,
   DEFAULT_SETTINGS,
@@ -47,7 +48,7 @@ const dealBanners = [
   { title: "Season sale", sub: "১৬% ছাড়", note: "Limited stock" },
 ];
 
-/** Editorial section heading: eyebrow label, display headline — centered. */
+/** Beauty editorial section heading. */
 function SectionHead({
   index,
   eyebrow,
@@ -60,14 +61,14 @@ function SectionHead({
   subtitle?: string;
 }) {
   return (
-    <div className="mb-7 flex flex-col items-center text-center border-b border-border pb-5">
+    <div className="mb-7 flex flex-col items-center text-center">
       <div className="flex items-center justify-center gap-3">
         {index ? (
-          <span className="font-display text-sm text-gradient-brand tracking-[0.2em]">{index}</span>
+          <span className="text-[10px] font-bold text-primary">{index}</span>
         ) : null}
         {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
       </div>
-      <h2 className="font-display mt-2 text-3xl sm:text-5xl uppercase">{title}</h2>
+      <h2 className="beauty-section-title mt-2 font-display text-2xl font-semibold sm:text-3xl">{title}</h2>
       {subtitle ? <p className="mt-1 text-sm text-muted-foreground max-w-xl">{subtitle}</p> : null}
     </div>
   );
@@ -76,6 +77,29 @@ function SectionHead({
 /** Bottom-of-section action row (e.g. View all). */
 function SectionFooter({ children }: { children: React.ReactNode }) {
   return <div className="mt-6 flex justify-center">{children}</div>;
+}
+
+function CategoryRail({ categories }: { categories: Category[] }) {
+  return (
+    <aside className="hidden w-56 shrink-0 border border-border bg-card lg:block">
+      <div className="flex items-center gap-2 bg-primary px-4 py-3 text-xs font-bold uppercase text-primary-foreground">
+        <Sparkles className="h-4 w-4" /> Shop by category
+      </div>
+      <nav className="divide-y divide-border">
+        {categories.slice(0, 8).map((category) => (
+          <Link
+            key={category.slug}
+            to="/category/$slug"
+            params={{ slug: category.slug }}
+            className="flex items-center justify-between px-4 py-3 text-xs font-medium transition-colors hover:bg-secondary hover:text-primary"
+          >
+            {category.name}
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+        ))}
+      </nav>
+    </aside>
+  );
 }
 
 /** Compact single-row card used inside the hot-products marquee band. */
@@ -87,8 +111,8 @@ function HotCard({ p }: { p: Product }) {
       params={{ slug: p.slug }}
       className="group mr-3 block w-40 shrink-0 sm:mr-4 sm:w-48"
     >
-      <div className="rounded-2xl border border-border/70 bg-card p-3 text-card-foreground shadow-brand transition-colors group-hover:bg-secondary">
-        <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
+      <div className="border border-border/70 bg-card p-3 text-card-foreground shadow-brand transition-colors group-hover:bg-secondary">
+        <div className="relative aspect-square overflow-hidden bg-muted">
           <img
             {...imgProps(p.image, { width: 320, widths: [160, 240, 320], sizes: "192px" })}
             alt={p.name}
@@ -119,7 +143,7 @@ function ViewAll() {
     <Link
       to="/search"
       search={{ q: "" }}
-      className="group inline-flex items-center gap-1.5 rounded-full border border-foreground/15 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-foreground hover:text-background transition-colors"
+      className="group inline-flex items-center gap-1.5 border-b border-primary pb-1 text-[11px] font-bold uppercase text-primary transition-colors hover:text-foreground"
     >
       View all
       <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -196,14 +220,19 @@ function Index() {
   const slides = normalizeHeroSlides(settings.hero_slides);
 
   const blocks: Record<string, (s: HomeSection) => React.ReactNode> = {
-    hero: () => <HeroSlider slides={slides} />,
+    hero: () => (
+      <section className="mx-auto flex max-w-7xl gap-4 px-4 pt-4 md:pt-6">
+        <CategoryRail categories={topCategories} />
+        <HeroSlider slides={slides} />
+      </section>
+    ),
 
     categories: (s) => {
       const heading = builtinText(s, "title");
       const sub = builtinText(s, "subtitle");
       const cats = topCategories.slice(0, builtinLimit(s));
       return (
-        <section className="max-w-7xl mx-auto px-4 mt-12 md:mt-16">
+        <section className="mx-auto mt-12 max-w-7xl px-4 md:mt-16">
           <SectionHead index="01" eyebrow="Shop by" title={heading || "Categories"} subtitle={sub} />
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-5">
             {cats.map((c, i) => (
@@ -211,31 +240,29 @@ function Index() {
                 key={c.slug}
                 to="/category/$slug"
                 params={{ slug: c.slug }}
-                className={`${i >= 6 && !showAllCats ? "hidden" : "flex"} group flex-col gap-2`}
+                 className={`${i >= 6 && !showAllCats ? "hidden" : "flex"} group flex-col items-center gap-2`}
               >
-                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
+                 <div className="relative aspect-square w-full overflow-hidden rounded-full border-4 border-secondary bg-muted transition-colors group-hover:border-primary/30">
                   <img
                     {...imgProps(c.image, { width: 400, widths: [200, 320, 480], sizes: "(max-width: 640px) 33vw, 180px" })}
                     alt={c.name}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-[linear-gradient(0deg,rgb(0_0_0/0.55),transparent_55%)]" />
-                  <span className="absolute inset-x-3 bottom-2.5 text-center font-display text-sm sm:text-lg uppercase text-primary-foreground leading-tight line-clamp-2">
-                    {c.name}
-                  </span>
                 </div>
+                 <span className="text-center text-xs font-semibold transition-colors group-hover:text-primary sm:text-sm">{c.name}</span>
               </Link>
             ))}
           </div>
           {cats.length > 6 && (
             <div className="mt-5 flex justify-center">
-              <button
+              <Button
+                variant="outline"
                 onClick={() => setShowAllCats((v) => !v)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border px-5 py-2 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-muted"
+                className="rounded-none px-5 text-[11px] font-bold uppercase"
               >
                 {showAllCats ? "Show less" : "All categories"}
                 <ChevronRight className={`h-3.5 w-3.5 transition ${showAllCats ? "-rotate-90" : "rotate-90"}`} />
-              </button>
+              </Button>
             </div>
           )}
         </section>
@@ -250,21 +277,17 @@ function Index() {
           title={builtinText(s, "title") || "Deals of the week"}
           subtitle={builtinText(s, "subtitle")}
         />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 gap-px overflow-hidden border border-primary/15 bg-primary/15 md:grid-cols-4">
           {dealBanners.map((d, i) => (
             <Link
               key={d.title}
               to="/search"
               search={{ q: "" }}
-              className={`group relative overflow-hidden rounded-2xl p-5 sm:p-6 flex flex-col justify-between min-h-40 sm:min-h-56 ${
-                i === 0
-                  ? "bg-gradient-brand text-primary-foreground md:col-span-2"
-                  : "bg-gradient-soft text-foreground border border-border"
-              }`}
+              className={`group relative flex min-h-32 flex-col justify-between overflow-hidden p-5 sm:p-6 ${i === 0 ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"}`}
             >
               <p className="text-[10px] font-bold uppercase tracking-[0.22em] opacity-80">{d.title}</p>
               <div>
-                <p className="font-display text-3xl sm:text-5xl uppercase">{d.sub}</p>
+                 <p className="font-display text-2xl font-semibold sm:text-3xl">{d.sub}</p>
                 <p className="mt-1 text-xs opacity-75">{d.note}</p>
               </div>
               <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.18em]">
@@ -288,14 +311,14 @@ function Index() {
       return (
         <section className="mx-auto mt-14 max-w-7xl px-4 md:mt-20">
           <div
-            className="overflow-hidden rounded-3xl py-12 md:py-16"
+             className="overflow-hidden py-12 md:py-16"
             style={{ backgroundColor: bg, color: fg }}
           >
             <div className="mb-8 flex flex-col items-center px-4 text-center">
               <span className="text-[11px] font-semibold uppercase tracking-[0.22em] opacity-60">
                 Bestsellers
               </span>
-              <h2 className="font-display mt-2 text-3xl uppercase sm:text-5xl">
+               <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                 {builtinText(s, "title") || "Hot Products"}
               </h2>
               {builtinText(s, "subtitle") && (
@@ -362,9 +385,9 @@ function Index() {
                 key={b.slug}
                 to="/brand/$slug"
                 params={{ slug: b.slug }}
-                className="group rounded-2xl border border-border bg-card p-2.5 hover:border-transparent hover:bg-gradient-soft transition-colors text-center"
+               className="group border border-border bg-card p-2.5 text-center transition-colors hover:border-primary/30 hover:bg-secondary"
               >
-                <div className="aspect-[4/3] grid place-items-center rounded-xl bg-muted/40 overflow-hidden">
+                 <div className="grid aspect-[4/3] place-items-center overflow-hidden bg-muted/40">
                   {b.logo ? (
                     <img
                       {...imgProps(b.logo, { width: 320, widths: [160, 320, 480], sizes: "180px" })}
@@ -381,17 +404,18 @@ function Index() {
           </div>
           <div className="mt-5 flex justify-center gap-2">
             {list.length > 6 && (
-              <button
+               <Button
+                 variant="outline"
                 onClick={() => setShowAllBrands((v) => !v)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border px-5 py-2 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-muted"
+                 className="rounded-none px-5 text-[11px] font-bold uppercase"
               >
                 {showAllBrands ? "Show less" : "Show more"}
                 <ChevronRight className={`h-3.5 w-3.5 transition ${showAllBrands ? "-rotate-90" : "rotate-90"}`} />
-              </button>
+               </Button>
             )}
             <Link
               to="/brands"
-              className="inline-flex items-center rounded-full border border-border px-5 py-2 text-[11px] font-bold uppercase tracking-[0.18em] hover:bg-muted"
+               className="inline-flex items-center border border-border px-5 py-2 text-[11px] font-bold uppercase hover:bg-muted"
             >
               All brands
             </Link>
@@ -406,7 +430,7 @@ function Index() {
       const bg = builtinBg(s);
       return (
         <section className="mx-auto mt-14 max-w-7xl px-4 md:mt-20">
-          <div className="rounded-3xl px-4 py-12 md:px-10 md:py-16" style={{ backgroundColor: bg }}>
+           <div className="px-4 py-12 md:px-10 md:py-16" style={{ backgroundColor: bg }}>
             <SectionHead
               eyebrow="Real people, real glow"
               title={builtinText(s, "title") || "Customer Reviews"}
@@ -424,11 +448,11 @@ function Index() {
 
     trust: (s) => (
       <section className="max-w-7xl mx-auto px-4 mt-16 md:mt-24">
-        <div className="rounded-[1.75rem] bg-gradient-brand text-primary-foreground p-6 md:p-10 shadow-brand">
+         <div className="border-y border-primary/20 bg-secondary p-6 text-foreground md:p-10">
           {(builtinText(s, "title") || builtinText(s, "subtitle")) && (
             <div className="mb-7 max-w-2xl">
               {builtinText(s, "title") && (
-                <h2 className="font-display text-3xl sm:text-5xl uppercase">{builtinText(s, "title")}</h2>
+                 <h2 className="font-display text-3xl font-semibold sm:text-4xl">{builtinText(s, "title")}</h2>
               )}
               {builtinText(s, "subtitle") && (
                 <p className="mt-1 text-sm opacity-85">{builtinText(s, "subtitle")}</p>
@@ -443,11 +467,11 @@ function Index() {
               { icon: Headphones, title: "24/7 Support", sub: "Talk to our team" },
             ].map(({ icon: Icon, title, sub }) => (
               <div key={title} className="flex items-start gap-3">
-                <div className="h-10 w-10 shrink-0 rounded-full bg-background/20 grid place-items-center">
-                  <Icon className="h-5 w-5" />
+                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+                   <Icon className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="font-display text-lg uppercase leading-none">{title}</p>
+                   <p className="font-display text-base font-semibold leading-none">{title}</p>
                   <p className="text-xs opacity-80 mt-1">{sub}</p>
                 </div>
               </div>
@@ -464,7 +488,7 @@ function Index() {
       <SiteTheme settings={settings} />
       <SiteHeader categories={categories} settings={settings} />
 
-      {order.map((s, idx) =>
+       {order.map((s, idx) =>
         s.kind === "products" ? (
           <section key={s.id} className="max-w-7xl mx-auto px-4 mt-14 md:mt-20">
             <SectionHead
@@ -492,6 +516,24 @@ function Index() {
         ) : (
           <div key={s.id}>{blocks[s.id]?.(s)}</div>
         ),
+      )}
+
+      {topCategories.length > 0 && (
+        <section className="mx-auto mt-16 max-w-7xl px-4 md:mt-24">
+          <SectionHead eyebrow="The beauty edit" title="Stories & routines" subtitle="Discover ideas for your everyday glow" />
+          <div className="grid gap-4 md:grid-cols-3">
+            {topCategories.slice(0, 3).map((category, index) => (
+              <Link key={category.slug} to="/category/$slug" params={{ slug: category.slug }} className="group relative aspect-[4/3] overflow-hidden bg-muted">
+                <img {...imgProps(category.image, { width: 720, widths: [360, 540, 720], sizes: "(max-width: 768px) 100vw, 33vw" })} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+                <div className="absolute inset-x-0 bottom-0 bg-background/92 p-5 backdrop-blur-sm">
+                  <p className="text-[10px] font-bold uppercase text-primary">Beauty guide 0{index + 1}</p>
+                  <h3 className="mt-1 font-display text-xl font-semibold">Your {category.name} ritual</h3>
+                  <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold">Read the edit <ArrowRight className="h-3.5 w-3.5" /></span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       )}
 
       <div className="mt-16 md:mt-24">

@@ -24,11 +24,11 @@ const NAV_LINK =
 
 const MENU_PILL: Record<string, string> = {
   none: "",
-  pink: "bg-[color:var(--brand-pink)] text-white px-3 py-1.5 rounded-full",
-  magenta: "bg-[color:var(--brand-magenta)] text-white px-3 py-1.5 rounded-full",
-  purple: "bg-[color:var(--brand-purple)] text-white px-3 py-1.5 rounded-full",
-  teal: "bg-[color:var(--brand-teal)] text-white px-3 py-1.5 rounded-full",
-  green: "bg-[color:var(--brand-green)] text-white px-3 py-1.5 rounded-full",
+  pink: "bg-[color:var(--brand-pink)] text-primary-foreground px-3 py-1.5 rounded-full",
+  magenta: "bg-[color:var(--brand-magenta)] text-primary-foreground px-3 py-1.5 rounded-full",
+  purple: "bg-[color:var(--brand-purple)] text-primary-foreground px-3 py-1.5 rounded-full",
+  teal: "bg-[color:var(--brand-teal)] text-primary-foreground px-3 py-1.5 rounded-full",
+  green: "bg-[color:var(--brand-green)] text-primary-foreground px-3 py-1.5 rounded-full",
 };
 
 export function SiteHeader({
@@ -175,7 +175,7 @@ export function SiteHeader({
       <div className={`lg:hidden fixed inset-0 z-50 ${menuOpen ? "" : "pointer-events-none"}`} aria-hidden={!menuOpen}>
         <div
           onClick={() => setMenuOpen(false)}
-          className={`absolute inset-0 bg-black/50 transition-opacity ${menuOpen ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 bg-foreground/50 transition-opacity ${menuOpen ? "opacity-100" : "opacity-0"}`}
         />
         <div
           className={`absolute inset-y-0 left-0 w-[82%] max-w-80 bg-background flex flex-col transition-transform duration-200 ${
