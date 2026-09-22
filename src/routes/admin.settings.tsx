@@ -146,6 +146,9 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
   const productBadges = normalizeProductBadges(form.product_badges);
   const headerMenus = normalizeHeaderMenus(form.header_menus);
   const footerColumns = normalizeFooterColumns(form.footer_columns);
+  const shelfPromos = normalizeShelfPromos(form.shelf_promos);
+  const setPromo = (index: number, patch: Partial<ShelfPromo>) =>
+    set("shelf_promos", shelfPromos.map((p, i) => (i === index ? { ...p, ...patch } : p)));
 
   const setColumn = (i: number, patch: Partial<FooterColumn>) =>
     set("footer_columns", footerColumns.map((c, idx) => (idx === i ? { ...c, ...patch } : c)));
