@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { Heart, ShoppingBag, Menu, X, UserRound, Search } from "lucide-react";
+import { useState } from "react";
+import { Heart, ShoppingBag, Menu, X, UserRound } from "lucide-react";
 import type { Category } from "@/lib/shop-data";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
@@ -42,27 +42,11 @@ export function SiteHeader({
   const { count: wishCount } = useWishlist();
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchHidden, setSearchHidden] = useState(false);
   const topCats = categories.filter((c) => !c.parent);
   const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
   const menus: HeaderMenu[] = configured.length ? configured : DEFAULT_HEADER_MENUS;
 
-  // Hide search icon on scroll down, show on scroll up (mobile only)
-  useEffect(() => {
-    let lastY = window.scrollY;
-    function onScroll() {
-      const y = window.scrollY;
-      if (y > lastY && y > 80) {
-        setSearchHidden(true);
-      } else {
-        setSearchHidden(false);
-      }
-      lastY = y;
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+
 
 
 
@@ -152,16 +136,6 @@ export function SiteHeader({
 
           <SearchAutocomplete className="ml-auto hidden min-w-0 max-w-xs flex-1 md:block" />
           <div className="ml-auto flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              aria-label="Search"
-              className={`relative grid h-9 w-9 place-items-center hover:text-primary transition-opacity duration-200 md:hidden ${
-                searchHidden ? "opacity-0 pointer-events-none" : "opacity-100"
-              }`}
-            >
-              <Search className="h-4 w-4" />
-            </button>
             <Link
               to="/wishlist"
               aria-label="Wishlist"
@@ -194,17 +168,7 @@ export function SiteHeader({
 
       </header>
 
-      {/* Mobile search overlay */}
-      {searchOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-background">
-          <div className="flex items-center gap-2 border-b border-border px-4 py-3">
-            <SearchAutocomplete className="flex-1" placeholder="Search products…" />
-            <Button variant="ghost" size="icon" onClick={() => setSearchOpen(false)} aria-label="Close search" className="shrink-0">
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      )}
+
 
 
       {/* Mobile menu drawer */}
