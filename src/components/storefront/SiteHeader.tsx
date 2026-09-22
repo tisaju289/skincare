@@ -42,9 +42,27 @@ export function SiteHeader({
   const { count: wishCount } = useWishlist();
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchHidden, setSearchHidden] = useState(false);
   const topCats = categories.filter((c) => !c.parent);
   const configured = normalizeHeaderMenus(settings.header_menus).filter((m) => m.enabled);
   const menus: HeaderMenu[] = configured.length ? configured : DEFAULT_HEADER_MENUS;
+
+  // Hide search icon on scroll down, show on scroll up (mobile only)
+  useEffect(() => {
+    let lastY = window.scrollY;
+    function onScroll() {
+      const y = window.scrollY;
+      if (y > lastY && y > 80) {
+        setSearchHidden(true);
+      } else {
+        setSearchHidden(false);
+      }
+      lastY = y;
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
 
 
