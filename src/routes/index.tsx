@@ -97,7 +97,7 @@ function PromoBanner({ promo }: { promo: ShelfPromo }) {
 function ProductShelf({ title, subtitle, products, promo }: { title: string; subtitle: string; products: Product[]; promo: ShelfPromo }) {
   const hasPromo = promo.enabled && Boolean((promo.image ?? "").trim());
   return (
-    <section className={`fire-border mt-8 rounded-xl p-4 grid gap-4 ${hasPromo ? "lg:grid-cols-[1fr_17rem]" : ""}`}>
+    <section className={`section-soft mt-8 rounded-xl p-4 grid gap-4 ${hasPromo ? "lg:grid-cols-[1fr_17rem]" : ""}`}>
       <div className="min-w-0">
         <SectionTitle title={title} subtitle={subtitle} />
         <div className="grid grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-3 xl:grid-cols-5">
@@ -164,7 +164,7 @@ function Index() {
         </section>
 
 
-        <section className="mt-8 rounded-xl p-4">
+        <section className="section-soft mt-8 rounded-xl p-4">
           <SectionTitle title="Shop by Category" subtitle="Find your beauty essentials." href="/categories" />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {categories.slice(0, 6).map((category) => (
@@ -188,7 +188,7 @@ function Index() {
         <ProductShelf title="New Arrivals" subtitle="Fresh beauty picks, just for you." products={firstShelf} promo={promos[0]} />
         <ProductShelf title="Best Sellers" subtitle="Loved by thousands. Beauty that delivers." products={secondShelf} promo={promos[1]} />
 
-        <section className="fire-border mt-8 rounded-xl p-4">
+        <section className="section-soft mt-8 rounded-xl p-4">
           <SectionTitle title="Featured Collections" subtitle="Everything for your daily beauty ritual." href="/categories" />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {categories.slice(0, 4).map((category) => (
@@ -204,7 +204,7 @@ function Index() {
           </div>
         </section>
 
-        <section className="fire-border mt-8 rounded-xl p-4 lg:grid lg:grid-cols-[1fr_20rem] lg:gap-4">
+        <section className="section-soft mt-8 rounded-xl p-4 lg:grid lg:grid-cols-[1fr_20rem] lg:gap-4">
           <div>
             <SectionTitle title="Beauty Articles" subtitle="Tips, trends and stories for a more beautiful you." />
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -224,7 +224,7 @@ function Index() {
         </section>
 
         {data.brands.length > 0 ? (
-          <section className="fire-border mt-8 rounded-xl py-6">
+          <section className="section-soft mt-8 rounded-xl py-6">
             <div className="grid grid-cols-3 items-center gap-5 sm:grid-cols-4 lg:grid-cols-8">
               {data.brands.slice(0, 8).map((brand) => (
                 <Link key={brand.slug} to="/brand/$slug" params={{ slug: brand.slug }} className="grid h-12 place-items-center grayscale transition hover:grayscale-0">
