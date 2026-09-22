@@ -507,6 +507,7 @@ export function resolveSettings(row: unknown): SiteSettings {
   out.product_badges = normalizeProductBadges(r.product_badges);
   out.header_menus = normalizeHeaderMenus(r.header_menus);
   out.footer_columns = normalizeFooterColumns(r.footer_columns);
+  out.shelf_promos = normalizeShelfPromos(r.shelf_promos);
   out.newsletter_enabled = r.newsletter_enabled !== false;
   return out as SiteSettings;
 }
