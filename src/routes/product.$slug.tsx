@@ -138,7 +138,7 @@ function ProductPage() {
         <span className="text-foreground line-clamp-1">{product.name}</span>
       </div>
 
-      <section className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-6 md:gap-8">
+      <section className="max-w-7xl mx-auto px-4 mt-8 grid md:grid-cols-2 gap-6 md:gap-8 border border-border rounded-2xl p-4 sm:p-6">
         <div className="space-y-3">
           <div className="relative aspect-square rounded-3xl overflow-hidden bg-muted">
             <img
