@@ -21,7 +21,9 @@ import { pickProducts, type Category, type Product } from "@/lib/shop-data";
 import {
   DEFAULT_SETTINGS,
   normalizeHeroSlides,
+  normalizeShelfPromos,
   siteHead,
+  type ShelfPromo,
   type SiteSettings,
 } from "@/lib/site-settings";
 
