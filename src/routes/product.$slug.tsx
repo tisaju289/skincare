@@ -306,19 +306,6 @@ function ProductPage() {
             )}
           </div>
 
-          {whatsappEnabled(settings) && (
-            <a
-              href={whatsappLink(
-                settings,
-                `Hi! I want to order:\n${product.name}${variant ? ` (${variant.value})` : ""}\nQty: ${qty}\nPrice: ৳${price}`,
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 w-full rounded-full bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 hover:brightness-105"
-            >
-              <MessageCircle className="h-4 w-4" /> Order on WhatsApp
-            </a>
-          )}
 
 
 
