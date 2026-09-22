@@ -18,7 +18,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <section className="min-w-0 flex-1">
-      <div className="relative aspect-[16/9] md:aspect-[16/5] overflow-hidden bg-gradient-soft">
+      <div className="relative aspect-[16/9] lg:aspect-[2.65/1] overflow-hidden bg-secondary">
         {slides.map((s, i) => (
           <div
             key={i}
