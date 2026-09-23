@@ -333,6 +333,7 @@ function Index() {
                 </Link>
               ))}
             </div>
+            <ViewAllLink />
           </div>
           <div className="flex flex-col justify-center bg-secondary p-6">
             <Gift className="mb-3 h-7 w-7 text-primary" />
