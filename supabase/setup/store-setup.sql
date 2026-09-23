@@ -378,7 +378,8 @@ CREATE TRIGGER trg_store_settings_updated BEFORE UPDATE ON public.store_settings
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 INSERT INTO public.store_settings (store_name, support_email, phone, business_address)
-VALUES ('Shajgoj', 'support@shajgoj.com', '+880 1700 000 000', 'House 42, Road 11, Banani, Dhaka 1213');
+SELECT 'Shajgoj', 'support@shajgoj.com', '+880 1700 000 000', 'House 42, Road 11, Banani, Dhaka 1213'
+WHERE NOT EXISTS (SELECT 1 FROM public.store_settings);
 
 
 -- ---------- 20260725051116_27995f54-f66d-42c7-8303-e7a55574c264.sql ----------
@@ -389,6 +390,9 @@ REVOKE EXECUTE ON FUNCTION public.has_role(uuid, app_role) FROM PUBLIC, anon;
 
 
 -- ---------- 20260726035054_cfa1b1e0-09a6-40b1-87dd-a3a36447daec.sql ----------
+/*
+  Legacy demo seed disabled: the canonical fixed-ID seed is defined at the end
+  of this file. Keeping both seeds active creates duplicate catalog rows.
 -- ============ SEED CATEGORIES ============
 insert into public.categories (slug, name, color, image, sort_order) values
 ('makeup','Makeup','from-pink-400 to-rose-500','https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80',1),
@@ -492,6 +496,7 @@ join lateral (values
 ) as v(user_name,rating,comment,status) on true;
 
 -- ============ AUTO STOCK STATUS ============
+*/
 create or replace function public.sync_product_status()
 returns trigger
 language plpgsql
