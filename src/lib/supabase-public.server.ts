@@ -4,9 +4,9 @@ import { resolveSettings, type SiteSettings } from "@/lib/site-settings";
 
 /** Publishable-key Supabase client for public (anon) reads inside server functions. */
 export function getPublicClient() {
-  const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL!;
+  const url = import.meta.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL!;
   const key =
-    process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY!;
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY!;
 
   return createClient<Database>(url, key, {
     auth: { storage: undefined, persistSession: false, autoRefreshToken: false },

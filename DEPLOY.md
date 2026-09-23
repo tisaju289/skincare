@@ -44,9 +44,16 @@ Supabase Dashboard -> **Project Settings -> API** theke:
 
 **Local e:** `.env.example` copy kore `.env` banie value bosan.
 
-**Cloudflare Worker e:** `VITE_*` 3 ta **build time** e lagbe (Workers Build /
-CI er Environment variables e din), ar `SUPABASE_*` 3 ta Worker er
-**Variables and Secrets** e din. Shob 6 ta duijaygatei diye dile shob theke safe.
+**Cloudflare Worker e:** `VITE_*` 3 ta **Workers Builds -> Environment variables**
+e din, karon egulo build-er somoy frontend bundle-e inject hoy. Shudhu
+**Variables and Secrets**-e dile `VITE_*` kaj korbe na.
+
+`SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_PROJECT_ID` 3 ta
+**Workers -> Settings -> Variables and Secrets -> Production**-e din.
+Preview deploy korle Preview environment-eo eki 3 ta din.
+
+Build variable save korar por abar **redeploy** korte hobe; sudhu custom
+domain add korle purono bundle-er environment value bodlay na.
 
 ## 4) Build ar deploy
 
@@ -67,5 +74,16 @@ Build er por Worker chalu hole storefront ar `/admin` duitai sathe sathe kaj kor
 - [ ] Email auth on
 - [ ] `/auth` e sign up + admin role SQL run
 - [ ] 6 ta variable set (build + worker)
+- [ ] Cloudflare build variables save kore redeploy
 - [ ] Deploy
 - [ ] `/admin -> Settings` theke logo, nam, colour, delivery charge, WhatsApp set
+
+### Custom domain diye auth
+
+Supabase Dashboard -> **Authentication -> URL Configuration** e:
+
+- Site URL: `https://your-domain.com`
+- Redirect URLs: `https://your-domain.com/**`
+
+Save kore abar `/auth` theke sign up korun. Email confirmation on thakle
+confirmation link-er redirect URL-o ei custom domain-er hote hobe.
