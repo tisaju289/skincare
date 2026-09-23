@@ -499,6 +499,10 @@ export function resolveSettings(row: unknown): SiteSettings {
   const out = { ...DEFAULT_SETTINGS } as Record<string, unknown>;
   for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof SiteSettings)[]) {
     const v = r[key];
+    if (key === "store_name" && typeof v === "string") {
+      out[key] = v;
+      continue;
+    }
     if (v !== undefined && v !== null && v !== "") out[key] = v;
   }
   if (r.id) out.id = r.id;
