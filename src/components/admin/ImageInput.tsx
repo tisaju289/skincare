@@ -42,7 +42,7 @@ export function ImageInput({
         upsert: false,
       });
       if (error) throw error;
-      onChange(`/api/public/media/${path}`);
+      onChange(`/api/public/media/${path.split("/").map(encodeURIComponent).join("/")}`);
       toast.success("Image uploaded");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Upload failed");
@@ -64,7 +64,7 @@ export function ImageInput({
           value={url}
           onChange={(e) => onChange(e.target.value)}
           placeholder="https://... or upload below"
-          className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm outline-none focus:border-[color:var(--brand-pink)]"
+          className="mt-1 w-full px-3 py-2 rounded-lg border border-border bg-background text-sm outline-none focus:border-(--brand-pink)"
         />
       </label>
 
@@ -86,11 +86,20 @@ export function ImageInput({
           if (e.key === "Enter" || e.key === " ") inputRef.current?.click();
         }}
         className={`flex items-center gap-3 rounded-xl border border-dashed px-4 py-3 cursor-pointer transition-colors ${
-          dragging ? "border-[color:var(--brand-pink)] bg-[color:var(--brand-pink)]/5" : "border-border hover:bg-muted/50"
+          dragging ? "border-(--brand-pink) bg-(--brand-pink)/5" : "border-border hover:bg-muted/50"
         }`}
       >
         {url ? (
-          <img src={url} alt="" loading="lazy" decoding="async" className="h-12 w-12 rounded-lg object-cover border border-border" />
+          <img
+            src={url}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="h-12 w-12 rounded-lg object-cover border border-border"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
         ) : (
           <div className="h-12 w-12 rounded-lg bg-muted grid place-items-center">
             <Upload className="h-4 w-4 text-muted-foreground" />
