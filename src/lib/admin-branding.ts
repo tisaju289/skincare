@@ -22,7 +22,7 @@ export function useAdminBranding(): AdminBranding {
       if (error) throw error;
       const row = (data ?? {}) as Record<string, unknown>;
       return {
-        storeName: (row["store_name"] as string) || "Store",
+        storeName: typeof row["store_name"] === "string" ? row["store_name"] : "Store",
         logoUrl: (row["logo_url"] as string) || null,
         faviconUrl: (row["favicon_url"] as string) || null,
       };
@@ -34,11 +34,15 @@ export function useAdminBranding(): AdminBranding {
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.title = `${branding.storeName} — Admin Console`;
-    if (!branding.faviconUrl) return;
-    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    let link = document.querySelector<HTMLLinkElement>("link[data-dynamic-favicon]");
+    if (!branding.faviconUrl) {
+      link?.remove();
+      return;
+    }
     if (!link) {
       link = document.createElement("link");
       link.rel = "icon";
+      link.dataset.dynamicFavicon = "true";
       document.head.appendChild(link);
     }
     link.href = branding.faviconUrl;

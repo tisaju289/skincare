@@ -132,6 +132,7 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
     onSuccess: () => {
       toast.success("Settings saved");
       qc.invalidateQueries({ queryKey: ["admin", "settings"] });
+      qc.invalidateQueries({ queryKey: ["admin", "branding"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });

@@ -525,7 +525,7 @@ export function siteHead(
   s: SiteSettings,
   opts: { title?: string; description?: string; image?: string; path?: string; type?: string } = {},
 ) {
-  const title = opts.title ?? s.seo_title ?? s.store_name;
+  const title = opts.title ?? s.seo_title?.trim() ?? s.store_name;
   const description = opts.description ?? s.seo_description ?? "";
   const image = opts.image ?? s.og_image_url ?? undefined;
 
@@ -547,7 +547,7 @@ export function siteHead(
 
   const links: Record<string, string>[] = [];
   if (opts.path) links.push({ rel: "canonical", href: opts.path });
-  if (s.favicon_url) links.push({ rel: "icon", href: s.favicon_url });
+  if (s.favicon_url?.trim()) links.push({ rel: "icon", href: s.favicon_url.trim() });
 
   return { meta, links };
 }
