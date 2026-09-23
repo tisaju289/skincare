@@ -54,7 +54,12 @@ function AuthPage() {
         );
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setError(
+        message.toLowerCase().includes("rate limit") || message.toLowerCase().includes("rate_limit")
+          ? "Supabase email limit reached. Wait a while before trying again, or disable email confirmation in Supabase Auth settings for instant signup."
+          : message,
+      );
     } finally {
       setLoading(false);
     }

@@ -87,3 +87,12 @@ Supabase Dashboard -> **Authentication -> URL Configuration** e:
 
 Save kore abar `/auth` theke sign up korun. Email confirmation on thakle
 confirmation link-er redirect URL-o ei custom domain-er hote hobe.
+
+### `email rate limit exceeded` hole
+
+Eta Supabase Auth-er temporary email sending limit; website-er password ba
+custom domain-er problem noy. Bar bar signup korben na. Kichu khon opekkha
+kore abar try korun, othoba testing-er somoy Supabase Dashboard ->
+**Authentication -> Providers -> Email** e **Confirm email** off kore signup
+korun. Production-e confirmation on rakhle nijer SMTP provider configure kora
+bhalo, karon Supabase-er default email service-er limit kom.
