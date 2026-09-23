@@ -112,6 +112,7 @@ function ProductShelf({ title, subtitle, products, promo }: { title: string; sub
         <div className="grid grid-cols-2 gap-px overflow-hidden border border-border bg-border sm:grid-cols-3 xl:grid-cols-5">
           {products.slice(0, 5).map((product) => <ProductCard key={product.slug} product={product} />)}
         </div>
+        <ViewAllLink />
       </div>
       <PromoBanner promo={promo} />
     </section>
@@ -278,7 +279,7 @@ function Index() {
 
 
         <section className="section-soft mt-8 rounded-xl p-4">
-          <SectionTitle title="Shop by Category" subtitle="Find your beauty essentials." href="/categories" />
+          <SectionTitle title="Shop by Category" subtitle="Find your beauty essentials." />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {categories.slice(0, 6).map((category) => (
               <Link
@@ -294,6 +295,7 @@ function Index() {
               </Link>
             ))}
           </div>
+          <ViewAllLink href="/categories" />
         </section>
 
         <FlashSale products={pickProducts(pool, "flash_sale", 5).length ? pickProducts(pool, "flash_sale", 5) : pickProducts(pool, "discount", 5)} />
@@ -304,7 +306,7 @@ function Index() {
         <ProductShelf title="Best Sellers" subtitle="Loved by thousands. Beauty that delivers." products={secondShelf} promo={promos[1]} />
 
         <section className="section-soft mt-8 rounded-xl p-4">
-          <SectionTitle title="Featured Collections" subtitle="Everything for your daily beauty ritual." href="/categories" />
+          <SectionTitle title="Featured Collections" subtitle="Everything for your daily beauty ritual." />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {categories.slice(0, 4).map((category) => (
               <Link key={category.slug} to="/category/$slug" params={{ slug: category.slug }} className="group relative aspect-[1.65/1] overflow-hidden bg-muted">
@@ -317,6 +319,7 @@ function Index() {
               </Link>
             ))}
           </div>
+          <ViewAllLink href="/categories" />
         </section>
 
         <section className="section-soft mt-8 rounded-xl p-4 lg:grid lg:grid-cols-[1fr_20rem] lg:gap-4">
