@@ -56,11 +56,11 @@ function ViewAllLink({ href = "/search" }: { href?: string }) {
 
 function CategorySidebar({ categories }: { categories: Category[] }) {
   return (
-    <aside className="hidden w-48 shrink-0 border border-border bg-card lg:block">
+    <aside className="hidden w-48 shrink-0 flex-col border border-border bg-card lg:flex">
       <div className="flex h-11 items-center gap-2 bg-secondary px-4 text-xs font-bold text-foreground">
         <span className="text-base">☰</span> Shop by Category
       </div>
-      <nav>
+      <nav className="flex-1">
         {categories.slice(0, 9).map((category) => (
           <Link
             key={category.slug}
@@ -72,6 +72,12 @@ function CategorySidebar({ categories }: { categories: Category[] }) {
           </Link>
         ))}
       </nav>
+      <Link
+        to="/categories"
+        className="flex items-center justify-center gap-1 border-t border-border bg-secondary px-4 py-3 text-xs font-bold text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+      >
+        All Categories <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
     </aside>
   );
 }
