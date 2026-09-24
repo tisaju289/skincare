@@ -8,7 +8,7 @@ import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
 import { TableToolbar } from "@/components/admin/TableToolbar";
 import { matchesQuery } from "@/lib/csv";
-import { Plus, Edit2, Trash2, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Loader2, Trash } from "lucide-react";
 
 export const Route = createFileRoute("/admin/products")({
   component: ProductsPage,
