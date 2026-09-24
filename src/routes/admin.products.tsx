@@ -165,6 +165,19 @@ function ProductsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const bulkDel = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase.from("products").delete().in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Selected products deleted");
+      setSelected(new Set());
+      qc.invalidateQueries({ queryKey: ["admin", "products"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   function openNew() {
     setEditing(null);
     setForm(empty);
