@@ -297,11 +297,42 @@ function ProductsPage() {
           onImported={() => qc.invalidateQueries({ queryKey: ["admin", "products"] })}
           resultCount={filtered.length}
         />
+        {selected.size > 0 && (
+          <div className="admin-card flex flex-wrap items-center justify-between gap-2 p-3 sm:p-4">
+            <span className="text-sm font-semibold">{selected.size} selected</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelected(new Set())}
+                className="text-xs font-semibold px-3 py-2 rounded-lg border border-border hover:bg-muted"
+              >
+                Clear
+              </button>
+              <button
+                disabled={bulkDel.isPending}
+                onClick={() => confirm(`Delete ${selected.size} selected product(s)?`) && bulkDel.mutate(Array.from(selected))}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg bg-rose-600 text-white hover:opacity-90 disabled:opacity-60"
+              >
+                {bulkDel.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash className="h-3.5 w-3.5" />}
+                Delete selected
+              </button>
+            </div>
+          </div>
+        )}
         <div className="admin-card overflow-hidden">
           <div className="overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
               <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
+                  <th className="px-3 py-3 w-10">
+                    <input
+                      type="checkbox"
+                      aria-label="Select all"
+                      checked={allSelected}
+                      ref={(el) => { if (el) el.indeterminate = someSelected; }}
+                      onChange={toggleAll}
+                      className="h-4 w-4 accent-[color:var(--brand-pink)] cursor-pointer"
+                    />
+                  </th>
                   <th className="px-5 py-3 text-left font-semibold">Product</th>
                   <th className="px-5 py-3 text-left font-semibold">Category</th>
                   <th className="px-5 py-3 text-left font-semibold">Price</th>
@@ -312,12 +343,12 @@ function ProductsPage() {
               </thead>
               <tbody>
                 {productsQ.isLoading && (
-                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">
+                  <tr><td colSpan={7} className="px-5 py-10 text-center text-muted-foreground">
                     <Loader2 className="h-5 w-5 animate-spin inline" />
                   </td></tr>
                 )}
                 {!productsQ.isLoading && filtered.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">{products.length ? "No products match your search." : 'No products yet. Click "Add product".'}</td></tr>
+                  <tr><td colSpan={7} className="px-5 py-10 text-center text-muted-foreground">{products.length ? "No products match your search." : 'No products yet. Click "Add product".'}</td></tr>
                 )}
                 {filtered.map((p: any) => (
                   <tr key={p.id} className="border-t border-border hover:bg-muted/30 transition-colors">
