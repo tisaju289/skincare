@@ -310,7 +310,16 @@ function Index() {
           <ViewAllLink href="/categories" />
         </section>
 
-        <FlashSale products={pickProducts(pool, "flash_sale", 5).length ? pickProducts(pool, "flash_sale", 5) : pickProducts(pool, "discount", 5)} />
+        <FlashSale
+          settings={data.settings}
+          products={
+            (() => {
+              const limit = Math.max(1, Number(data.settings.flash_sale_limit) || 8);
+              const flash = pickProducts(pool, "flash_sale", limit);
+              return flash.length ? flash : pickProducts(pool, "discount", limit);
+            })()
+          }
+        />
 
         <HotProducts products={pickProducts(pool, "trending", 12)} />
 
