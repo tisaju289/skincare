@@ -524,6 +524,9 @@ export function resolveSettings(row: unknown): SiteSettings {
   out.footer_columns = normalizeFooterColumns(r.footer_columns);
   out.shelf_promos = normalizeShelfPromos(r.shelf_promos);
   out.newsletter_enabled = r.newsletter_enabled !== false;
+  out.flash_sale_enabled = r.flash_sale_enabled !== false;
+  out.flash_sale_limit = Number(r.flash_sale_limit) > 0 ? Number(r.flash_sale_limit) : 8;
+  out.flash_sale_hours = Number(r.flash_sale_hours) > 0 ? Number(r.flash_sale_hours) : 12;
   return out as SiteSettings;
 }
 
