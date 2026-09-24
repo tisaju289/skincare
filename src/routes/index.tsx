@@ -168,10 +168,14 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
-function FlashSale({ products }: { products: Product[] }) {
-  // Countdown resets every 12 hours from load
-  const [target] = useState(() => Date.now() + 12 * 3_600_000);
-  const { h, m, s } = useCountdown(target);
+function FlashSale({ products, settings }: { products: Product[]; settings: SiteSettings }) {
+  const hours = Math.max(1, Number(settings.flash_sale_hours) || 12);
+  // Start the countdown after hydration so server/client markup match
+  const [target, setTarget] = useState<number | null>(null);
+  useEffect(() => {
+    setTarget(Date.now() + hours * 3_600_000);
+  }, [hours]);
+  const { h, m, s } = useCountdown(target ?? 0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollByCard = useCallback((dir: 1 | -1) => {
@@ -194,15 +198,17 @@ function FlashSale({ products }: { products: Product[] }) {
     return () => clearInterval(id);
   }, [products.length]);
 
-  if (!products.length) return null;
+  if (!settings.flash_sale_enabled || !products.length) return null;
+  const title = settings.flash_sale_title?.trim() || "Flash Sale";
+  const subtitle = settings.flash_sale_subtitle?.trim() || "Limited time deals — hurry up!";
   return (
     <section className="mt-8 overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-primary/5">
       <div className="flex flex-col items-center gap-3 px-5 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
         <div className="flex items-center gap-3">
           <span className="text-2xl">⚡</span>
           <div>
-            <h2 className="font-display text-xl font-bold uppercase tracking-wide text-primary">Flash Sale</h2>
-            <p className="text-[11px] text-muted-foreground">Limited time deals — hurry up!</p>
+            <h2 className="font-display text-xl font-bold uppercase tracking-wide text-primary">{title}</h2>
+            <p className="text-[11px] text-muted-foreground">{subtitle}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -215,7 +221,7 @@ function FlashSale({ products }: { products: Product[] }) {
             ].map((unit, i) => (
               <span key={i} className="flex items-center gap-1">
                 <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary font-mono text-sm font-bold text-primary-foreground tabular-nums">
-                  {pad(unit.v)}
+                  {target === null ? "--" : pad(unit.v)}
                 </span>
                 {i < 2 && <span className="text-primary font-bold">:</span>}
               </span>
@@ -304,7 +310,16 @@ function Index() {
           <ViewAllLink href="/categories" />
         </section>
 
-        <FlashSale products={pickProducts(pool, "flash_sale", 5).length ? pickProducts(pool, "flash_sale", 5) : pickProducts(pool, "discount", 5)} />
+        <FlashSale
+          settings={data.settings}
+          products={
+            (() => {
+              const limit = Math.max(1, Number(data.settings.flash_sale_limit) || 8);
+              const flash = pickProducts(pool, "flash_sale", limit);
+              return flash.length ? flash : pickProducts(pool, "discount", limit);
+            })()
+          }
+        />
 
         <HotProducts products={pickProducts(pool, "trending", 12)} />
 

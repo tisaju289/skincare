@@ -430,6 +430,12 @@ export type SiteSettings = {
   whatsapp_number: string | null;
   whatsapp_message: string | null;
   whatsapp_label: string | null;
+  flash_sale_enabled: boolean;
+  flash_sale_title: string;
+  flash_sale_subtitle: string;
+  flash_sale_limit: number;
+  /** Countdown length in hours before it resets. */
+  flash_sale_hours: number;
 };
 
 
@@ -490,6 +496,11 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   whatsapp_number: null,
   whatsapp_message: "Hello! I want to order from Shajgoj.",
   whatsapp_label: "WhatsApp",
+  flash_sale_enabled: true,
+  flash_sale_title: "Flash Sale",
+  flash_sale_subtitle: "Limited time deals — hurry up!",
+  flash_sale_limit: 8,
+  flash_sale_hours: 12,
 };
 
 
@@ -513,6 +524,9 @@ export function resolveSettings(row: unknown): SiteSettings {
   out.footer_columns = normalizeFooterColumns(r.footer_columns);
   out.shelf_promos = normalizeShelfPromos(r.shelf_promos);
   out.newsletter_enabled = r.newsletter_enabled !== false;
+  out.flash_sale_enabled = r.flash_sale_enabled !== false;
+  out.flash_sale_limit = Number(r.flash_sale_limit) > 0 ? Number(r.flash_sale_limit) : 8;
+  out.flash_sale_hours = Number(r.flash_sale_hours) > 0 ? Number(r.flash_sale_hours) : 12;
   return out as SiteSettings;
 }
 
