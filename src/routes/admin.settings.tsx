@@ -24,6 +24,7 @@ import {
   Menu as MenuIcon,
   ChevronDown,
   PanelBottom,
+  Zap,
 } from "lucide-react";
 import { ImageInput } from "@/components/admin/ImageInput";
 import {
@@ -62,6 +63,7 @@ const sections = [
   { id: "homepage", group: "design", icon: LayoutList, title: "Homepage layout", desc: "Reorder & show/hide home sections" },
   { id: "hero", group: "design", icon: GalleryHorizontal, title: "Hero slider", desc: "Slides shown at the top of the homepage" },
   { id: "offers", group: "design", icon: ImageIcon, title: "Offer banners", desc: "2 images beside New Arrivals & Best Sellers" },
+  { id: "flashsale", group: "design", icon: Zap, title: "Flash sale", desc: "Homepage flash sale section & countdown" },
   { id: "headermenu", group: "design", icon: MenuIcon, title: "Header menu", desc: "Top navigation links & dropdowns" },
   { id: "productpage", group: "design", icon: BadgeCheck, title: "Product page", desc: "Delivery / authentic / return badges" },
   { id: "branding", group: "design", icon: ImageIcon, title: "Branding", desc: "Logo, favicon, announcement, socials" },
