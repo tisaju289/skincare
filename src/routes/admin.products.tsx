@@ -231,6 +231,26 @@ function ProductsPage() {
   const parentCats = allCats.filter((c) => !c.parent_id);
   const subCats = allCats.filter((c) => c.parent_id);
 
+  const visibleIds = filtered.map((p: any) => p.id as string);
+  const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id));
+  const someSelected = visibleIds.some((id) => selected.has(id)) && !allSelected;
+  const toggleAll = () => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allSelected) visibleIds.forEach((id) => next.delete(id));
+      else visibleIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+  const toggleOne = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   return (
     <>
       <AdminTopbar
