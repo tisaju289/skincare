@@ -168,10 +168,14 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
-function FlashSale({ products }: { products: Product[] }) {
-  // Countdown resets every 12 hours from load
-  const [target] = useState(() => Date.now() + 12 * 3_600_000);
-  const { h, m, s } = useCountdown(target);
+function FlashSale({ products, settings }: { products: Product[]; settings: SiteSettings }) {
+  const hours = Math.max(1, Number(settings.flash_sale_hours) || 12);
+  // Start the countdown after hydration so server/client markup match
+  const [target, setTarget] = useState<number | null>(null);
+  useEffect(() => {
+    setTarget(Date.now() + hours * 3_600_000);
+  }, [hours]);
+  const { h, m, s } = useCountdown(target ?? 0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollByCard = useCallback((dir: 1 | -1) => {
