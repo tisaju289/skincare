@@ -352,6 +352,15 @@ function ProductsPage() {
                 )}
                 {filtered.map((p: any) => (
                   <tr key={p.id} className="border-t border-border hover:bg-muted/30 transition-colors">
+                    <td className="px-3 py-3">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${p.name}`}
+                        checked={selected.has(p.id)}
+                        onChange={() => toggleOne(p.id)}
+                        className="h-4 w-4 accent-[color:var(--brand-pink)] cursor-pointer"
+                      />
+                    </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         {p.image ? (
