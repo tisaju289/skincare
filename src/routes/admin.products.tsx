@@ -8,7 +8,7 @@ import { AdminModal, Field, inputCls } from "@/components/admin/AdminModal";
 import { supabase } from "@/integrations/supabase/client";
 import { TableToolbar } from "@/components/admin/TableToolbar";
 import { matchesQuery } from "@/lib/csv";
-import { Plus, Edit2, Trash2, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Loader2, Trash } from "lucide-react";
 
 export const Route = createFileRoute("/admin/products")({
   component: ProductsPage,
@@ -65,6 +65,7 @@ function ProductsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const productsQ = useQuery({
     queryKey: ["admin", "products"],
@@ -164,6 +165,19 @@ function ProductsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const bulkDel = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase.from("products").delete().in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Selected products deleted");
+      setSelected(new Set());
+      qc.invalidateQueries({ queryKey: ["admin", "products"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   function openNew() {
     setEditing(null);
     setForm(empty);
@@ -217,6 +231,26 @@ function ProductsPage() {
   const parentCats = allCats.filter((c) => !c.parent_id);
   const subCats = allCats.filter((c) => c.parent_id);
 
+  const visibleIds = filtered.map((p: any) => p.id as string);
+  const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id));
+  const someSelected = visibleIds.some((id) => selected.has(id)) && !allSelected;
+  const toggleAll = () => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allSelected) visibleIds.forEach((id) => next.delete(id));
+      else visibleIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+  const toggleOne = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   return (
     <>
       <AdminTopbar
@@ -263,11 +297,42 @@ function ProductsPage() {
           onImported={() => qc.invalidateQueries({ queryKey: ["admin", "products"] })}
           resultCount={filtered.length}
         />
+        {selected.size > 0 && (
+          <div className="admin-card flex flex-wrap items-center justify-between gap-2 p-3 sm:p-4">
+            <span className="text-sm font-semibold">{selected.size} selected</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelected(new Set())}
+                className="text-xs font-semibold px-3 py-2 rounded-lg border border-border hover:bg-muted"
+              >
+                Clear
+              </button>
+              <button
+                disabled={bulkDel.isPending}
+                onClick={() => confirm(`Delete ${selected.size} selected product(s)?`) && bulkDel.mutate(Array.from(selected))}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg bg-rose-600 text-white hover:opacity-90 disabled:opacity-60"
+              >
+                {bulkDel.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash className="h-3.5 w-3.5" />}
+                Delete selected
+              </button>
+            </div>
+          </div>
+        )}
         <div className="admin-card overflow-hidden">
           <div className="overflow-x-auto admin-scroll">
             <table className="w-full min-w-[720px] text-sm">
               <thead className="text-xs text-muted-foreground bg-muted/50 sticky top-0 z-10">
                 <tr>
+                  <th className="px-3 py-3 w-10">
+                    <input
+                      type="checkbox"
+                      aria-label="Select all"
+                      checked={allSelected}
+                      ref={(el) => { if (el) el.indeterminate = someSelected; }}
+                      onChange={toggleAll}
+                      className="h-4 w-4 accent-[color:var(--brand-pink)] cursor-pointer"
+                    />
+                  </th>
                   <th className="px-5 py-3 text-left font-semibold">Product</th>
                   <th className="px-5 py-3 text-left font-semibold">Category</th>
                   <th className="px-5 py-3 text-left font-semibold">Price</th>
@@ -278,15 +343,24 @@ function ProductsPage() {
               </thead>
               <tbody>
                 {productsQ.isLoading && (
-                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">
+                  <tr><td colSpan={7} className="px-5 py-10 text-center text-muted-foreground">
                     <Loader2 className="h-5 w-5 animate-spin inline" />
                   </td></tr>
                 )}
                 {!productsQ.isLoading && filtered.length === 0 && (
-                  <tr><td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">{products.length ? "No products match your search." : 'No products yet. Click "Add product".'}</td></tr>
+                  <tr><td colSpan={7} className="px-5 py-10 text-center text-muted-foreground">{products.length ? "No products match your search." : 'No products yet. Click "Add product".'}</td></tr>
                 )}
                 {filtered.map((p: any) => (
                   <tr key={p.id} className="border-t border-border hover:bg-muted/30 transition-colors">
+                    <td className="px-3 py-3">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${p.name}`}
+                        checked={selected.has(p.id)}
+                        onChange={() => toggleOne(p.id)}
+                        className="h-4 w-4 accent-[color:var(--brand-pink)] cursor-pointer"
+                      />
+                    </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         {p.image ? (
