@@ -622,6 +622,47 @@ export function SettingsPage({ scope = "settings" }: { scope?: SettingsScope } =
                 </div>
               )}
 
+              {tab === "flashsale" && (
+                <div className="space-y-4 max-w-md">
+                  <p className="text-xs text-muted-foreground">
+                    Controls the Flash Sale strip on the homepage (below Shop by Category). It shows products marked as
+                    flash sale — or discounted products when none are marked.
+                  </p>
+                  <Toggle
+                    label="Show flash sale section"
+                    checked={form.flash_sale_enabled !== false}
+                    onChange={(v) => set("flash_sale_enabled", v)}
+                  />
+                  <Field
+                    label="Title"
+                    value={str("flash_sale_title")}
+                    onChange={(v) => set("flash_sale_title", v)}
+                    hint="e.g. Flash Sale"
+                  />
+                  <Field
+                    label="Subtitle"
+                    value={str("flash_sale_subtitle")}
+                    onChange={(v) => set("flash_sale_subtitle", v)}
+                    hint="e.g. Limited time deals — hurry up!"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field
+                      label="Products to show"
+                      type="number"
+                      value={String(num("flash_sale_limit") || 8)}
+                      onChange={(v) => set("flash_sale_limit", Number(v) as SiteSettings["flash_sale_limit"])}
+                    />
+                    <Field
+                      label="Countdown length (hours)"
+                      type="number"
+                      value={String(num("flash_sale_hours") || 12)}
+                      onChange={(v) => set("flash_sale_hours", Number(v) as SiteSettings["flash_sale_hours"])}
+                      hint="Timer resets after this many hours"
+                    />
+                  </div>
+                </div>
+              )}
+
               {tab === "headermenu" && (
                 <div className="space-y-2">
                   <p className="text-xs text-muted-foreground">
