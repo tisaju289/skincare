@@ -65,6 +65,7 @@ function ProductsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const productsQ = useQuery({
     queryKey: ["admin", "products"],
