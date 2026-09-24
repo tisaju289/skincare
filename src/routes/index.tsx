@@ -198,15 +198,17 @@ function FlashSale({ products, settings }: { products: Product[]; settings: Site
     return () => clearInterval(id);
   }, [products.length]);
 
-  if (!products.length) return null;
+  if (!settings.flash_sale_enabled || !products.length) return null;
+  const title = settings.flash_sale_title?.trim() || "Flash Sale";
+  const subtitle = settings.flash_sale_subtitle?.trim() || "Limited time deals — hurry up!";
   return (
     <section className="mt-8 overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-primary/5">
       <div className="flex flex-col items-center gap-3 px-5 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
         <div className="flex items-center gap-3">
           <span className="text-2xl">⚡</span>
           <div>
-            <h2 className="font-display text-xl font-bold uppercase tracking-wide text-primary">Flash Sale</h2>
-            <p className="text-[11px] text-muted-foreground">Limited time deals — hurry up!</p>
+            <h2 className="font-display text-xl font-bold uppercase tracking-wide text-primary">{title}</h2>
+            <p className="text-[11px] text-muted-foreground">{subtitle}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -219,7 +221,7 @@ function FlashSale({ products, settings }: { products: Product[]; settings: Site
             ].map((unit, i) => (
               <span key={i} className="flex items-center gap-1">
                 <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary font-mono text-sm font-bold text-primary-foreground tabular-nums">
-                  {pad(unit.v)}
+                  {target === null ? "--" : pad(unit.v)}
                 </span>
                 {i < 2 && <span className="text-primary font-bold">:</span>}
               </span>
